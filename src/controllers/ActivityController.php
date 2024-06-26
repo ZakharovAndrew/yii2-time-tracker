@@ -2,16 +2,16 @@
 
 namespace ZakharovAndrew\TimeTracker\controllers;
 
-use app\models\Activity;
-use app\models\ActivitySearch;
-use yii\web\Controller;
+use ZakharovAndrew\TimeTracker\models\Activity;
+use ZakharovAndrew\TimeTracker\models\ActivitySearch;
+use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * ActivityController implements the CRUD actions for Activity model.
  */
-class ActivityController extends Controller
+class ActivityController extends ParentController
 {
     public $controller_id = 5002;
     

@@ -2,21 +2,17 @@
 
 namespace ZakharovAndrew\TimeTracker\controllers;
 
-use ZakharovAndrew\TimeTracker\models\TimeTracking;
-use ZakharovAndrew\TimeTracker\models\TimeTrackingSearch;
+use ZakharovAndrew\TimeTracker\models\RoleActivity;
+use ZakharovAndrew\TimeTracker\models\RoleActivitySearch;
 use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * TimeTrackingController implements the CRUD actions for TimeTracking model.
- * @author Andrew Zakharov https://github.com/ZakharovAndrew
+ * RoleActivityController implements the CRUD actions for RoleActivity model.
  */
-class TimeTrackingController extends ParentController
+class RoleActivityController extends ParentController
 {
-    
-    public $controller_id = 5001;
-    
     /**
      * @inheritDoc
      */
@@ -36,13 +32,13 @@ class TimeTrackingController extends ParentController
     }
 
     /**
-     * Lists all TimeTracking models.
+     * Lists all RoleActivity models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new TimeTrackingSearch();
+        $searchModel = new RoleActivitySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -52,7 +48,7 @@ class TimeTrackingController extends ParentController
     }
 
     /**
-     * Displays a single TimeTracking model.
+     * Displays a single RoleActivity model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -65,13 +61,13 @@ class TimeTrackingController extends ParentController
     }
 
     /**
-     * Creates a new TimeTracking model.
+     * Creates a new RoleActivity model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new TimeTracking();
+        $model = new RoleActivity();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -87,7 +83,7 @@ class TimeTrackingController extends ParentController
     }
 
     /**
-     * Updates an existing TimeTracking model.
+     * Updates an existing RoleActivity model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -107,7 +103,7 @@ class TimeTrackingController extends ParentController
     }
 
     /**
-     * Deletes an existing TimeTracking model.
+     * Deletes an existing RoleActivity model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -121,15 +117,15 @@ class TimeTrackingController extends ParentController
     }
 
     /**
-     * Finds the TimeTracking model based on its primary key value.
+     * Finds the RoleActivity model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return TimeTracking the loaded model
+     * @return RoleActivity the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TimeTracking::findOne(['id' => $id])) !== null) {
+        if (($model = RoleActivity::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
