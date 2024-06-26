@@ -1,0 +1,25 @@
+{
+  "name": "zakharov-andrew/yii2-time-tracker",
+  "description": "Yii2 Time tracker",
+  "type": "yii2-extension",
+  "keywords": ["yii2", "extension", "module", "time tracker", "yii 2"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andrew Zakharov",
+      "homepage": "https://github.com/ZakharovAndrew",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=7.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "ZakharovAndrew\\time-tracker\\": "src"
+    }
+  },
+  "fxp-asset": {
+    "enabled": false
+  }
+}
