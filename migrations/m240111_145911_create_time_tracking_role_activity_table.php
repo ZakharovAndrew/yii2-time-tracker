@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `time_tracking_role_activity`.
  */
-class m240111_145911_create_time_tracking_activity_table extends Migration
+class m240111_145911_create_time_tracking_role_activity_table extends Migration
 {
     public function up()
     {

@@ -1,0 +1,47 @@
+<?php
+
+use app\models\TimeTracking;
+use yii\helpers\Html;
+use yii\helpers\Url;
+use yii\grid\ActionColumn;
+use yii\grid\GridView;
+
+/** @var yii\web\View $this */
+/** @var app\models\TimeTrackingSearch $searchModel */
+/** @var yii\data\ActiveDataProvider $dataProvider */
+
+$this->title = 'Time Trackings';
+$this->params['breadcrumbs'][] = $this->title;
+?>
+<div class="time-tracking-index">
+
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a('Create Time Tracking', ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            'id',
+            'user_id',
+            'activity_id',
+            'datetime_at',
+            'comment',
+            [
+                'class' => ActionColumn::className(),
+                'urlCreator' => function ($action, TimeTracking $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'id' => $model->id]);
+                 }
+            ],
+        ],
+    ]); ?>
+
+
+</div>

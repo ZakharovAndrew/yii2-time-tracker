@@ -53,6 +53,20 @@ return [
 ];
 ```
 
+## Usage
+
+Add this to your main configuration's modules array
+
+```php
+    'modules' => [
+        'timetracker' => [
+            'class' => 'ZakharovAndrew\TimeTracker\Module',
+            'bootstrapVersion' => 5, // if use bootstrap 5
+        ],
+        // ...
+    ],
+```
+
 ## License
 
 **yii2-time-tracker** it is available under a MIT License. Detailed information can be found in the `LICENSE.md`.

@@ -2,7 +2,7 @@
   "name": "zakharov-andrew/yii2-time-tracker",
   "description": "Yii2 Time tracker",
   "type": "yii2-extension",
-  "keywords": ["yii2", "extension", "module", "time tracker", "yii 2"],
+  "keywords": ["yii2", "extension", "module", "time tracker", "time tracking", "yii 2"],
   "license": "MIT",
   "authors": [
     {
@@ -16,7 +16,7 @@
   },
   "autoload": {
     "psr-4": {
-      "ZakharovAndrew\\time-tracker\\": "src"
+      "ZakharovAndrew\\TimeTracker\\": "src"
     }
   },
   "fxp-asset": {
