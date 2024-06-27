@@ -1,14 +1,14 @@
 <?php
 
 use ZakharovAndrew\TimeTracker\Module;
-use app\models\TimeTracking;
+use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
-/** @var app\models\TimeTrackingSearch $searchModel */
+/** @var ZakharovAndrew\TimeTracker\models\TimeTrackingSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = Module::t('Time Tracking');
