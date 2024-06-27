@@ -42,12 +42,10 @@ class TimeTrackingController extends ParentController
      */
     public function actionIndex()
     {
-        $searchModel = new TimeTrackingSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
-
+        $user_activity = TimeTracking::find()->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])->all();
+       
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'user_activity' => $user_activity,
         ]);
     }
 

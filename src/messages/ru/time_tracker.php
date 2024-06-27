@@ -22,6 +22,7 @@ return [
     'Comment' => 'Комментарий',
     'Start the working day' => 'Начать рабочий день',
     'Time Tracking' => 'Учет рабочего времени',
+    'Time' => 'Время',
 
     // actions
     'Save' => 'Сохранить',
