@@ -24,6 +24,7 @@ return [
     'Time Tracking' => 'Учет рабочего времени',
     'Time' => 'Время',
     'The start of the working day is marked' => 'Начало рабочего дня отмечено',
+    'Activity' => 'Активность',
 
     // actions
     'Save' => 'Сохранить',
