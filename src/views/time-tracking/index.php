@@ -1,5 +1,6 @@
 <?php
 
+use ZakharovAndrew\TimeTracker\Module;
 use app\models\TimeTracking;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -10,13 +11,17 @@ use yii\grid\GridView;
 /** @var app\models\TimeTrackingSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Time Trackings';
+$this->title = Module::t('Time Tracking');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="time-tracking-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 
+    <p>
+        <?= Html::a(Module::t('Start the working day'), ['start'], ['class' => 'btn btn-success']) ?>
+    </p>
+    
     <p>
         <?= Html::a('Create Time Tracking', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
