@@ -20,6 +20,7 @@ return [
     'Name' => 'Имя',
     'Title' => 'Название',
     'Comment' => 'Комментарий',
+    'Start the working day' => 'Начать рабочий день',
 
 
     // actions
