@@ -15,6 +15,10 @@ use Yii;
  */
 class TimeTracking extends \yii\db\ActiveRecord
 {
+    
+    const START_DAY = 1000000;
+    const STOP_DAY  = 1000001;
+    
     /**
      * {@inheritdoc}
      */
@@ -47,5 +51,13 @@ class TimeTracking extends \yii\db\ActiveRecord
             'datetime_at' => 'Datetime At',
             'comment' => 'Comment',
         ];
+    }
+    
+    static public function getUserActivity($user_id)
+    {
+        return TimeTracking::find()
+                ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
+                ->andWhere(['user_id' => $user_id])
+                ->all();
     }
 }

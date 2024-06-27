@@ -2,6 +2,7 @@
 
 namespace ZakharovAndrew\TimeTracker\controllers;
 
+use Yii;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\TimeTrackingSearch;
 use ZakharovAndrew\user\controllers\ParentController;
@@ -42,11 +43,36 @@ class TimeTrackingController extends ParentController
      */
     public function actionIndex()
     {
-        $user_activity = TimeTracking::find()->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])->all();
+        $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
        
         return $this->render('index', [
             'user_activity' => $user_activity,
         ]);
+    }
+    
+    public function actionStart()
+    {
+        $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
+        
+        if (!$user_activity) {
+            $model = new TimeTracking([
+                'user_id' => Yii::$app->user->id,
+                'activity_id' => TimeTracking::START_DAY
+            ]);
+            
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', Module::t('The start of the working day is marked'));
+            } else {
+                Yii::$app->session->setFlash('error', 'Ошибка проставления начала работы');
+            }
+            
+            $this->redirect('index');
+        }
+        
+        Yii::$app->session->setFlash('error', 'Начало работы уже проставлено');
+        
+        $this->redirect('index');
+        
     }
 
     /**
