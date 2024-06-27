@@ -21,7 +21,7 @@ return [
     'Title' => 'Название',
     'Comment' => 'Комментарий',
     'Start the working day' => 'Начать рабочий день',
-
+    'Time Tracking' => 'Учет рабочего времени',
 
     // actions
     'Save' => 'Сохранить',
