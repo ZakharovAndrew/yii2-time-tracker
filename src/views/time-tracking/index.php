@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
     
     <div class="time-tracking-box animate__animated animate__fadeInUp">
-        <table class="table table-bordered">
+        <table class="table">
             <thead>
                 <tr>
                     <th><?= Module::t('Time') ?></th>

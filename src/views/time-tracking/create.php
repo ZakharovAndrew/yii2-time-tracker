@@ -13,13 +13,13 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="time-tracking-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 
     <div class="time-tracking-form">
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'activity_id')->dropDownList(\ZakharovAndrew\TimeTracker\models\Activity::getDropdownList(), ['prompt'=>'', 'class' => 'form-select']) ?>
+        <?= $form->field($model, 'activity_id')->dropDownList(\ZakharovAndrew\TimeTracker\models\Activity::getDropdownList(), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
         <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
