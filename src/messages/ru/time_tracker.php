@@ -21,12 +21,17 @@ return [
     'Title' => 'Название',
     'Comment' => 'Комментарий',
     'Start the working day' => 'Начать рабочий день',
+    'Finish the working day' => 'Закончить рабочий день',
     'Time Tracking' => 'Учет рабочего времени',
     'Time' => 'Время',
     'The start of the working day is marked' => 'Начало рабочего дня отмечено',
+    'The end of the working day is marked' => 'Завершение рабочего дня отмечено',
     'Activity' => 'Активность',
     'The begining of the work day' => 'Начало рабочего дня',
+    'End of the working day' => 'Завершение рабочего дня',
+    'You have completed your working day.' => 'Вы завершили рабочий день.',
     'Add Activity' => 'Добавить активность',
+    "You've already finished your work day!" => 'Вы уже закончили рабочий день!',
     
     'Activities' => 'Активности',
 
