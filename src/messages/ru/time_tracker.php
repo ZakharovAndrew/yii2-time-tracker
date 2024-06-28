@@ -25,6 +25,10 @@ return [
     'Time' => 'Время',
     'The start of the working day is marked' => 'Начало рабочего дня отмечено',
     'Activity' => 'Активность',
+    'The begining of the work day' => 'Начало рабочего дня',
+    'Add Activity' => 'Добавить активность',
+    
+    'Activities' => 'Активности',
 
     // actions
     'Save' => 'Сохранить',

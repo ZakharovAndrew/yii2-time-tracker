@@ -3,6 +3,8 @@
 namespace ZakharovAndrew\TimeTracker\models;
 
 use Yii;
+use ZakharovAndrew\TimeTracker\Module;
+use \yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "time_tracking_activity".
@@ -12,6 +14,9 @@ use Yii;
  */
 class Activity extends \yii\db\ActiveRecord
 {
+    const START_DAY = 1000000;
+    const STOP_DAY  = 1000001;
+    
     /**
      * {@inheritdoc}
      */
@@ -37,7 +42,21 @@ class Activity extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => Module::t('Name'),
         ];
+    }
+    
+    static public function getDropdownList()
+    {
+        return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'name');
+    }
+    
+    static public function getList()
+    {
+        $list = static::getDropdownList();
+        
+        $list[static::START_DAY] = Module::t('The begining of the work day');
+        
+        return $list;
     }
 }

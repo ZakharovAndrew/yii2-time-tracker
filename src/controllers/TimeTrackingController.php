@@ -3,8 +3,9 @@
 namespace ZakharovAndrew\TimeTracker\controllers;
 
 use Yii;
+use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
-use ZakharovAndrew\TimeTracker\models\TimeTrackingSearch;
+use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -57,7 +58,7 @@ class TimeTrackingController extends ParentController
         if (!$user_activity) {
             $model = new TimeTracking([
                 'user_id' => Yii::$app->user->id,
-                'activity_id' => TimeTracking::START_DAY
+                'activity_id' => Activity::START_DAY
             ]);
             
             if ($model->save()) {
@@ -96,10 +97,12 @@ class TimeTrackingController extends ParentController
     public function actionCreate()
     {
         $model = new TimeTracking();
+        
+        $model->user_id = Yii::$app->user->id;
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['index']);
             }
         } else {
             $model->loadDefaultValues();

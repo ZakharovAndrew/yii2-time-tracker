@@ -1,16 +1,17 @@
 <?php
 
-use app\models\Activity;
+use ZakharovAndrew\TimeTracker\models\Activity;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
+use ZakharovAndrew\TimeTracker\Module;
 
 /** @var yii\web\View $this */
-/** @var app\models\ActivitySearch $searchModel */
+/** @var ZakharovAndrew\TimeTracker\models\ActivitySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = 'Activities';
+$this->title = Module::t('Activities');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="activity-index">
@@ -18,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Activity', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Module::t('Add Activity'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

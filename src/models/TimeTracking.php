@@ -3,6 +3,7 @@
 namespace ZakharovAndrew\TimeTracker\models;
 
 use Yii;
+use ZakharovAndrew\TimeTracker\Module;
 
 /**
  * This is the model class for table "time_tracking".
@@ -15,9 +16,6 @@ use Yii;
  */
 class TimeTracking extends \yii\db\ActiveRecord
 {
-    
-    const START_DAY = 1000000;
-    const STOP_DAY  = 1000001;
     
     /**
      * {@inheritdoc}
@@ -34,6 +32,7 @@ class TimeTracking extends \yii\db\ActiveRecord
     {
         return [
             [['user_id', 'activity_id'], 'integer'],
+            ['activity_id', 'required'],
             [['datetime_at'], 'safe'],
             [['comment'], 'string', 'max' => 500],
         ];
@@ -47,9 +46,9 @@ class TimeTracking extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'activity_id' => 'Activity ID',
+            'activity_id' => Module::t('Activity'),
             'datetime_at' => 'Datetime At',
-            'comment' => 'Comment',
+            'comment' => Module::t('Comment'),
         ];
     }
     
