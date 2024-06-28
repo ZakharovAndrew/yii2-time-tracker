@@ -67,13 +67,45 @@ class TimeTrackingController extends ParentController
                 Yii::$app->session->setFlash('error', 'Ошибка проставления начала работы');
             }
             
-            $this->redirect('index');
+            return $this->redirect('index');
         }
         
         Yii::$app->session->setFlash('error', 'Начало работы уже проставлено');
         
-        $this->redirect('index');
+        return $this->redirect('index');
         
+    }
+    
+    public function actionStop()
+    {
+        $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
+        
+        if (!$user_activity) {
+            Yii::$app->session->setFlash('error', 'Вы еще не начали работу!');
+
+            return $this->redirect('index');
+        }
+        
+        $last_activity = end($user_activity);
+        
+        if ($last_activity->activity_id == Activity::STOP_DAY) {
+            Yii::$app->session->setFlash('error', Module::t("You've already finished your work day!"));
+
+            return $this->redirect('index');
+        }
+        
+        $model = new TimeTracking([
+            'user_id' => Yii::$app->user->id,
+            'activity_id' => Activity::STOP_DAY
+        ]);
+        
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', Module::t('The end of the working day is marked'));
+        } else {
+            Yii::$app->session->setFlash('error', 'Ошибка проставления начала работы');
+        }
+        
+        return $this->redirect('index');
     }
 
     /**

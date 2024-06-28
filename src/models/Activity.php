@@ -56,6 +56,7 @@ class Activity extends \yii\db\ActiveRecord
         $list = static::getDropdownList();
         
         $list[static::START_DAY] = Module::t('The begining of the work day');
+        $list[static::STOP_DAY] = Module::t('End of the working day');
         
         return $list;
     }
