@@ -32,6 +32,49 @@ class RoleActivityController extends ParentController
     }
 
     /**
+     * Lists all RoleActivity models by role_id.
+     *
+     * @return string
+     */
+    public function actionActivities($role_id)
+    {
+        $searchModel = new RoleActivitySearch();
+        $dataProvider = $searchModel->search($this->request->queryParams, $role_id);
+
+        return $this->render('activities', [
+            'role_id' => $role_id,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    
+    /**
+     * Creates a new RoleActivity model.
+     * If creation is successful, the browser will be redirected to the 'activities' page.
+     * @return string|\yii\web\Response
+     */
+    public function actionAdd($role_id)
+    {
+        $model = new RoleActivity();
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->role_id = $role_id;
+                if ($model->save()) {
+                    return $this->redirect(['activities', 'role_id' => $role_id]);
+                }
+            }
+        } else {
+            $model->loadDefaultValues();
+            $model->role_id = $role_id;
+        }
+
+        return $this->render('add', [
+            'model' => $model,
+        ]);
+    }
+    
+    /**
      * Lists all RoleActivity models.
      *
      * @return string
@@ -39,7 +82,7 @@ class RoleActivityController extends ParentController
     public function actionIndex()
     {
         $searchModel = new RoleActivitySearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = $searchModel->searchList($this->request->queryParams);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -94,7 +137,7 @@ class RoleActivityController extends ParentController
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['activities', 'role_id' => $model->role_id]);
         }
 
         return $this->render('update', [
