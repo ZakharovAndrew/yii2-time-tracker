@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'activity_id')->dropDownList(\ZakharovAndrew\TimeTracker\models\Activity::getDropdownList(), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
+        <?= $form->field($model, 'activity_id')->dropDownList(\ZakharovAndrew\TimeTracker\models\Activity::getActivityByUserId(Yii::$app->user->id), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
         <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 

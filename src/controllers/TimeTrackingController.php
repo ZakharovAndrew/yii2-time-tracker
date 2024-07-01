@@ -107,6 +107,25 @@ class TimeTrackingController extends ParentController
         
         return $this->redirect('index');
     }
+    
+    public function actionTimeline()
+    {
+        $model = TimeTracking::find()
+                ->where(['user_id' => Yii::$app->user->id])
+                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime('-7 days'))])
+                ->orderBy('datetime_at')
+                ->all();
+        
+        $timeline = [];
+        foreach ($model as $item) {
+            $item_name = date('Y-m-d', strtotime($item->datetime_at));
+            $timeline[$item_name][] = $item;
+        }
+        
+        return $this->render('timeline', [
+            'timeline' => $timeline,
+        ]);
+    }
 
     /**
      * Displays a single TimeTracking model.
