@@ -4,7 +4,8 @@ namespace ZakharovAndrew\TimeTracker\models;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\RoleActivity;
+use ZakharovAndrew\TimeTracker\models\RoleActivity;
+use ZakharovAndrew\TimeTracker\models\Roles;
 
 /**
  * RoleActivitySearch represents the model behind the search form of `app\models\RoleActivity`.
@@ -39,7 +40,9 @@ class RoleActivitySearch extends RoleActivity
      */
     public function search($params)
     {
-        $query = RoleActivity::find();
+        $query = Roles::find()
+                ->select('time_tracking_role_activity.*, roles.title')
+                ->leftJoin('roles', 'roles.id = time_tracking_role_activity.role_id');
 
         // add conditions that should always apply here
 

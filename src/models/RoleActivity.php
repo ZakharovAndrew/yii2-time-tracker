@@ -14,6 +14,8 @@ use Yii;
  */
 class RoleActivity extends \yii\db\ActiveRecord
 {
+    public $title;
+    
     /**
      * {@inheritdoc}
      */
