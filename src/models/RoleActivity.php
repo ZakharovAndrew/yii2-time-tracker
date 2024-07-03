@@ -3,6 +3,8 @@
 namespace ZakharovAndrew\TimeTracker\models;
 
 use Yii;
+use ZakharovAndrew\TimeTracker\Module;
+use \yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "time_tracking_role_activity".
@@ -14,6 +16,9 @@ use Yii;
  */
 class RoleActivity extends \yii\db\ActiveRecord
 {
+    public $role_title;
+    public $activity_title;
+    
     /**
      * {@inheritdoc}
      */
@@ -39,9 +44,23 @@ class RoleActivity extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
+            'role_title' => Module::t('Role'),
             'role_id' => 'Role ID',
-            'activity_id' => 'Activity ID',
-            'pos' => 'Pos',
+            'activity_id' => Module::t('Activity'),
+            'pos' => Module::t('Position'),
         ];
+    }
+    
+    public function getActivities()
+    {
+        $arr = self::find()
+                ->select(['activity_id', 'time_tracking_activity.name'])
+                ->leftJoin('time_tracking_activity', 'time_tracking_activity.id = activity_id')
+                ->where(['role_id' => $this->role_id])
+                ->orderBy('pos')
+                ->asArray()
+                ->all();
+        
+        return ArrayHelper::map($arr, 'activity_id', 'name');
     }
 }

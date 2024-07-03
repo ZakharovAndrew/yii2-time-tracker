@@ -51,6 +51,16 @@ class Activity extends \yii\db\ActiveRecord
         return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'name');
     }
     
+    static public function getActivityByUserId($user_id)
+    {
+        $list = static::find()
+                ->where('id in (select activity_id as id FROM time_tracking_role_activity a WHERE a.role_id in (SELECT role_id FROM user_roles WHERE user_id = '.$user_id.' ))')
+                ->asArray()
+                ->all();
+        
+        return ArrayHelper::map($list, 'id', 'name');
+    }
+    
     static public function getList()
     {
         $list = static::getDropdownList();
