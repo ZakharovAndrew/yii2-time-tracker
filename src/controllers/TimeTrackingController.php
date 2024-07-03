@@ -8,7 +8,6 @@ use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * TimeTrackingController implements the CRUD actions for TimeTracking model.
@@ -18,24 +17,6 @@ class TimeTrackingController extends ParentController
 {
     
     public $controller_id = 5001;
-    
-    /**
-     * @inheritDoc
-     */
-    public function behaviors()
-    {
-        return array_merge(
-            parent::behaviors(),
-            [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
-            ]
-        );
-    }
 
     /**
      * Lists all TimeTracking models.
@@ -106,6 +87,25 @@ class TimeTrackingController extends ParentController
         }
         
         return $this->redirect('index');
+    }
+    
+    public function actionTimeline()
+    {
+        $model = TimeTracking::find()
+                ->where(['user_id' => Yii::$app->user->id])
+                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime('-7 days'))])
+                ->orderBy('datetime_at')
+                ->all();
+        
+        $timeline = [];
+        foreach ($model as $item) {
+            $item_name = date('Y-m-d', strtotime($item->datetime_at));
+            $timeline[$item_name][] = $item;
+        }
+        
+        return $this->render('timeline', [
+            'timeline' => $timeline,
+        ]);
     }
 
     /**
