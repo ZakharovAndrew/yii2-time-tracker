@@ -12,12 +12,17 @@ use ZakharovAndrew\TimeTracker\Module;
 /** @var app\models\RoleActivitySearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Module::t('Role Activities');
+$this->title = Module::t('Activities');
+$this->params['breadcrumbs'][] = ['label' => Module::t('Role Activities'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="role-activity-index">
 
     <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
+    
+    <p>
+        <?= Html::a(Module::t('Add Activity'), ['add', 'role_id' => $role_id], ['class' => 'btn btn-success']) ?>
+    </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
@@ -27,26 +32,20 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
 
             [
-                'attribute' => 'role_id',
-                'label' => Module::t('Role'),
-                'filter' => Roles::getRolesList(),
+                'attribute' => 'activity_id',
+                'label' => Module::t('Activity'),
+                'filter' => ZakharovAndrew\TimeTracker\models\Activity::getDropdownList(),
                 'filterInputOptions' => ['class' => 'form-control form-select'],
                 'value'  => function ($model) {
-                    return $model->role_title;
+                    return $model->activity_title;
                 }
             ],
+            'pos',
             [
-                'label' => Module::t('Activity'),
-                'value'  => function ($model) {
-                    $list = $model->getActivities();
-                    return implode(', ', $list);
-                }
-            ],
-            [
-                'format' => 'raw',
-                'value'  => function ($model) {
-                    return Html::a( Module::t('Edit'), ['activities', 'role_id' => $model->role_id], ['title' =>  Module::t('Edit')]);
-                }
+                'class' => ActionColumn::className(),
+                'urlCreator' => function ($action, $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'id' => $model->id]);
+                 }
             ],
         ],
     ]); ?>

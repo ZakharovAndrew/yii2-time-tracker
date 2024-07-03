@@ -4,6 +4,7 @@ use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use yii\helpers\Html;
+use yii\bootstrap\Modal;
 use yii\helpers\Url;
 
 /** @var yii\web\View $this */
@@ -43,9 +44,9 @@ $last_activity = end($user_activity);
     </p>
     <?php } else if ($last_activity->activity_id != Activity::STOP_DAY) { ?>
     <p>
-        <?= Html::a('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-</svg> '.Module::t('Add Activity'), ['create'], ['class' => 'btn btn-success']) ?>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#w0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
+</svg> <?= Module::t('Add Activity') ?></button>
         <?= Html::a(Module::t('Finish the working day'), ['stop'], ['class' => 'btn btn-danger']) ?>
     </p>
     <?php } ?>
@@ -55,7 +56,7 @@ $last_activity = end($user_activity);
     <?php } ?>
     
     <?php if ($user_activity) { ?>
-    <div class="time-tracking-box animate__animated animate__faster animate__fadeInUp">
+    <div class="time-tracking-box animate__animated animate__fast animate__fadeInUp">
         <table class="table">
             <thead>
                 <tr>
@@ -77,3 +78,12 @@ $last_activity = end($user_activity);
     <?php } ?>
 
 </div>
+
+<?php
+Modal::begin([
+    'header' => '<h2>'.Module::t('Add Activity').'</h2>',
+]);
+
+echo $this->render('_form_add', ['model' => new TimeTracking()]);
+
+Modal::end();
