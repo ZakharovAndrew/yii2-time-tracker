@@ -132,22 +132,13 @@ $this->params['breadcrumbs'][] = $this->title;
     margin-bottom: 0;
 }
 </style>
-<<<<<<< HEAD
 
-<table class="table">
-    <tr>
-    <?php foreach ($timeline as $day => $item) {?>
-
-    <td>
-        <div style="background:#fff; padding:15px;border-radius:10px">
-=======
 <div style="background:#fff; padding:15px;border-radius:10px">
     <table class="table table-bordered">
         <tr>
         <?php foreach ($timeline as $day => $item) {?>
         
         <td>
->>>>>>> aed7c99a482603b7ad46eb1acebcf29ff1d9d159
             <b class="date-header"><?= date('d.m.Y', strtotime($day))  ?></b>
             <?php foreach ($item as $activity) {?>
             <div class="vertical-timeline">
@@ -166,7 +157,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
         
             <?php } ?>
         </div>
@@ -174,11 +164,4 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php } ?>
     </tr>
 </table>
-=======
-            <?php } ?>
-        </td>
-        <?php } ?>
-        </tr>
-    </table>
-</div>
->>>>>>> aed7c99a482603b7ad46eb1acebcf29ff1d9d159
+
