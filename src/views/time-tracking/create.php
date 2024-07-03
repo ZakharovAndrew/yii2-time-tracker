@@ -18,4 +18,5 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= $this->render('_form_add', [
         'model' => $model,
     ]) ?>
+
 </div>
