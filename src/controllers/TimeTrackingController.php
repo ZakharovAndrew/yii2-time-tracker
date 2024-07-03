@@ -8,6 +8,7 @@ use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
+use \yii\helpers\ArrayHelper;
 
 /**
  * TimeTrackingController implements the CRUD actions for TimeTracking model.
@@ -87,6 +88,35 @@ class TimeTrackingController extends ParentController
         }
         
         return $this->redirect('index');
+    }
+    
+    public function actionStatistics()
+    {
+        if (!Yii::$app->user->identity->hasRole('admin')) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        
+        $model = TimeTracking::find()
+                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime('-7 days'))])
+                ->orderBy('datetime_at')
+                ->all();
+        
+        $timeline = [];
+        $users = [];
+        foreach ($model as $item) {
+            $item_name = date('Y-m-d', strtotime($item->datetime_at));
+            $timeline[$item_name][$item->user_id][] = $item;
+            $users[$item->user_id] = $item->user_id;
+        }
+        
+        return $this->render('statistics', [
+            'timeline' => $timeline,
+            'activities' => Activity::getList(),
+            'users' => ArrayHelper::map(
+                        \ZakharovAndrew\user\models\User::find()->where(['id' => $users])->all(),
+                        'id', 'name'
+                    )
+        ]);
     }
     
     public function actionTimeline()
