@@ -32,11 +32,16 @@ return [
     'You have completed your working day.' => 'Вы завершили рабочий день.',
     'Add Activity' => 'Добавить активность',
     "You've already finished your work day!" => 'Вы уже закончили рабочий день!',
-    
+    'Role' => 'Роль',
     'Activities' => 'Активности',
+    'Position' => 'Позиция',
+    'Role Activities' => 'Активности ролей',
+    'Add Activity for Role' => 'Добавить активность для роли',
+    'Update Role Activity' => 'Обновить активность роли',
 
     // actions
     'Save' => 'Сохранить',
     'Update' => 'Изменить',
+    'Edit' => 'Редактировать',
     'Send' => 'Отправить',
 ];
