@@ -41,6 +41,9 @@ $last_activity = end($user_activity);
     <?php if (!$user_activity || (is_array($user_activity) && count($user_activity) == 0)) {?>
     <p>
         <?= Html::a(Module::t('Start the working day'), ['start'], ['class' => 'btn btn-success']) ?>
+        <?php if (Yii::$app->user->identity->hasRole('admin')) {
+            echo Html::a(Module::t('Statistics'), ['statistics'], ['class' => 'btn btn-info']);
+        }?>
     </p>
     <?php } else if ($last_activity->activity_id != Activity::STOP_DAY) { ?>
     <p>
@@ -48,11 +51,17 @@ $last_activity = end($user_activity);
   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
 </svg> <?= Module::t('Add Activity') ?></button>
         <?= Html::a(Module::t('Finish the working day'), ['stop'], ['class' => 'btn btn-danger']) ?>
+        <?php if (Yii::$app->user->identity->hasRole('admin')) {
+            echo Html::a(Module::t('Statistics'), ['statistics'], ['class' => 'btn btn-info']);
+        }?>
     </p>
     <?php } ?>
     
     <?php if ($last_activity !== false && $last_activity->activity_id == Activity::STOP_DAY) { ?>
     <div class="alert alert-info"><?= Module::t('You have completed your working day.') ?></div>
+    <?php if (Yii::$app->user->identity->hasRole('admin')) {
+            echo Html::a(Module::t('Statistics'), ['statistics'], ['class' => 'btn btn-info']);
+        }?>
     <?php } ?>
     
     <?php if ($user_activity) { ?>
