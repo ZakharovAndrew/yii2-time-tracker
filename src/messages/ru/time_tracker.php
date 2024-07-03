@@ -38,6 +38,8 @@ return [
     'Role Activities' => 'Активности ролей',
     'Add Activity for Role' => 'Добавить активность для роли',
     'Update Role Activity' => 'Обновить активность роли',
+    'User' => 'Пользователь',
+    'Statistics' => 'Статистика',
 
     // actions
     'Save' => 'Сохранить',
