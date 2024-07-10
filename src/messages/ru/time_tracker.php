@@ -40,6 +40,7 @@ return [
     'Update Role Activity' => 'Обновить активность роли',
     'User' => 'Пользователь',
     'Statistics' => 'Статистика',
+    'Edit comment' => 'Изменить комментарий',
 
     // actions
     'Save' => 'Сохранить',
