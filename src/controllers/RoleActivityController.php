@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
 class RoleActivityController extends ParentController
 {
 
+    public $controller_id = 5003;
+    
     /**
      * Lists all RoleActivity models by role_id.
      *

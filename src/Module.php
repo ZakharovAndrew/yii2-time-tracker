@@ -39,6 +39,13 @@ class Module extends \yii\base\Module
     public $useTranslite = false;
     
     /**
+     * @var array user role and available roles for viewing statistics
+     */
+    public $availableRolesForViewingStatistics = [
+        'admin' => '*'
+    ];
+    
+    /**
      * @var string show H1
      */
     public $showTitle = true;

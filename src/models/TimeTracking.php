@@ -4,6 +4,8 @@ namespace ZakharovAndrew\TimeTracker\models;
 
 use Yii;
 use ZakharovAndrew\TimeTracker\Module;
+use ZakharovAndrew\user\models\Roles;
+use \yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "time_tracking".
@@ -58,5 +60,13 @@ class TimeTracking extends \yii\db\ActiveRecord
                 ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
                 ->andWhere(['user_id' => $user_id])
                 ->all();
+    }
+    
+    static public function userRolesForViewingStatistics()
+    {
+        $list = Yii::$app->getModule('timetracker')->availableRolesForViewingStatistics;
+        $user_roles = ArrayHelper::map(Roles::getRolesByUserId(Yii::$app->user->id), 'code', 'code');
+        
+        return array_intersect_key($list, $user_roles);
     }
 }

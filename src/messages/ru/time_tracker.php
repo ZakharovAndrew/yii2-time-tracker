@@ -40,7 +40,10 @@ return [
     'Update Role Activity' => 'Обновить активность роли',
     'User' => 'Пользователь',
     'Statistics' => 'Статистика',
+    'My Statistics' => 'Моя статистика',
     'Edit comment' => 'Изменить комментарий',
+    "You haven't started work yet!" => 'Вы еще не начали работу!',
+    'The start of work has already been marked' => 'Начало работы уже проставлено',
 
     // actions
     'Save' => 'Сохранить',
