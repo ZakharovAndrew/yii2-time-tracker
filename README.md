@@ -8,6 +8,10 @@ Yii 2 module for time tracking.
 
 The time tracking module for the Yii2 framework is a comprehensive solution for monitoring time spent on various tasks within projects. It allows users to easily start, stop, and record time intervals for specific tasks, as well as provides detailed reports on time spent.
 
+- Maintains an individual list of actions for each user role.
+- Supports Bootstrap versions: 3, 4, 5
+- Supports languages: English, Russian
+
 ## Installation
 
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
