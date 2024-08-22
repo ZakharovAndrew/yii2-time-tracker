@@ -101,13 +101,17 @@ class TimeTrackingController extends ParentController
         return $this->redirect('index');
     }
     
-    public function actionStatistics()
+    public function actionStatistics($datetime_start = null, $datetime_stop = null, $username = null)
     {
         $roles = array_keys(Yii::$app->getModule('timetracker')->availableRolesForViewingStatistics);
         
         if (!Yii::$app->user->identity->hasRole($roles)) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+        
+        // start of interval
+        $start_day = !empty($datetime_start) ? $datetime_start : date('Y-m-d 00:00:00', strtotime('-7 days'));
+        $stop_day = !empty($datetime_stop) ? $datetime_stop : date('Y-m-d 23:59:59');
         
         $roles = [];
         foreach (TimeTracking::userRolesForViewingStatistics() as $params) {
@@ -121,14 +125,20 @@ class TimeTrackingController extends ParentController
         
         if (count($roles) == 0) {
             $model = TimeTracking::find()
-                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime('-7 days'))])
+                ->leftJoin('users', 'users.id = time_tracking.user_id')
+                ->andWhere(['>', 'datetime_at', $start_day])
+                ->andWhere(['<=', 'datetime_at', $stop_day])
+                //->andWhere('users.id' => $users)
                 ->orderBy('datetime_at')->all();
         } else {
             $model = TimeTracking::find()
                 ->leftJoin('user_roles', 'user_roles.user_id = time_tracking.user_id')
                 ->leftJoin('roles', 'user_roles.role_id = roles.id')
+                ->leftJoin('users', 'users.id = time_tracking.user_id')
                 ->where(['roles.code' => $roles])
-                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime('-7 days'))])
+                ->andWhere(['>', 'datetime_at', $start_day])
+                ->andWhere(['<=', 'datetime_at', $stop_day])
+                //->andWhere('LIKE', 'users.name', $username)
                 ->orderBy('datetime_at')->all();
         }
         
@@ -142,6 +152,8 @@ class TimeTrackingController extends ParentController
         
         return $this->render('statistics', [
             'timeline' => $timeline,
+            'datetime_start' => $datetime_start,
+            'datetime_stop' => $datetime_stop,
             'activities' => Activity::getList(),
             'users' => ArrayHelper::map(
                         \ZakharovAndrew\user\models\User::find()
