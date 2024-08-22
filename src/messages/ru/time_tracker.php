@@ -38,16 +38,22 @@ return [
     'Role Activities' => 'Активности ролей',
     'Add Activity for Role' => 'Добавить активность для роли',
     'Update Role Activity' => 'Обновить активность роли',
+    'Update Activity' => 'Обновить активность',
     'User' => 'Пользователь',
     'Statistics' => 'Статистика',
     'My Statistics' => 'Моя статистика',
     'Edit comment' => 'Изменить комментарий',
     "You haven't started work yet!" => 'Вы еще не начали работу!',
     'The start of work has already been marked' => 'Начало работы уже проставлено',
+    'Hint' => 'Подсказка',
+    'Hints' => 'Подсказки',
 
+    'Comment Templates' => 'Шаблоны комментариев',
+    'Color' => 'Цвет',
     // actions
     'Save' => 'Сохранить',
     'Update' => 'Изменить',
     'Edit' => 'Редактировать',
     'Send' => 'Отправить',
+    'Apply' => 'Применить',
 ];
