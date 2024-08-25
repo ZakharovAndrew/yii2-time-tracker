@@ -1,18 +1,18 @@
 <?php
 
 use yii\helpers\Html;
+use ZakharovAndrew\TimeTracker\Module;
 
 /** @var yii\web\View $this */
-/** @var app\models\Activity $model */
+/** @var ZakharovAndrew\TimeTracker\models\Activity $model */
 
-$this->title = 'Update Activity: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Activities', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->title = Module::t('Update Activity'). ': ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => Module::t('Activities'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="activity-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 
     <?= $this->render('_form', [
         'model' => $model,

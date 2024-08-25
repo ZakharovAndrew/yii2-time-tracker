@@ -31,7 +31,8 @@ class Activity extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'string', 'max' => 100],
+            [['name', 'color'], 'string', 'max' => 100],
+            [['comment_templates', 'hint'], 'string'],
         ];
     }
 
@@ -43,6 +44,9 @@ class Activity extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => Module::t('Name'),
+            'comment_templates' => Module::t('Comment Templates'),
+            'color' => Module::t('Color'),
+            'hint' => Module::t('Hint'),
         ];
     }
     
@@ -59,6 +63,27 @@ class Activity extends \yii\db\ActiveRecord
                 ->all();
         
         return ArrayHelper::map($list, 'id', 'name');
+    }
+    
+    static public function getHintsActivityByUserId($user_id)
+    {
+        $list = static::find()
+                ->where('id in (select activity_id as id FROM time_tracking_role_activity a WHERE a.role_id in (SELECT role_id FROM user_roles WHERE user_id = '.$user_id.' ))')
+                ->andWhere('hint <> \'\' AND hint IS NOT NULL')
+                ->asArray()
+                ->all();
+        
+        return ArrayHelper::map($list, 'id', 'hint');
+    }
+    static public function getTemplateCommentsActivityByUserId($user_id)
+    {
+        $list = static::find()
+                ->where('id in (select activity_id as id FROM time_tracking_role_activity a WHERE a.role_id in (SELECT role_id FROM user_roles WHERE user_id = '.$user_id.' ))')
+                ->andWhere('comment_templates <> \'\' AND comment_templates IS NOT NULL')
+                ->asArray()
+                ->all();
+        
+        return ArrayHelper::map($list, 'id', 'comment_templates');
     }
     
     static public function getList()
