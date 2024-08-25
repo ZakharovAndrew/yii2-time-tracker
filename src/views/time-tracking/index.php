@@ -4,7 +4,6 @@ use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use yii\helpers\Html;
-use yii\bootstrap\Modal;
 use yii\helpers\Url;
 
 $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
@@ -18,12 +17,111 @@ $this->title = Module::t('Time Tracking');
 $this->params['breadcrumbs'][] = $this->title;
 
 $last_activity = end($user_activity);
+
+$comment_list = Activity::getTemplateCommentsActivityByUserId(Yii::$app->user->id);
+$comments = json_encode($comment_list, JSON_UNESCAPED_UNICODE);
+$hints = str_replace(['"', "\n", "\r"], ['\"',"<br>", ''], trim(implode('<br>', Activity::getHintsActivityByUserId(Yii::$app->user->id))));
+$hint = Module::t('Hints');
+  
+$script = <<< JS
+let comments = $comments
+        
+    $('.field-timetracking-comment').append($("#comment-menu"));
+    $('.field-timetracking-activity_id').append('<div class="info-icon" data-toggle="popover" data-bs-placement="left" data-placement="left" title="$hint" data-content="$hints"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 50 50"><path style="fill:#fff;fill-opacity:1;stroke:none" d="M0 0h50v50H0z"/><path style="stroke:none;fill-rule:nonzero;fill:#000;fill-opacity:1" d="M48.785 25c0 13.137-10.648 23.785-23.785 23.785S1.215 38.137 1.215 25 11.863 1.215 25 1.215 48.785 11.863 48.785 25zm0 0"/><path style="stroke:none;fill-rule:nonzero;fill:#fff;fill-opacity:1" d="M25 42.2c-2.21 0-4-1.368-4-3.055V21.883c0-1.684 1.79-3.051 4-3.051s4 1.367 4 3.05v17.263c0 1.687-1.79 3.054-4 3.054zM28.938 12.426a3.939 3.939 0 1 1-7.878-.002 3.939 3.939 0 0 1 7.878.002zm0 0"/></svg></div>');
+        
+    let counter;
+    $('[data-toggle="popover"]').popover({
+        html: 'true',
+        trigger: 'manual',
+        container: 'body'
+    }).on("mouseenter", function(e) {
+        var _this = this;
+        e.preventDefault();
+        clearTimeout(counter);
+        $('[rel="popover"]').not(_this).popover('hide');
+        counter = setTimeout(function(){
+            if($(_this).is(':hover'))
+            {
+                $(_this).popover("show");
+            }
+            $(".popover").on("mouseleave", function () {
+                $(_this).popover('hide');
+            });
+        }, 400);
+        
+    }).on("mouseleave", function () {
+        var _this = this;
+
+        setTimeout(function () {
+            if (!$(".popover:hover").length) {
+                if (!$(_this).is(':hover')) {
+                   $(_this).popover('hide');
+                }
+            }
+        }, 200);
+    });
+        
+    $("#timetracking-activity_id").on('change', function() {
+        let id = $(this).val();
+        $("#comment-menu").hide();
+        $(".comment-templates").hide();
+        if (comments[id] !== undefined) {
+            $("#comment-templates-filter").val("");
+            $("#comment-menu").show();
+            $(".comment-templates-"+id).show();
+        }
+    });
+       
+    // filter
+    $(document).on('keyup', '#comment-templates-filter', function() {
+        let str = $('#comment-templates-filter').val().toLowerCase();
+    
+        if (str == '') {
+            $('.comment-templates-item').show();
+            return;
+        }
+    
+        $('.comment-templates-item').each(function(){
+            if ($(this).html().toLowerCase().includes(str)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });        
+    });
+        
+    $("#comment-menu").hide();
+    
+    $(".comment-templates-item").on('click', function() {
+        let comment = $("#timetracking-comment").val();
+        if (comment.trim() !== '') {
+            comment += '.';
+        }
+        $("#timetracking-comment").val(comment + $(this).text());
+        $("#comment-templates-modal").modal('hide');
+    });
+
+JS;
+
+$this->registerJs($script, yii\web\View::POS_READY);
 ?>
 <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
 <style>
+    #comment-menu {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+    textarea.form-control {
+        max-width:100%
+    }
+    .popover {
+        max-width: 500px;
+        z-index: 2000;
+    }
     .time-tracking-box {
         box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
         border-radius: 15px;
@@ -36,6 +134,64 @@ $last_activity = end($user_activity);
     .text-muted {
         color: rgba(112, 122, 130, 0.75);
     }
+    .time-tracking__time {
+        width:75px;
+    }
+    .time-tracking__activity {
+        text-wrap: nowrap;
+    }
+    .time-tracking__comment {
+        width:100%;
+    } 
+    .field-timetracking-comment, .field-timetracking-activity_id {
+        position:relative;
+    }
+    .field-timetracking-comment .copyng, .field-timetracking-activity_id .info-icon{
+        position:absolute;
+        top: -3px;
+        right: 0;
+    }
+    
+.comment-templates {max-height: 80vh; height:max; overflow-y:auto;}
+.comment-templates-item {
+    display: block;
+    padding: 8px 6px;
+    font-size:13px;
+    line-height: 13px;
+
+    border-bottom: 1px dotted #cdcdcd;
+    cursor:pointer;
+}
+.comment-templates-item:hover {
+    background-color: #ebebeb;
+}
+
+.comment-templates-item:last-child {
+    border-bottom: 0 none;
+}
+.comment-templates-search {
+    padding-bottom:6px;
+}
+.dropdown-menu-card {
+    padding:5px
+}
+#comment-menu .btn {
+    padding: 2px;
+    margin: 0;
+    line-height: 1;
+    margin-top: -8px;
+}
+#comment-menu .search-box {
+    background: #E1F5FE;
+    padding: 4px;
+    font-size: 13px;
+    border-radius: 6px;
+}
+#comment-menu .search-box input {
+    border: 1px solid #a0d0e5;
+    border-radius: 6px;
+}
+
 </style>
 <div class="time-tracking-index">
 
@@ -69,28 +225,30 @@ $last_activity = end($user_activity);
     
     <?php if ($user_activity) { ?>
     <div class="time-tracking-box animate__animated animate__fast animate__fadeInUp">
-        <table class="table">
-            <thead>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="time-tracking__time"><?= Module::t('Time') ?></th>
+                        <th><?= Module::t('Activity') ?></th>
+                        <th class="time-tracking__comment"><?= Module::t('Comment') ?></th>
+                    </tr>
+                </thead>
+                <?php 
+                foreach ($user_activity as $item) {?>
                 <tr>
-                    <th><?= Module::t('Time') ?></th>
-                    <th><?= Module::t('Activity') ?></th>
-                    <th><?= Module::t('Comment') ?></th>
+                    <td><div class="text-muted"><?= date('H:i', strtotime($item->datetime_at))?></div></td>
+                    <td class="time-tracking__activity"><?= Activity::getList()[$item->activity_id] ?? $item->activity_id ?></td>
+                    <td><?= $item->comment ?> <?php
+                        if ($item->id == $last_activity->id && $item->activity_id != Activity::START_DAY && $item->activity_id != Activity::STOP_DAY) {
+                             echo Html::a(Module::t('Edit'), ['edit-comment'], ['class' => '']);   
+                        }
+                        ?>
+                    </td>
                 </tr>
-            </thead>
-            <?php 
-            foreach ($user_activity as $item) {?>
-            <tr>
-                <td><div class="text-muted"><?= date('H:i', strtotime($item->datetime_at))?></div></td>
-                <td><?= Activity::getList()[$item->activity_id] ?? $item->activity_id ?></td>
-                <td><?= $item->comment ?> <?php
-                    if ($item->id == $last_activity->id && $item->activity_id != Activity::START_DAY && $item->activity_id != Activity::STOP_DAY) {
-                         echo Html::a(Module::t('Edit'), ['edit-comment'], ['class' => '']);   
-                    }
-                    ?>
-                </td>
-            </tr>
-            <?php } ?>
-        </table>
+                <?php } ?>
+            </table>
+        </div>
     </div>
     
     <?php } ?>
@@ -105,3 +263,20 @@ $classModal::begin([
 echo $this->render('_form_add', ['model' => new TimeTracking()]);
 
 $classModal::end();
+?>
+
+<div class="copying" id='comment-menu'>
+    <div class="dropdown">
+        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M2 5.25A3.25 3.25 0 0 1 5.25 2h10.5A3.25 3.25 0 0 1 19 5.25V9H6.75a.75.75 0 0 0 0 1.5h3A3.73 3.73 0 0 0 9 12.75v6.5q0 .386.075.75H5.25A3.25 3.25 0 0 1 2 16.75zm4 1.5c0 .414.336.75.75.75h7.5a.75.75 0 0 0 0-1.5h-7.5a.75.75 0 0 0-.75.75m4 6A2.75 2.75 0 0 1 12.75 10h6.5A2.75 2.75 0 0 1 22 12.75v.75H10zM10 15h12v4.25A2.75 2.75 0 0 1 19.25 22h-6.5A2.75 2.75 0 0 1 10 19.25z"/></svg></button>
+        <ul class="dropdown-menu dropdown-menu-left dropdown-menu-card">
+          <div class="search-box">Искать <input type="text" id="comment-templates-filter"></div>
+            <?php foreach ($comment_list as $key => $comment) {?>
+            <div class="comment-templates comment-templates-<?= $key ?>">
+                <?php foreach (explode("\n", $comment) as $item) {?>
+                <li class="comment-templates-item dropdown-item"><?= $item ?></li>
+                <?php } ?>
+            </div>
+            <?php } ?>
+        </ul>
+    </div>
+</div>

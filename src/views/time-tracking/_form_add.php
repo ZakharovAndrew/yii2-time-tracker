@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use ZakharovAndrew\TimeTracker\Module;
+use ZakharovAndrew\TimeTracker\models\Activity;
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\TimeTracking $model */
@@ -13,12 +14,13 @@ use ZakharovAndrew\TimeTracker\Module;
 
     <?php $form = ActiveForm::begin(['action' => '/timetracker/time-tracking/create']); ?>
 
-    <?= $form->field($model, 'activity_id')->dropDownList(\ZakharovAndrew\TimeTracker\models\Activity::getActivityByUserId(Yii::$app->user->id), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
+    <?= $form->field($model, 'activity_id')->dropDownList(Activity::getActivityByUserId(Yii::$app->user->id), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
-    <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>
+        
     </div>
 
     <?php ActiveForm::end(); ?>

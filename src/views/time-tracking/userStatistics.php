@@ -8,7 +8,7 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 /** @var ZakharovAndrew\TimeTracker\models\TimeTrackingSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Module::t('Statistics') . ' '. $user->name;
+$this->title = Module::t('Statistics') . ': '. $user->name;
 $this->params['breadcrumbs'][] = ['label' => Module::t('Time Tracking'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
