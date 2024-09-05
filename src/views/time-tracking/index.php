@@ -198,7 +198,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
     <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 
     <p>
-    <?php if (!$user_activity || (is_array($user_activity) && count($user_activity) == 0)) {?>
+    <?php if (!$user_activity || (is_array($user_activity) && count($user_activity) == 0) || $last_activity->activity_id == Activity::STOP_DAY) {?>
     
         <?= Html::a(Module::t('Start the working day'), ['start'], ['class' => 'btn btn-success']) ?>
     
@@ -218,9 +218,6 @@ $this->registerJs($script, yii\web\View::POS_READY);
     
     <?php if ($last_activity !== false && $last_activity->activity_id == Activity::STOP_DAY) { ?>
     <div class="alert alert-info"><?= Module::t('You have completed your working day.') ?></div>
-    <?php if (Yii::$app->user->identity->hasRole('admin')) {
-            echo Html::a(Module::t('Statistics'), ['statistics'], ['class' => 'btn btn-info']);
-        }?>
     <?php } ?>
     
     <?php if ($user_activity) { ?>

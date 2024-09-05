@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="timeline-element">
                         <div>
                             <span class="timeline-icon">
-                                <i class="badge badge-dot badge-dot-xl badge-warning"> </i>
+                                <i class="badge badge-dot badge-dot-xl badge-warning activity-<?= $activity->activity_id ?>"> </i>
                             </span>
                             <div class="timeline-content">
                                 <h4 class="timeline-title"><?= Activity::getDropdownList()[$activity->activity_id] ?? ($activity->activity_id == Activity::START_DAY ? 'Начало рабочего дня' : ($activity->activity_id == Activity::STOP_DAY ? 'Конец рабочего дня' : ''))  ?></h4>

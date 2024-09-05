@@ -111,4 +111,10 @@
     color: #212529;
     background-color: #ae71ce;
 }
+<?php 
+$colors = ZakharovAndrew\TimeTracker\models\Activity::find()->where('color is not null')->all();
+foreach ($colors as $activity) {
+    echo '.activity-'.$activity->id.' { background-color:'.$activity->color.'}';
+}
+?>
 </style>

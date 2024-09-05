@@ -240,6 +240,7 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
                             }
                                             
                             $activity_list[$i][] = [
+                                'id' => $activity->activity_id,
                                 'activity' => $activities[$activity->activity_id],
                                 'time' => date('H:i:s', strtotime($activity->datetime_at)),
                                 'date' => date('d.m.Y', strtotime($activity->datetime_at)),
@@ -316,6 +317,8 @@ $classModal::end();
     <div class="form-group">
         <label>Дата с</label>
         <?= Html::input('date', 'datetime_start', $datetime_start ?? '', ['class' => 'form-control']) ?>
+    </div>
+    <div class="form-group">
         <label>Дата по</label>
         <?= Html::input('date', 'datetime_stop', $datetime_stop ?? '', ['class' => 'form-control']) ?>
     </div>
@@ -340,7 +343,7 @@ $classModal::end();
         return `<div class="timeline-element">
                     <div>
                         <span class="timeline-icon">
-                            <i class="badge badge-dot badge-dot-xl badge-warning"> </i>
+                            <i class="badge badge-dot badge-dot-xl badge-warning activity-${activity.id}"> </i>
                         </span>
                         <div class="timeline-content">
                             <h4 class="timeline-title">${activity.activity}</h4>
