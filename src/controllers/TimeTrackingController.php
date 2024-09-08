@@ -45,10 +45,10 @@ class TimeTrackingController extends ParentController
         // get last activity
         $user_activity = TimeTracking::getUserLastActivity(Yii::$app->user->id);
         
-        if (!$user_activity || $user_activity->activity_id == Activity::STOP_DAY) {
+        if (!$user_activity || $user_activity->activity_id == Activity::WORK_STOP) {
             $model = new TimeTracking([
                 'user_id' => Yii::$app->user->id,
-                'activity_id' => Activity::START_DAY
+                'activity_id' => Activity::WORK_START
             ]);
             
             if ($model->save()) {
@@ -82,7 +82,7 @@ class TimeTrackingController extends ParentController
         
         $last_activity = end($user_activity);
         
-        if ($last_activity->activity_id == Activity::STOP_DAY) {
+        if ($last_activity->activity_id == Activity::WORK_STOP) {
             Yii::$app->session->setFlash('error', Module::t("You've already finished your work day!"));
 
             return $this->redirect('index');
@@ -90,7 +90,7 @@ class TimeTrackingController extends ParentController
         
         $model = new TimeTracking([
             'user_id' => Yii::$app->user->id,
-            'activity_id' => Activity::STOP_DAY
+            'activity_id' => Activity::WORK_STOP
         ]);
         
         if ($model->save()) {
@@ -285,8 +285,8 @@ class TimeTrackingController extends ParentController
         $activity = Activity::getActivityByUserId($model->user_id);
         
         // adding special statuses
-        $activity[Activity::START_DAY] = Module::t('Start the working day');
-        $activity[Activity::STOP_DAY] = Module::t('Finish the working day');
+        $activity[Activity::WORK_START] = Module::t('Start the working day');
+        $activity[Activity::WORK_STOP] = Module::t('Finish the working day');
 
         return $this->render('update', [
             'model' => $model,

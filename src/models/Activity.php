@@ -14,9 +14,9 @@ use \yii\helpers\ArrayHelper;
  */
 class Activity extends \yii\db\ActiveRecord
 {
-    const START_DAY = 1000000;
-    const STOP_DAY  = 1000001;
-    const BREAK_DAY = 1000002;
+    const WORK_START    = 1000000;
+    const WORK_STOP     = 1000001;
+    const WORK_BREAK    = 1000002;
     
     /**
      * {@inheritdoc}
@@ -89,9 +89,9 @@ class Activity extends \yii\db\ActiveRecord
     {
         $list = static::getDropdownList();
         
-        $list[static::START_DAY] = Module::t('The begining of the work day');
-        $list[static::STOP_DAY] = Module::t('End of the working day');
-        $list[static::BREAK_DAY] = Module::t('Break');
+        $list[static::WORK_START] = Module::t('The begining of the work day');
+        $list[static::WORK_STOP] = Module::t('End of the working day');
+        $list[static::WORK_BREAK] = Module::t('Break');
         
         return $list;
     }

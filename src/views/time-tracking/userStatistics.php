@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <i class="badge badge-dot badge-dot-xl badge-warning"> </i>
                             </span>
                             <div class="timeline-content">
-                                <h4 class="timeline-title"><?= Activity::getDropdownList()[$activity->activity_id] ?? ($activity->activity_id == Activity::START_DAY ? 'Начало рабочего дня' : ($activity->activity_id == Activity::STOP_DAY ? 'Конец рабочего дня' : ''))  ?></h4>
+                                <h4 class="timeline-title"><?= Activity::getDropdownList()[$activity->activity_id] ?? ($activity->activity_id == Activity::WORK_START ? 'Начало рабочего дня' : ($activity->activity_id == Activity::WORK_STOP ? 'Конец рабочего дня' : ''))  ?></h4>
                                 <?php 
                                 if ($is_editor) {
                                     echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);

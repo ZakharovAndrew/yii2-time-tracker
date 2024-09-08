@@ -232,10 +232,10 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
                         $stop = '';
                         
                         foreach ($item[$user_id] as $activity) {
-                            if ($activity->activity_id == Activity::START_DAY) {
+                            if ($activity->activity_id == Activity::WORK_START) {
                                 $start = date('H:i', strtotime($activity->datetime_at));
                             }
-                            if ($activity->activity_id == Activity::STOP_DAY) {
+                            if ($activity->activity_id == Activity::WORK_STOP) {
                                 $stop = date('H:i', strtotime($activity->datetime_at));
                             }
                                             
@@ -266,7 +266,7 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
                         // last status
                         $end_activity =  end($item[$user_id]);
                         $hint = '';
-                        if ($end_activity->activity_id != Activity::STOP_DAY && $end_activity->activity_id != Activity::START_DAY) {
+                        if ($end_activity->activity_id != Activity::WORK_STOP && $end_activity->activity_id != Activity::WORK_START) {
                             $hint = '<div class="last_activity">'.$activities[$activity->activity_id].'</div>';
                         }
                         
