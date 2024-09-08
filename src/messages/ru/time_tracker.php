@@ -22,6 +22,7 @@ return [
     'Comment' => 'Комментарий',
     'Start the working day' => 'Начать рабочий день',
     'Finish the working day' => 'Закончить рабочий день',
+    'Break' => 'Перерыв',
     'Time Tracking' => 'Учет рабочего времени',
     'Time' => 'Время',
     'The start of the working day is marked' => 'Начало рабочего дня отмечено',
@@ -47,6 +48,9 @@ return [
     'The start of work has already been marked' => 'Начало работы уже проставлено',
     'Hint' => 'Подсказка',
     'Hints' => 'Подсказки',
+    'Activity time' => 'Время активности',
+    'Edit activity' => 'Редактировать активность',
+    'Edit' => 'Изменить',
 
     'Comment Templates' => 'Шаблоны комментариев',
     'Color' => 'Цвет',
