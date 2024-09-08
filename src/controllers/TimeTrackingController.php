@@ -65,6 +65,38 @@ class TimeTrackingController extends ParentController
         return $this->redirect('index');
     }
     
+    public function actionBreak()
+    {
+        $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
+        
+        if (!$user_activity) {
+            Yii::$app->session->setFlash('error', Modulte::t("You haven't started work yet!"));
+
+            return $this->redirect('index');
+        }
+        
+        $last_activity = end($user_activity);
+        
+        if ($last_activity->activity_id == Activity::WORK_STOP) {
+            Yii::$app->session->setFlash('error', Module::t("You've already finished your work day!"));
+
+            return $this->redirect('index');
+        }
+        
+        $model = new TimeTracking([
+            'user_id' => Yii::$app->user->id,
+            'activity_id' => Activity::WORK_BREAK
+        ]);
+        
+        if ($model->save()) {
+            Yii::$app->session->setFlash('success', Module::t('The break of the working day is marked'));
+        } else {
+            Yii::$app->session->setFlash('error', Module::t('Error setting the break'));
+        }
+        
+        return $this->redirect('index');
+    }
+    
     /**
      * Finish the working day
      * 
