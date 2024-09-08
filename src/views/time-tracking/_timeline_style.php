@@ -111,6 +111,15 @@
     color: #212529;
     background-color: #ae71ce;
 }
+.btn-edit-activity {
+    display:none;
+    font-size: 12px;
+    padding: 3px 7px;
+    margin-bottom: 5px;
+}
+.vertical-timeline:hover .btn-edit-activity {
+    display:inline-block;
+}
 <?php 
 $colors = ZakharovAndrew\TimeTracker\models\Activity::find()->where('color is not null')->all();
 foreach ($colors as $activity) {
