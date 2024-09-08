@@ -49,7 +49,7 @@ class TimeTracking extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ID',
             'activity_id' => Module::t('Activity'),
-            'datetime_at' => 'Datetime At',
+            'datetime_at' => Module::t('Activity time'),
             'comment' => Module::t('Comment'),
         ];
     }
@@ -60,6 +60,15 @@ class TimeTracking extends \yii\db\ActiveRecord
                 ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
                 ->andWhere(['user_id' => $user_id])
                 ->all();
+    }
+    
+    static public function getUserLastActivity($user_id)
+    {
+        return TimeTracking::find()
+                ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
+                ->andWhere(['user_id' => $user_id])
+                ->orderBy('datetime_at DESC')
+                ->one();
     }
     
     static public function userRolesForViewingStatistics()

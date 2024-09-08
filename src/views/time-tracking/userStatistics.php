@@ -2,7 +2,7 @@
 
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
-
+use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\TimeTrackingSearch $searchModel */
@@ -32,6 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             </span>
                             <div class="timeline-content">
                                 <h4 class="timeline-title"><?= Activity::getDropdownList()[$activity->activity_id] ?? ($activity->activity_id == Activity::START_DAY ? 'Начало рабочего дня' : ($activity->activity_id == Activity::STOP_DAY ? 'Конец рабочего дня' : ''))  ?></h4>
+                                <?php 
+                                if ($is_editor) {
+                                    echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);
+                                }
+                                ?>
                                 <p><?= $activity->comment ?></p>
                                 <span class="timeline-date"><?= date('H:i:s', strtotime($activity->datetime_at)) ?></span>
                             </div>

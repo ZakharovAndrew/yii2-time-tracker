@@ -2,9 +2,10 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use ZakharovAndrew\TimeTracker\Module;
 
 /** @var yii\web\View $this */
-/** @var app\models\TimeTracking $model */
+/** @var ZakharovAndrew\TimeTracker\models\TimeTracking $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 
@@ -12,16 +13,16 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'user_id')->textInput() ?>
-
-    <?= $form->field($model, 'activity_id')->textInput() ?>
+    <?= $form->field($model, 'user_id')->hiddenInput()->label(false) ?>
+    
+    <?= $form->field($model, 'activity_id')->dropDownList($activity, ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
     <?= $form->field($model, 'datetime_at')->textInput() ?>
 
-    <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
