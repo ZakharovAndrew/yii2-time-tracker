@@ -2,6 +2,8 @@
 
 Yii 2 module for time tracking. 
 
+![Yii2 user module by Zakharov Andrey](docs/img/yii2-time-tracker-Zakharov-Andrey.png)
+
 [![Latest Stable Version](https://poser.pugx.org/zakharov-andrew/yii2-time-tracker/v/stable)](https://packagist.org/packages/zakharov-andrew/yii2-time-tracker)
 [![License](https://poser.pugx.org/zakharov-andrew/yii2-time-tracker/license)](https://packagist.org/packages/zakharov-andrew/yii2-time-tracker)
 [![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
