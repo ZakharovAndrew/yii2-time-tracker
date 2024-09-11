@@ -35,7 +35,7 @@ class TimeTracking extends \yii\db\ActiveRecord
         return [
             [['user_id', 'activity_id'], 'integer'],
             ['activity_id', 'required'],
-            [['datetime_at'], 'safe'],
+            [['datetime_at', 'datetime_update'], 'safe'],
             [['comment'], 'string', 'max' => 500],
         ];
     }
@@ -50,6 +50,7 @@ class TimeTracking extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'activity_id' => Module::t('Activity'),
             'datetime_at' => Module::t('Activity time'),
+            'datetime_update' => Module::t('Update time'),
             'comment' => Module::t('Comment'),
         ];
     }
@@ -77,5 +78,12 @@ class TimeTracking extends \yii\db\ActiveRecord
         $user_roles = ArrayHelper::map(Roles::getRolesByUserId(Yii::$app->user->id), 'code', 'code');
         
         return array_intersect_key($list, $user_roles);
+    }
+    
+    public function beforeSave($insert)
+    {
+        $this->datetime_update = date('Y-m-d H:i:s');
+        
+        return parent::beforeSave($insert);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace ZakharovAndrew\TimeTracker\models;
 
-use Yii;
 use ZakharovAndrew\TimeTracker\Module;
 use \yii\helpers\ArrayHelper;
 
@@ -16,7 +15,14 @@ use \yii\helpers\ArrayHelper;
  */
 class RoleActivity extends \yii\db\ActiveRecord
 {
+    /**
+     * @var string Role title
+     */
     public $role_title;
+    
+    /**
+     * @var string Activity title
+     */
     public $activity_title;
     
     /**
@@ -51,6 +57,11 @@ class RoleActivity extends \yii\db\ActiveRecord
         ];
     }
     
+    /**
+     * Get a list of autistics for this role
+     * 
+     * @return array
+     */
     public function getActivities()
     {
         $arr = self::find()

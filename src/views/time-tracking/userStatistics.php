@@ -2,6 +2,7 @@
 
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
+use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -12,6 +13,20 @@ $this->title = Module::t('Statistics') . ': '. $user->name;
 $this->params['breadcrumbs'][] = ['label' => Module::t('Time Tracking'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
+$script = <<< JS
+    let activity_day = '';
+    $(".btn-add-activity").on('click', function() {
+        $("#form-add-activity form").first().trigger('reset');
+        activity_day = $(this).data('day');
+    });
+    $("#timetracking-activity_time").on('change keyup', function() {
+        $("#timetracking-datetime_at").val(activity_day + ' '+$("#timetracking-activity_time").val());
+    });
+        
+JS;
+
+$this->registerJs($script, yii\web\View::POS_READY);
+//echo Html::a('+', ['add', 'id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'btn btn-sm btn-primary btn-add-activity', 'title'=>Module::t('Add Activity')]);
 ?>
 <?= $this->render('_timeline_style') ?>
 
@@ -22,16 +37,19 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php foreach ($timeline as $day => $item) {?>
 
             <td>
-                <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?></b>
+                <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?><?php if ($is_editor) {?>
+                    <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>
+                    
+                <?php }?></b>
                 <?php foreach ($item as $activity) {?>
                 <div class="vertical-timeline">
                     <div class="timeline-element">
                         <div>
                             <span class="timeline-icon">
-                                <i class="badge badge-dot badge-dot-xl badge-warning"> </i>
+                                <i class="badge badge-dot badge-dot-xl badge-warning activity-<?= $activity->activity_id ?>"> </i>
                             </span>
                             <div class="timeline-content">
-                                <h4 class="timeline-title"><?= Activity::getDropdownList()[$activity->activity_id] ?? ($activity->activity_id == Activity::WORK_START ? 'Начало рабочего дня' : ($activity->activity_id == Activity::WORK_STOP ? 'Конец рабочего дня' : ''))  ?></h4>
+                                <h4 class="timeline-title"><?= Activity::getList()[$activity->activity_id] ?? ''  ?></h4>
                                 <?php 
                                 if ($is_editor) {
                                     echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);
@@ -52,3 +70,23 @@ $this->params['breadcrumbs'][] = $this->title;
         </table>
     </div>
 </div>
+
+<?php
+if ($is_editor) {
+    $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
+    $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Modal";
+    
+    // FORM
+    $classModal::begin([
+        ($bootstrapVersion==3 ? 'header' : 'title') => '<h2>'.Module::t('Add Activity').'</h2>',
+        'id' => 'form-add-activity'
+    ]);
+
+    echo $this->render('_form_add_for_editor', [
+        'model' => new TimeTracking(['user_id' => $user->id]),
+        'user_id' => $user->id
+    ]);
+
+    $classModal::end();
+}
+?>

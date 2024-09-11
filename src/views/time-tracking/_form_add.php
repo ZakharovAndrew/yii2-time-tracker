@@ -14,7 +14,7 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 
     <?php $form = ActiveForm::begin(['action' => '/timetracker/time-tracking/create']); ?>
 
-    <?= $form->field($model, 'activity_id')->dropDownList(Activity::getActivityByUserId(Yii::$app->user->id), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
+    <?= $form->field($model, 'activity_id')->dropDownList(Activity::getActivityByUserId($user_id ?? Yii::$app->user->id), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
     <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
 

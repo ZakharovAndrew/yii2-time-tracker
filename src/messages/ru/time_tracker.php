@@ -25,6 +25,7 @@ return [
     'Break' => 'Перерыв',
     'Time Tracking' => 'Учет рабочего времени',
     'Time' => 'Время',
+    'Update time' => 'Время обновления',
     'The start of the working day is marked' => 'Начало рабочего дня отмечено',
     'The end of the working day is marked' => 'Завершение рабочего дня отмечено',
     'The break of the working day is marked' => 'Отмечен перерыв в рабочем дне',

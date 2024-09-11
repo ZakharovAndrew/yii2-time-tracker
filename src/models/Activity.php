@@ -68,9 +68,17 @@ class Activity extends \yii\db\ActiveRecord
         return $query->asArray()->all();
     }
     
-    static public function getActivityByUserId($user_id)
-    {        
-        return ArrayHelper::map(static::userActivity($user_id), 'id', 'name');
+    static public function getActivityByUserId($user_id, $showAll = false)
+    {   
+        $list = ArrayHelper::map(static::userActivity($user_id), 'id', 'name');
+        
+        if ($showAll) {
+            $list[static::WORK_START] = Module::t('The begining of the work day');
+            $list[static::WORK_STOP] = Module::t('End of the working day');
+            $list[static::WORK_BREAK] = Module::t('Break');
+        }
+        
+        return $list;
     }
     
     /**

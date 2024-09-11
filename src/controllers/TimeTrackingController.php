@@ -207,7 +207,7 @@ class TimeTrackingController extends ParentController
         if (is_null($user_id)) {
             $user_id = Yii::$app->user->id;
         } else {
-            $user_id = Yii::$app->user->identity->hasRole('admin') ? $user_id : Yii::$app->user->id; 
+            $user_id = (Yii::$app->user->identity->hasRole('admin') || Yii::$app->user->identity->hasRole('time_tracking_editor')) ? $user_id : Yii::$app->user->id; 
         }
         
         $model = TimeTracking::find()
@@ -275,6 +275,27 @@ class TimeTrackingController extends ParentController
         ]);
     }
     
+    public function actionAdd()
+    {
+        if (!Yii::$app->user->identity->hasRole('time_tracking_editor')) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        
+        
+        $model = new TimeTracking();
+        
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', 'Активность добавлена');
+                return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
+            }
+        } 
+        
+        Yii::$app->session->setFlash('error', 'Ошибка при добавление активности пользователю');
+        
+        return $this->redirect(['index']);
+    }
+    
     public function actionEditComment()
     {
         $model = TimeTracking::find()
@@ -310,15 +331,13 @@ class TimeTrackingController extends ParentController
 
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            if ($model->save()) {
+                return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
+            }
         }
         
-        $activity = Activity::getActivityByUserId($model->user_id);
-        
-        // adding special statuses
-        $activity[Activity::WORK_START] = Module::t('Start the working day');
-        $activity[Activity::WORK_STOP] = Module::t('Finish the working day');
+        $activity = Activity::getActivityByUserId($model->user_id, true);
 
         return $this->render('update', [
             'model' => $model,

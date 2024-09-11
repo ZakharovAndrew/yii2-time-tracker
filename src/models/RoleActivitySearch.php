@@ -5,10 +5,9 @@ namespace ZakharovAndrew\TimeTracker\models;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use ZakharovAndrew\TimeTracker\models\RoleActivity;
-use ZakharovAndrew\user\models\Roles;
 
 /**
- * RoleActivitySearch represents the model behind the search form of `app\models\RoleActivity`.
+ * RoleActivitySearch represents the model behind the search form of `ZakharovAndrew\TimeTracker\models\RoleActivity`.
  */
 class RoleActivitySearch extends RoleActivity
 {

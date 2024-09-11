@@ -120,6 +120,14 @@
 .vertical-timeline:hover .btn-edit-activity {
     display:inline-block;
 }
+.btn-add-activity {
+    float: right;
+    padding: 2px 4px;
+    line-height: 16px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    border: none;
+}
 <?php 
 $colors = ZakharovAndrew\TimeTracker\models\Activity::find()->where('color is not null')->all();
 foreach ($colors as $activity) {
