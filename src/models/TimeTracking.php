@@ -33,7 +33,7 @@ class TimeTracking extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'activity_id'], 'integer'],
+            [['user_id', 'activity_id', 'who_changed'], 'integer'],
             ['activity_id', 'required'],
             [['datetime_at', 'datetime_update'], 'safe'],
             [['comment'], 'string', 'max' => 500],
@@ -83,6 +83,7 @@ class TimeTracking extends \yii\db\ActiveRecord
     public function beforeSave($insert)
     {
         $this->datetime_update = date('Y-m-d H:i:s');
+        $this->who_changed = Yii::$app->user->id;
         
         return parent::beforeSave($insert);
     }

@@ -128,6 +128,10 @@
     background-color: #4CAF50;
     border: none;
 }
+.timeline-date-update {
+    color: #cfcfcf;
+}
+
 <?php 
 $colors = ZakharovAndrew\TimeTracker\models\Activity::find()->where('color is not null')->all();
 foreach ($colors as $activity) {
