@@ -37,7 +37,7 @@ $('[data-toggle="popover"]').click(function() {
     $("#popover-modal-title").html('$str ' + $(this).data('user'));
     $('#popover-modal').modal('show');
 });
-$("h1").parent().append('<div id="filter" class="btn"><svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.906 300.906" xml:space="preserve"><path d="M288.953 0h-277c-5.522 0-10 4.478-10 10v49.531c0 5.522 4.478 10 10 10h12.372l91.378 107.397v113.978a10 10 0 0 0 15.547 8.32l49.5-33a9.999 9.999 0 0 0 4.453-8.32v-80.978l91.378-107.397h12.372c5.522 0 10-4.478 10-10V10c0-5.522-4.477-10-10-10zM167.587 166.77a9.999 9.999 0 0 0-2.384 6.48v79.305l-29.5 19.666V173.25a9.997 9.997 0 0 0-2.384-6.48L50.585 69.531h199.736l-82.734 97.239zM278.953 49.531h-257V20h257v29.531z"/></svg></div>');
+$("h1").parent().append('<div id="filter" class="btn mg-top--10"><svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.906 300.906" xml:space="preserve"><path d="M288.953 0h-277c-5.522 0-10 4.478-10 10v49.531c0 5.522 4.478 10 10 10h12.372l91.378 107.397v113.978a10 10 0 0 0 15.547 8.32l49.5-33a9.999 9.999 0 0 0 4.453-8.32v-80.978l91.378-107.397h12.372c5.522 0 10-4.478 10-10V10c0-5.522-4.477-10-10-10zM167.587 166.77a9.999 9.999 0 0 0-2.384 6.48v79.305l-29.5 19.666V173.25a9.997 9.997 0 0 0-2.384-6.48L50.585 69.531h199.736l-82.734 97.239zM278.953 49.531h-257V20h257v29.531z"/></svg></div>');
 $("#filter").click(function() {
     if ($(".settings-modal").hasClass('show')) {
         $(".settings-modal").removeClass('show');
@@ -60,6 +60,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
 <?= $this->render('_timeline_style') ?>
 <style>
     h1 {display:inline-block}
+    .mg-top--10 {margin-top: -10px;}
     .time-tracking-box {
         box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
         border-radius: 15px;
@@ -99,8 +100,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
         background-color: #e0f3ff;
     }
     .last_activity {
-            font-size: 10px;
-    color: #cdcdcd;
+        font-size: 10px;
+        color: #cdcdcd;
+        margin-top: 5px;
     }
     
     .nice-shadow {
@@ -199,7 +201,7 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
     width: 100%;
 }
 </style>
-<div class="time-tracking-index">
+<div class="time-tracking-statistics">
 
     <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 

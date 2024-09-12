@@ -3,6 +3,7 @@
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
+use ZakharovAndrew\user\models\User;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
@@ -50,6 +51,20 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             </span>
                             <div class="timeline-content">
                                 <h4 class="timeline-title"><?= Activity::getList()[$activity->activity_id] ?? ''  ?></h4>
+                                <?php if (!empty($activity->datetime_update) && $activity->datetime_at <> $activity->datetime_update) { ?>
+                                    <div class="timeline-date-update">
+                                        Изменено 
+                                        <?php
+                                        if (date('Y-m-d', strtotime($activity->datetime_update)) != date('Y-m-d', strtotime($activity->datetime_at))) {
+                                            echo date('d.m.Y', strtotime($activity->datetime_update));
+                                        } ?>
+                                        <?= date('H:i:s', strtotime($activity->datetime_update)) ?>
+                                        <?php if (!empty($activity->who_changed) && $activity->who_changed != $activity->user_id) {
+                                            $who_changed = User::find()->where(['id' => $activity->who_changed])->one();
+                                            echo $who_changed->name;
+                                        } ?>
+                                    </div>
+                                <?php } ?>
                                 <?php 
                                 if ($is_editor) {
                                     echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);
