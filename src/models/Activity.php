@@ -56,6 +56,11 @@ class Activity extends \yii\db\ActiveRecord
         return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'name');
     }
     
+    static public function getActivityColors()
+    {
+        return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'color');
+    }
+    
     static public function userActivity($user_id, $additionalCondition = null)
     {
         $query = static::find()

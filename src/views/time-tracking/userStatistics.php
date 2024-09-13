@@ -5,6 +5,7 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\user\models\User;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\TimeTrackingSearch $searchModel */
@@ -68,6 +69,13 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 <?php 
                                 if ($is_editor) {
                                     echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);
+                                    echo Html::a('Удалить', Url::to(['delete', 'id' => $activity->id]), [
+                                        'class' => 'btn btn-danger btn-delete-activity',
+                                        'data' => [
+                                            'confirm' => 'Вы уверены, что хотите удалить этот элемент?',
+                                            //'method' => 'get',
+                                        ],
+                                    ]);
                                 }
                                 ?>
                                 <p><?= $activity->comment ?></p>

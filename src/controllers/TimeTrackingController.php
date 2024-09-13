@@ -28,10 +28,29 @@ class TimeTrackingController extends ParentController
     public function actionIndex()
     {
         $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
+        
+        $aggActivity = [];        
+        $activityCount = count($user_activity);
+        $workTime = 0;
+        
+        foreach ($user_activity as $i => $activity) {
+            $nextActivityTime = ($i === $activityCount - 1) ?  strtotime('now') : strtotime($user_activity[$i + 1]->datetime_at);
+            
+            $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
+
+            $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
+            
+            // sum up working hours
+            if ($activity->activity_id != Activity::WORK_STOP) {
+                $workTime += $activityTime;
+            }
+        }
        
         return $this->render('index', [
             'user_activity' => $user_activity,
-            'allow_statistics' => count(TimeTracking::userRolesForViewingStatistics()) >0
+            'allow_statistics' => count(TimeTracking::userRolesForViewingStatistics()) >0,
+            'aggActivity' => $aggActivity,
+            'workTime' => $workTime
         ]);
     }
     
@@ -354,9 +373,15 @@ class TimeTrackingController extends ParentController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        if (!Yii::$app->user->identity->hasRole('time_tracking_editor')) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        
+        $model = $this->findModel($id);
+        $user_id = $model->user_id;
+        $model->delete();
+        
+        return $this->redirect(['user-statistics', 'id' => $user_id]);
     }
 
     /**

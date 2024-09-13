@@ -96,9 +96,10 @@ $this->registerJs($script, yii\web\View::POS_READY);
         color: brown;
         display: inline-block;
     }
-    tbody tr:hover {
+    tbody tr:hover, .time-tracking-statistics tbody tr:hover .td-holiday {
         background-color: #e0f3ff;
     }
+    
     .last_activity {
         font-size: 10px;
         color: #cdcdcd;
@@ -200,6 +201,12 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
 .settings-modal .bottom-panel button {
     width: 100%;
 }
+.td-holiday {
+    background: #FFEBEE;
+}
+.td-holiday.td-danger span {
+    background-color: #FFCDD2 !important;
+}
 </style>
 <div class="time-tracking-statistics">
 
@@ -215,8 +222,8 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
             <thead>
                 <tr>
                     <th class="time-tracking-user"><?= Module::t('User') ?></th>
-                    <?php foreach ($timeline as $day => $item) {?>
-                    <th><?= date('d.m.Y', strtotime($day))  ?></th>
+                    <?php foreach ($timeline as $day => $item) { $class = (date('N', strtotime($day)) > 5) ? 'td-holiday ' : '';?>
+                    <th class="<?= $class ?>"><?= date('d.m.Y', strtotime($day))  ?></th>
                     <?php } ?>
                     
                 </tr>
@@ -228,6 +235,7 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
                     <?= Html::a($user_name, ['user-statistics', 'user_id' => $user_id], ['class' => '']) ?>
                 </td>
                 <?php foreach ($timeline as $day => $item) {
+                    $class = (date('N', strtotime($day)) > 5) ? 'td-holiday ' : '';
                     /*$item_name = date('Y-m-d', strtotime($item[$user_id]->datetime_at));*/?>
                     <?php if ($item[$user_id] ?? '') {
                         $start = '';
@@ -251,19 +259,19 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
                             
                         }
                         
-                        $class = '';
-
                         //not current day
                         if (date('d.m.Y', strtotime($day)) != date('d.m.Y') || !empty($stop)) {
                             $time_diff = round((strtotime($stop ?? $start) - strtotime($start))/3600);
                             if ($time_diff < 6) {
-                                $class = 'td-warning';
+                                $class .= ' td-warning';
                             }
                             if (empty($stop)) {
-                                $class = 'td-danger';
+                                $class .= ' td-danger';
                                 $alert = '⚠ ';
                             }  
                         }
+                        
+                        
                         
                         // last status
                         $end_activity =  end($item[$user_id]);
@@ -276,7 +284,7 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
                         $i++;
                     } else {
                     ?>
-                    <td></td>
+                    <td class="<?= $class ?>"></td>
                     <?php } ?>
                 <?php } ?>
             </tr>

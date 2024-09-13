@@ -105,10 +105,6 @@ JS;
 
 $this->registerJs($script, yii\web\View::POS_READY);
 ?>
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-  />
 <style>
     #comment-menu {
         position: absolute;
@@ -211,10 +207,19 @@ $this->registerJs($script, yii\web\View::POS_READY);
         <?= Html::a(Module::t('Finish the working day'), ['stop'], ['class' => 'btn btn-danger']) ?>
     <?php } ?>
         
-        <?php if ($allow_statistics) {?>
-        <?= Html::a(Module::t('Statistics'), ['statistics'], ['class' => 'btn btn-info']) ?>
-        <?php } ?>
+        <?php 
+        if ($allow_statistics) {
+            echo Html::a(Module::t('Statistics'), ['statistics'], ['class' => 'btn btn-info']);
+        } ?>
         <?= Html::a(Module::t('My Statistics'), ['user-statistics'], ['class' => 'btn btn-info']) ?>
+        <span class="alert alert-info" style="float: right; padding: 7px;">
+        <?php
+            $hours = floor($workTime / 3600);
+            $minutes = floor(($workTime % 3600) / 60);
+            $seconds = $workTime % 60;
+            echo 'Рабочее время '. "$hours:$minutes:$seconds";
+        ?>
+        </span>
     </p>
     
     <?php if ($last_activity !== false && $last_activity->activity_id == Activity::WORK_STOP) { ?>
@@ -222,33 +227,102 @@ $this->registerJs($script, yii\web\View::POS_READY);
     <?php } ?>
     
     <?php if ($user_activity) { ?>
-    <div class="time-tracking-box animate__animated animate__fast animate__fadeInUp">
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th class="time-tracking__time"><?= Module::t('Time') ?></th>
-                        <th><?= Module::t('Activity') ?></th>
-                        <th class="time-tracking__comment"><?= Module::t('Comment') ?></th>
-                    </tr>
-                </thead>
-                <?php 
-                foreach ($user_activity as $item) {?>
-                <tr>
-                    <td><div class="text-muted"><?= date('H:i', strtotime($item->datetime_at))?></div></td>
-                    <td class="time-tracking__activity"><?= Activity::getList()[$item->activity_id] ?? $item->activity_id ?></td>
-                    <td><?= $item->comment ?> <?php
-                        if ($item->id == $last_activity->id && $item->activity_id != Activity::WORK_START && $item->activity_id != Activity::WORK_STOP) {
-                             echo Html::a(Module::t('Edit'), ['edit-comment'], ['class' => '']);   
-                        }
-                        ?>
-                    </td>
-                </tr>
-                <?php } ?>
-            </table>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="time-tracking-box">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="time-tracking__time"><?= Module::t('Time') ?></th>
+                                <th><?= Module::t('Activity') ?></th>
+                                <th class="time-tracking__comment"><?= Module::t('Comment') ?></th>
+                            </tr>
+                        </thead>
+                        <?php 
+                        foreach ($user_activity as $item) {?>
+                        <tr>
+                            <td><div class="text-muted"><?= date('H:i', strtotime($item->datetime_at))?></div></td>
+                            <td class="time-tracking__activity"><?= Activity::getList()[$item->activity_id] ?? $item->activity_id ?></td>
+                            <td><?= $item->comment ?> <?php
+                                if ($item->id == $last_activity->id && $item->activity_id != Activity::WORK_START && $item->activity_id != Activity::WORK_STOP) {
+                                     echo Html::a(Module::t('Edit'), ['edit-comment'], ['class' => '']);   
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <?php } ?>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="time-tracking-box">
+                <canvas id="bar" width="800" height="450"></canvas>
+            </div>
         </div>
     </div>
     
+    
+    
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    <?php
+    $labels = [];
+    $colors = [];
+    foreach ($aggActivity as $key => $activity) { 
+        $labels[] = Activity::getList()[$key];
+        $colors[] = Activity::getActivityColors()[$key] ?? '#4441bc';
+    }
+    ?>
+        
+    function formatTime(seconds) {
+        let hours = Math.floor(seconds / 3600);
+        let minutes = Math.floor((seconds % 3600) / 60);
+        //let second = Math.floor((seconds % (3600*60)/100);
+        return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
+    }
+    let chartBar = new Chart(document.getElementById("bar"), {
+        type: 'bar',
+        
+        data: {
+            labels: <?= json_encode($labels) ?>,
+            datasets: [{
+                label: '<?= Module::t('Activity') ?>',
+                backgroundColor: <?= json_encode($colors) ?>,
+                data: <?= json_encode( array_values ($aggActivity)) ?>
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 60*30,
+                        callback: formatTime
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            let hours = Math.floor(tooltipItem.raw / 3600);
+                            let minutes = Math.floor((tooltipItem.raw % 3600) / 60);
+
+                            return hours + 'h ' + (minutes < 10 ? '0' : '') + minutes + 'm';
+                        }
+                    }
+                }
+            }
+            
+        }
+    });
+</script>
+    </div>
     <?php } ?>
 
 </div>
