@@ -111,13 +111,13 @@
     color: #212529;
     background-color: #ae71ce;
 }
-.btn-edit-activity {
+.btn-edit-activity, .btn-delete-activity {
     display:none;
     font-size: 12px;
     padding: 3px 7px;
     margin-bottom: 5px;
 }
-.vertical-timeline:hover .btn-edit-activity {
+.vertical-timeline:hover .btn-edit-activity, .vertical-timeline:hover .btn-delete-activity {
     display:inline-block;
 }
 .btn-add-activity {
@@ -127,6 +127,7 @@
     font-size: 18px;
     background-color: #4CAF50;
     border: none;
+    margin-right:5px;
 }
 .timeline-date-update {
     color: #cfcfcf;
