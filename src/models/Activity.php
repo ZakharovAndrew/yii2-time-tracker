@@ -51,17 +51,17 @@ class Activity extends \yii\db\ActiveRecord
         ];
     }
     
-    static public function getDropdownList()
+    public static function  getDropdownList()
     {
         return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'name');
     }
     
-    static public function getActivityColors()
+    public static function  getActivityColors()
     {
         return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'color');
     }
     
-    static public function userActivity($user_id, $additionalCondition = null)
+    public static function  userActivity($user_id, $additionalCondition = null)
     {
         $query = static::find()
                 ->where('id in (select activity_id as id FROM time_tracking_role_activity a WHERE a.role_id in (SELECT role_id FROM user_roles WHERE user_id = '.(int)$user_id.' ))');
@@ -73,7 +73,7 @@ class Activity extends \yii\db\ActiveRecord
         return $query->asArray()->all();
     }
     
-    static public function getActivityByUserId($user_id, $showAll = false)
+    public static function  getActivityByUserId($user_id, $showAll = false)
     {   
         $list = ArrayHelper::map(static::userActivity($user_id), 'id', 'name');
         
@@ -89,16 +89,16 @@ class Activity extends \yii\db\ActiveRecord
     /**
      * Get hints for activities available to the user
      */
-    static public function getHintsActivityByUserId($user_id)
+    public static function  getHintsActivityByUserId($user_id)
     {
         return ArrayHelper::map(static::userActivity($user_id, "hint <> '' AND hint IS NOT NULL"), 'id', 'hint');
     }
-    static public function getTemplateCommentsActivityByUserId($user_id)
+    public static function  getTemplateCommentsActivityByUserId($user_id)
     {
         return ArrayHelper::map(static::userActivity($user_id, "comment_templates <> '' AND comment_templates IS NOT NULL"), 'id', 'comment_templates');
     }
     
-    static public function getList()
+    public static function  getList()
     {
         $list = static::getDropdownList();
         
@@ -107,5 +107,14 @@ class Activity extends \yii\db\ActiveRecord
         $list[static::WORK_BREAK] = Module::t('Break');
         
         return $list;
+    }
+    
+    public static function timeFormat($time)
+    {
+        $hours = floor($time / 3600);
+        $minutes = floor(($time % 3600) / 60);
+        $seconds = $time % 60;
+        
+        return "$hours:$minutes:$seconds";
     }
 }

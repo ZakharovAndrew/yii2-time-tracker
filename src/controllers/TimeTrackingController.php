@@ -32,25 +32,34 @@ class TimeTrackingController extends ParentController
         $aggActivity = [];        
         $activityCount = count($user_activity);
         $workTime = 0;
+        $breakTime = 0;
         
         foreach ($user_activity as $i => $activity) {
             $nextActivityTime = ($i === $activityCount - 1) ?  strtotime('now') : strtotime($user_activity[$i + 1]->datetime_at);
             
             $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
 
-            $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
+            if ($activity->activity_id != Activity::WORK_STOP) {
+                $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
+            }
             
             // sum up working hours
-            if ($activity->activity_id != Activity::WORK_STOP) {
+            if ($activity->activity_id != Activity::WORK_STOP && $activity->activity_id != Activity::WORK_BREAK) {
                 $workTime += $activityTime;
             }
+            // sum up working hours
+            if ($activity->activity_id == Activity::WORK_BREAK) {
+                $breakTime += $activityTime;
+            }
+            
         }
        
         return $this->render('index', [
             'user_activity' => $user_activity,
             'allow_statistics' => count(TimeTracking::userRolesForViewingStatistics()) >0,
             'aggActivity' => $aggActivity,
-            'workTime' => $workTime
+            'workTime' => $workTime,
+            'breakTime' => $breakTime
         ]);
     }
     

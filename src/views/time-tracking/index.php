@@ -212,12 +212,13 @@ $this->registerJs($script, yii\web\View::POS_READY);
             echo Html::a(Module::t('Statistics'), ['statistics'], ['class' => 'btn btn-info']);
         } ?>
         <?= Html::a(Module::t('My Statistics'), ['user-statistics'], ['class' => 'btn btn-info']) ?>
-        <span class="alert alert-info" style="float: right; padding: 7px;">
+        
+        <span class="alert alert-warning" style="float: right; padding: 7px;">
+        <?= Module::t('Break') . ' ' . Activity::timeFormat($breakTime) ?>
+        </span>
+        <span class="alert alert-info" style="float: right; padding: 7px; margin-right: 7px">
         <?php
-            $hours = floor($workTime / 3600);
-            $minutes = floor(($workTime % 3600) / 60);
-            $seconds = $workTime % 60;
-            echo 'Рабочее время '. "$hours:$minutes:$seconds";
+            echo 'Рабочее время '. Activity::timeFormat($workTime);
         ?>
         </span>
     </p>
@@ -240,7 +241,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             </tr>
                         </thead>
                         <?php 
-                        foreach ($user_activity as $item) {?>
+                        foreach ($user_activity as $item) { ?>
                         <tr>
                             <td><div class="text-muted"><?= date('H:i', strtotime($item->datetime_at))?></div></td>
                             <td class="time-tracking__activity"><?= Activity::getList()[$item->activity_id] ?? $item->activity_id ?></td>
