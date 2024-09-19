@@ -45,6 +45,7 @@ return [
     'User' => 'Пользователь',
     'Statistics' => 'Статистика',
     'My Statistics' => 'Моя статистика',
+    'Working hours' => 'Рабочее время',
     'Edit comment' => 'Изменить комментарий',
     "You haven't started work yet!" => 'Вы еще не начали работу!',
     'The start of work has already been marked' => 'Начало работы уже проставлено',

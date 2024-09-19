@@ -217,9 +217,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
         <?= Module::t('Break') . ' ' . Activity::timeFormat($breakTime) ?>
         </span>
         <span class="alert alert-info" style="float: right; padding: 7px; margin-right: 7px">
-        <?php
-            echo 'Рабочее время '. Activity::timeFormat($workTime);
-        ?>
+        <?= Module::t('Working hours') . ' ' .  Activity::timeFormat($workTime) ?>
         </span>
     </p>
     
