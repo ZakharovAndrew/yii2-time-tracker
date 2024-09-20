@@ -12,7 +12,7 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 
 <div class="time-tracking-form">
 
-    <?php $form = ActiveForm::begin(['action' => '/timetracker/time-tracking/create']); ?>
+    <?php $form = ActiveForm::begin(['action' => 'create']); ?>
 
     <?= $form->field($model, 'activity_id')->dropDownList(Activity::getActivityByUserId($user_id ?? Yii::$app->user->id), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 

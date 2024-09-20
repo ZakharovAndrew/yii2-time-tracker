@@ -31,7 +31,7 @@ let comments = $comments
         
     let counter;
     $('[data-toggle="popover"]').popover({
-        html: 'true',
+        html: true,
         trigger: 'manual',
         container: 'body'
     }).on("mouseenter", function(e) {
@@ -200,7 +200,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
     
     <?php } else if ($last_activity->activity_id != Activity::WORK_STOP) { ?>
 
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#w0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-bs-toggle="modal" data-target="#time-tracking-add-activity" data-bs-target="#time-tracking-add-activity"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
   <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
 </svg> <?= Module::t('Add Activity') ?></button>
         <?= Html::a(Module::t('Break'), ['break'], ['class' => 'btn btn-warning']) ?>
@@ -226,7 +226,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
     <?php } ?>
     
     <?php if ($user_activity) { ?>
-    <div class="row">
+    <div class="row" style="width:100%">
         <div class="col-md-6">
             <div class="time-tracking-box">
                 <div class="table-responsive">
@@ -258,6 +258,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
         <div class="col-md-6">
             <div class="time-tracking-box">
                 <canvas id="bar" width="800" height="450"></canvas>
+                <div style="display:none">
+                    
+                </div>
             </div>
         </div>
     </div>
@@ -329,6 +332,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
 <?php
 $classModal::begin([
     ($bootstrapVersion==3 ? 'header' : 'title') => '<h2>'.Module::t('Add Activity').'</h2>',
+    'id' => 'time-tracking-add-activity'
 ]);
 
 echo $this->render('_form_add', ['model' => new TimeTracking()]);
