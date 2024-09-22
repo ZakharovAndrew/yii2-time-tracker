@@ -29,7 +29,8 @@ class TimeTrackingController extends ParentController
     {
         $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
         
-        $aggActivity = [];        
+        $aggActivity = [];
+        
         $activityCount = count($user_activity);
         $workTime = 0;
         $breakTime = 0;
@@ -53,11 +54,21 @@ class TimeTrackingController extends ParentController
             }
             
         }
+        
+        // for chart js
+        $labels = [];
+        $colors = [];
+        foreach ($aggActivity as $key => $activity) { 
+            $labels[] = Activity::getList()[$key];
+            $colors[] = Activity::getActivityColors()[$key] ?? '#4441bc';
+        }
        
         return $this->render('index', [
             'user_activity' => $user_activity,
             'allow_statistics' => count(TimeTracking::userRolesForViewingStatistics()) >0,
             'aggActivity' => $aggActivity,
+            'labels' => $labels,
+            'colors' => $colors,
             'workTime' => $workTime,
             'breakTime' => $breakTime
         ]);

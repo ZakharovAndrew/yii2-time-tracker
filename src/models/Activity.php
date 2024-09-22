@@ -115,6 +115,6 @@ class Activity extends \yii\db\ActiveRecord
         $minutes = floor(($time % 3600) / 60);
         $seconds = $time % 60;
         
-        return "$hours:$minutes:$seconds";
+        return "$hours:".($minutes > 10 ? $minutes : '0'.$minutes).":".($seconds > 10 ? $seconds : '0'.$seconds);
     }
 }

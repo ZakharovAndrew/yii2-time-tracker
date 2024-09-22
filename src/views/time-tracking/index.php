@@ -8,6 +8,7 @@ use yii\helpers\Url;
 
 $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
 $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Modal";
+$classTabs = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Tabs";
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\TimeTrackingSearch $searchModel */
@@ -257,10 +258,23 @@ $this->registerJs($script, yii\web\View::POS_READY);
         </div>
         <div class="col-md-6">
             <div class="time-tracking-box">
-                <canvas id="bar" width="800" height="450"></canvas>
-                <div style="display:none">
-                    
-                </div>
+                <?php
+                echo $classTabs::widget([
+                    'items' => [
+                        [
+                            'label' => Module::t('Chart'),
+                            'content' => '<canvas id="bar" width="800" height="450"></canvas>',
+                            'active' => true
+                        ],
+                        [
+                            'label' => Module::t('Table'),
+                            'content' => $this->render('_table_activity', ['aggActivity' => $aggActivity]),
+                        ],
+
+                    ],
+                ]);
+                ?>
+                
             </div>
         </div>
     </div>
@@ -270,14 +284,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    <?php
-    $labels = [];
-    $colors = [];
-    foreach ($aggActivity as $key => $activity) { 
-        $labels[] = Activity::getList()[$key];
-        $colors[] = Activity::getActivityColors()[$key] ?? '#4441bc';
-    }
-    ?>
+    
         
     function formatTime(seconds) {
         let hours = Math.floor(seconds / 3600);
