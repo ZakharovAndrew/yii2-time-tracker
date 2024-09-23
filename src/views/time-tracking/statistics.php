@@ -2,6 +2,7 @@
 
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
+use ZakharovAndrew\user\models\User;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 
@@ -140,9 +141,10 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
 }
 
 .settings-modal .btn-modal-close {
-    padding: 7px 8px 2px;
-    background: #7ba3ff24;
+    padding: 6px 8px 7px;
+    background: #f3f9fe;
     border-radius: 6px;
+    display: flex;
 }
 .settings-modal {
     transition: transform .5s cubic-bezier(.32, .72, 0, 1);
@@ -200,6 +202,21 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
 }
 .settings-modal .bottom-panel button {
     width: 100%;
+}
+.settings-modal .form-users-list {
+    background: #f3f9fe;
+    /* border-radius: 8px; */
+    padding: 12px 16px;
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 0 -15px 0;
+}
+.settings-modal .form-users-list label{
+    display: block;
+    margin-bottom: 7px;
+}
+.settings-modal .form-users-list label input{
+    margin-right: 6px;
 }
 .td-holiday {
     background: #FFEBEE;
@@ -335,6 +352,15 @@ $classModal::end();
         <label>ФИО</label>
         <?= Html::input('input', 'username', $username ?? '', ['class' => 'form-control']) ?>
     </div> -->
+    
+    <label>Пользователи</label>
+    <div class="form-users-list">
+        <?php
+        $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->all();
+        foreach ($users as $user) {
+            echo Html::checkbox('users[]', false, ['value' => $user->id, 'label' => $user->name]);
+        } ?>
+    </div>
 
     <div class="form-group bottom-panel">
         <?= Html::submitButton(Module::t('Apply'), ['class' => 'btn btn-primary']) ?>
