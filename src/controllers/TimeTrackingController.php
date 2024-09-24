@@ -104,22 +104,32 @@ class TimeTrackingController extends ParentController
         return $this->redirect('index');
     }
     
-    public function actionBreak()
-    {
+    public function canAddActivity()
+    { 
         $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
-        
+     
+        // you cannot enter an activity if the working day has not started
         if (!$user_activity) {
             Yii::$app->session->setFlash('error', Modulte::t("You haven't started work yet!"));
-
             return $this->redirect('index');
         }
         
+        
         $last_activity = end($user_activity);
         
+        //You cannot enter an activity if the working day is over
         if ($last_activity->activity_id == Activity::WORK_STOP) {
             Yii::$app->session->setFlash('error', Module::t("You've already finished your work day!"));
-
             return $this->redirect('index');
+        }
+        
+        return true;
+    }
+    
+    public function actionBreak()
+    {   
+        if (($result = $this->canAddActivity()) !== true) {
+            return $result;
         }
         
         $model = new TimeTracking([
@@ -143,20 +153,8 @@ class TimeTrackingController extends ParentController
      */
     public function actionStop()
     {
-        $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
-        
-        if (!$user_activity) {
-            Yii::$app->session->setFlash('error', Modulte::t("You haven't started work yet!"));
-
-            return $this->redirect('index');
-        }
-        
-        $last_activity = end($user_activity);
-        
-        if ($last_activity->activity_id == Activity::WORK_STOP) {
-            Yii::$app->session->setFlash('error', Module::t("You've already finished your work day!"));
-
-            return $this->redirect('index');
+        if (($result = $this->canAddActivity()) !== true) {
+            return $result;
         }
         
         $model = new TimeTracking([
@@ -175,6 +173,8 @@ class TimeTrackingController extends ParentController
     
     public function actionStatistics($datetime_start = null, $datetime_stop = null, $username = null)
     {
+        $selectedUserIds = Yii::$app->request->get('users');
+        
         $roles = array_keys(Yii::$app->getModule('timetracker')->availableRolesForViewingStatistics);
         
         if (!Yii::$app->user->identity->hasRole($roles)) {
@@ -196,14 +196,14 @@ class TimeTrackingController extends ParentController
         }
         
         if (count($roles) == 0) {
-            $model = TimeTracking::find()
+            $query = TimeTracking::find()
                 ->leftJoin('users', 'users.id = time_tracking.user_id')
                 ->andWhere(['>', 'datetime_at', $start_day])
                 ->andWhere(['<=', 'datetime_at', $stop_day])
                 //->andWhere('users.id' => $users)
-                ->orderBy('datetime_at')->all();
+                ->orderBy('datetime_at');
         } else {
-            $model = TimeTracking::find()
+            $query = TimeTracking::find()
                 ->leftJoin('user_roles', 'user_roles.user_id = time_tracking.user_id')
                 ->leftJoin('roles', 'user_roles.role_id = roles.id')
                 ->leftJoin('users', 'users.id = time_tracking.user_id')
@@ -211,8 +211,14 @@ class TimeTrackingController extends ParentController
                 ->andWhere(['>', 'datetime_at', $start_day])
                 ->andWhere(['<=', 'datetime_at', $stop_day])
                 //->andWhere('LIKE', 'users.name', $username)
-                ->orderBy('datetime_at')->all();
+                ->orderBy('datetime_at');
         }
+        
+        if (is_array($selectedUserIds) && count($selectedUserIds) > 0) {
+            $query->andWhere(['time_tracking.user_id' => $selectedUserIds]);
+        }
+        
+        $model = $query->all();
         
         $timeline = [];
         $users = [];
@@ -288,13 +294,8 @@ class TimeTrackingController extends ParentController
      */
     public function actionCreate()
     {
-        
-        $user_activity = TimeTracking::getUserActivity(Yii::$app->user->id);
-        
-        if (!$user_activity) {
-            Yii::$app->session->setFlash('error', Modulte::t("You haven't started work yet!"));
-
-            return $this->redirect('index');
+        if (($result = $this->canAddActivity()) !== true) {
+            return $result;
         }
         
         $model = new TimeTracking();
@@ -319,13 +320,12 @@ class TimeTrackingController extends ParentController
         if (!Yii::$app->user->identity->hasRole('time_tracking_editor')) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-        
-        
+              
         $model = new TimeTracking();
         
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                Yii::$app->session->setFlash('success', 'Активность добавлена');
+                Yii::$app->session->setFlash('success', 'Activity added');
                 return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
             }
         } 

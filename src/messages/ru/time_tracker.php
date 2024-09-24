@@ -30,6 +30,7 @@ return [
     'The end of the working day is marked' => 'Завершение рабочего дня отмечено',
     'The break of the working day is marked' => 'Отмечен перерыв в рабочем дне',
     'Activity' => 'Активность',
+    'Activity added' => 'Активность добавлена',
     'The begining of the work day' => 'Начало рабочего дня',
     'End of the working day' => 'Завершение рабочего дня',
     'You have completed your working day.' => 'Вы завершили рабочий день.',
