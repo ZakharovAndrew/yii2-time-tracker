@@ -1,0 +1,169 @@
+/* 
+Time Tracking
+@author Andrew Zakharov https://github.com/ZakharovAndrew
+*/
+.mg-top--10 {margin-top: -10px;}
+.time-tracking-box {
+    box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
+    border-radius: 15px;
+    padding:15px;
+    background: #fff;
+}
+.time-tracking-box .table {
+    margin-bottom: 0;
+}
+.text-muted {
+    color: rgba(112, 122, 130, 0.75);
+}
+.time-tracking-statistics [data-toggle="popover"], .time-tracking-statistics thead th {
+    text-align:center;
+}
+.time-tracking-statistics thead th:first-child {
+    text-align:left;
+}
+.time-tracking-statistics [data-toggle="popover"]:hover {
+    background-color: #e6e6e6 !important;
+    border-color: #adadad;
+    cursor:pointer
+}
+.time-tracking-statistics .td-warning span {
+    background-color: #fff8e8 !important;
+    border-radius: 5px;
+    padding: 6px 7px;
+}
+.time-tracking-statistics .td-danger span {
+    background-color: #ffece8 !important;
+    border-radius: 5px;
+    padding: 4px 7px;
+    color: brown;
+    display: inline-block;
+}
+.time-tracking-statistics tbody tr:hover, .time-tracking-statistics tbody tr:hover .td-holiday {
+    background-color: #e0f3ff;
+}
+
+.time-tracking-statistics .last_activity {
+    font-size: 10px;
+    color: #cdcdcd;
+    margin-top: 5px;
+}
+.time-tracking-statistics .nice-shadow {
+    box-shadow: rgba(0, 0, 0, 0.05) -5px 10px 15px;
+}
+.time-tracking-statistics .td-holiday {
+    background: #FFEBEE;
+}
+.time-tracking-statistics .td-holiday.td-danger span {
+    background-color: #FFCDD2 !important;
+}
+
+/* Modal Right */
+.modal.right.fade.in .modal-dialog {
+right:0 !important;
+transform: translateX(-50%);
+}
+.modal.right .modal-content {
+height:100%;
+overflow:auto;
+border-radius:0;
+border:none;
+}
+.modal.right .modal-dialog {
+position: fixed;
+margin: auto;
+height: 100%;
+-webkit-transform: translate3d(0%, 0, 0);
+-ms-transform: translate3d(0%, 0, 0);
+-o-transform: translate3d(0%, 0, 0);
+transform: translate3d(0%, 0, 0);
+}
+.modal.right.fade.in .modal-dialog {
+transform: translateX(0%);
+}
+.modal.right.fade .modal-dialog {
+right: -320px;
+-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+-moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+-o-transition: opacity 0.3s linear, right 0.3s ease-out;
+transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+/* Setting Right Modal */
+.settings-modal .btn-modal-close {
+    padding: 6px 8px 7px;
+    background: #f3f9fe;
+    border-radius: 6px;
+    display: flex;
+}
+.settings-modal {
+    transition: transform .5s cubic-bezier(.32, .72, 0, 1);
+    transform: translate3d(130%, 0, 0);
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    height: 100vh;
+    overflow: hidden auto;
+    z-index: 10;
+    box-shadow: rgba(0, 0, 0, 0.05) -5px 10px 15px;
+    background: #fff;
+    padding: 10px 15px;
+    z-index: 1050;
+    min-width: 260px;
+}
+.settings-modal-title:first-child {
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+.settings-modal-title {
+    padding: 0 0 25px;
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    align-items: center;
+}
+.settings-modal.show {
+    transform: translate3d(0, 0, 0);
+}
+.settings-modal .btn-primary {
+    color: #fff;
+    background-color: #2196F3;
+    border-color: #2196F3;
+}
+.settings-modal .btn-primary:hover {
+    color: #fff;
+    background-color: #42A5F5;
+    border-color: #42A5F5;
+}
+.settings-modal .btn-primary:active {
+    color: #fff;
+    background-color: #1976D2;
+    border-color: #1976D2;
+}
+.settings-modal .bottom-panel {
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    padding: 0 12px;
+}
+.settings-modal .bottom-panel button {
+    width: 100%;
+}
+.settings-modal .form-users-list {
+    background: #f3f9fe;
+    /* border-radius: 8px; */
+    padding: 12px 16px;
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 0 -15px 0;
+}
+.settings-modal .form-users-list label{
+    display: block;
+    margin-bottom: 7px;
+}
+.settings-modal .form-users-list label input{
+    margin-right: 6px;
+}
