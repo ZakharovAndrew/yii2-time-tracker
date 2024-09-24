@@ -61,10 +61,20 @@ class Activity extends \yii\db\ActiveRecord
         return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'color');
     }
     
+    /**
+     * Get a list of activities available to the user
+     * 
+     * @param int $user_id
+     * @param string $additionalCondition
+     * @return array
+     */
     public static function  userActivity($user_id, $additionalCondition = null)
     {
-        $query = static::find()
-                ->where('id in (select activity_id as id FROM time_tracking_role_activity a WHERE a.role_id in (SELECT role_id FROM user_roles WHERE user_id = '.(int)$user_id.' ))');
+        $query = RoleActivity::find()->alias('a')
+                ->select(['t.*'])
+                ->leftJoin('time_tracking_activity t', 't.id = a.activity_id')
+                ->where('a.role_id in (SELECT role_id FROM user_roles WHERE user_id = '.(int)$user_id.' )')
+                ->orderBy('a.pos');
         
         if ($additionalCondition !== null) {
             $query->andWhere($additionalCondition);
@@ -91,11 +101,11 @@ class Activity extends \yii\db\ActiveRecord
      */
     public static function  getHintsActivityByUserId($user_id)
     {
-        return ArrayHelper::map(static::userActivity($user_id, "hint <> '' AND hint IS NOT NULL"), 'id', 'hint');
+        return ArrayHelper::map(static::userActivity($user_id, "t.hint <> '' AND t.hint IS NOT NULL"), 'id', 'hint');
     }
     public static function  getTemplateCommentsActivityByUserId($user_id)
     {
-        return ArrayHelper::map(static::userActivity($user_id, "comment_templates <> '' AND comment_templates IS NOT NULL"), 'id', 'comment_templates');
+        return ArrayHelper::map(static::userActivity($user_id, "t.comment_templates <> '' AND t.comment_templates IS NOT NULL"), 'id', 'comment_templates');
     }
     
     public static function  getList()
@@ -109,12 +119,12 @@ class Activity extends \yii\db\ActiveRecord
         return $list;
     }
     
-    public static function timeFormat($time)
+    public static function timeFormat(int $time)
     {
         $hours = floor($time / 3600);
         $minutes = floor(($time % 3600) / 60);
         $seconds = $time % 60;
         
-        return "$hours:".($minutes > 10 ? $minutes : '0'.$minutes).":".($seconds > 10 ? $seconds : '0'.$seconds);
+        return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
     }
 }
