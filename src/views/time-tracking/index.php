@@ -342,7 +342,10 @@ $classModal::begin([
     'id' => 'time-tracking-add-activity'
 ]);
 
-echo $this->render('_form_add', ['model' => new TimeTracking()]);
+echo $this->render('_form_add', [
+        'model' => new TimeTracking(),
+        'properties' => \ZakharovAndrew\TimeTracker\models\ActivityProperty::find()->all()
+    ]);
 
 $classModal::end();
 ?>

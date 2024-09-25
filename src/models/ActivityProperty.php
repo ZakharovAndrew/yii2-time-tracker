@@ -49,7 +49,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => Module::t('Name'),
             'type' => Module::t('Type'),
             'pos' => Module::t('Position'),
             'values' => Module::t('Values'),
@@ -64,6 +64,22 @@ class ActivityProperty extends \yii\db\ActiveRecord
             static::TYPE_DATE => Module::t('Date'),
             static::TYPE_TIME => Module::t('Time'),
         ];
+    }
+    
+    public function getUserPropertyValue($user_id = null)
+    {
+        if (empty($user_id)) {
+            $user_id = Yii::$app->user->id;
+        }
+        
+        $model = UserActivityProperty::find()
+            ->select('values')
+            ->where([
+                'property_id' => $this->id,
+                'user_id' => $user_id
+            ])->one();
+        
+        return $model->values ?? null;
     }
     
     public function getValues()

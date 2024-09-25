@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use ZakharovAndrew\TimeTracker\models\ActivityProperty;
+use ZakharovAndrew\TimeTracker\Module;
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\ActivityProperty $model */
@@ -22,7 +23,7 @@ use ZakharovAndrew\TimeTracker\models\ActivityProperty;
     <?= $form->field($model, 'values')->textarea(['rows' => 6]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

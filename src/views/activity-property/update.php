@@ -1,13 +1,13 @@
 <?php
 
 use yii\helpers\Html;
+use ZakharovAndrew\TimeTracker\Module;
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\ActivityProperty $model */
 
-$this->title = 'Update Activity Property: ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Activity Properties', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
+$this->title = Module::t('Update Activity Property') . ': ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => Module::t('Activity Properties'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="activity-property-update">

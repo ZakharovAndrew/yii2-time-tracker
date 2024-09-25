@@ -6,6 +6,8 @@ use Yii;
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
+use ZakharovAndrew\TimeTracker\models\ActivityProperty;
+use ZakharovAndrew\TimeTracker\models\UserActivityProperty;
 use ZakharovAndrew\user\models\User;
 use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
@@ -304,6 +306,14 @@ class TimeTrackingController extends ParentController
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                
+                // save user activity property
+                $properties = ActivityProperty::find()->all();
+                foreach ($properties as $property) {
+                    $value = Yii::$app->request->post($property->id) ?? null;
+                    UserActivityProperty::saveValue(Yii::$app->user->id, $property->id, $value);
+                }
+                
                 return $this->redirect(['index']);
             }
         } else {

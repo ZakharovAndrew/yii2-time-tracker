@@ -78,4 +78,5 @@ return [
     'Time' => 'Время',
     'Values' => 'Значения',
     'Position' => 'Позиция',
+    'Update Activity Property' => 'Обновить свойство активности'
 ];
