@@ -401,7 +401,7 @@ class TimeTrackingController extends ParentController
         $user_id = $model->user_id;
         $model->delete();
         
-        return $this->redirect(['user-statistics', 'id' => $user_id]);
+        return $this->redirect(['user-statistics', 'user_id' => $user_id]);
     }
 
     /**
