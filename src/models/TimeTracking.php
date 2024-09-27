@@ -60,6 +60,7 @@ class TimeTracking extends \yii\db\ActiveRecord
         return TimeTracking::find()
                 ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
                 ->andWhere(['user_id' => $user_id])
+                ->orderBy('datetime_at ASC')
                 ->all();
     }
     
