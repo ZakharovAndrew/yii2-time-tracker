@@ -20,6 +20,11 @@ use ZakharovAndrew\TimeTracker\Module;
     <?= $form->field($model, 'datetime_at')->textInput() ?>
 
     <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
+    
+    <?= $this->render('_activity_properties', [
+        'properties' => $properties,
+        'activity_id' => $model->id
+    ]) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>

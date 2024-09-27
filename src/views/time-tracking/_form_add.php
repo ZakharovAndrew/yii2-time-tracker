@@ -18,28 +18,11 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 
     <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
     
-    <?php foreach ($properties as $property) {?>
-            <div class="form-group">
-                <label><?= $property->name ?></label>
-                <?php
-                if ($property->type == 2 && !empty($property->getValues())) {
-                    echo Html::dropDownList( $property->id, $property->getUserPropertyValue(), $property->getValues(), [
-                            'id' => 'property-'.$property->id,
-                            'class' => 'form-control',
-                            'prompt' => ''
-                        ]);
-                } else {
-                    // determine the type
-                    $inputType = 'text';
-                    if ($property->type == UserSettingsConfig::TYPE_TIME) {
-                        $inputType = 'time';
-                    } else if ($property->type == UserSettingsConfig::TYPE_DATE) {
-                        $inputType = 'date';
-                    }
-                    echo Html::input($inputType, $property->id, $property->getUserPropertyValue(), ['id' => 'property-'.$property->id, 'class' => 'form-control']);
-                }?>
-            </div>
-        <?php } ?>
+    <?= $this->render('_activity_properties', [
+        'properties' => $properties,
+        'activity_id' => null
+    ]) ?>
+    
 
     <div class="form-group">
         <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>

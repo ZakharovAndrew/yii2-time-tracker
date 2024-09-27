@@ -7,7 +7,7 @@ use ZakharovAndrew\TimeTracker\Module;
 /** @var ZakharovAndrew\TimeTracker\models\TimeTracking $model */
 
 $this->title = Module::t('Edit activity');
-$this->params['breadcrumbs'][] = ['label' => 'Time Trackings', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Module::t('Time Tracking'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="time-tracking-update">
@@ -16,7 +16,8 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <?= $this->render('_form', [
         'model' => $model,
-        'activity' => $activity
+        'activity' => $activity,
+        'properties' => \ZakharovAndrew\TimeTracker\models\ActivityProperty::find()->all()
     ]) ?>
 
 </div>

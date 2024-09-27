@@ -66,7 +66,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
         ];
     }
     
-    public function getUserPropertyValue($user_id = null)
+    public function getUserPropertyValue($activity_id, $user_id = null)
     {
         if (empty($user_id)) {
             $user_id = Yii::$app->user->id;
@@ -76,6 +76,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
             ->select('values')
             ->where([
                 'property_id' => $this->id,
+                'activity_id' => $activity_id,
                 'user_id' => $user_id
             ])->one();
         

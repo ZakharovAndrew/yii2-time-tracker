@@ -29,7 +29,7 @@ class UserActivityProperty extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'property_id'], 'integer'],
+            [['user_id', 'property_id', 'activity_id'], 'integer'],
             [['values'], 'string', 'max' => 500],
             [['property_id'], 'exist', 'skipOnError' => true, 'targetClass' => ActivityProperty::class, 'targetAttribute' => ['property_id' => 'id']],
         ];
@@ -64,11 +64,12 @@ class UserActivityProperty extends \yii\db\ActiveRecord
      * @param int $property_id
      * @param string $values
      */
-    public static function saveValue($user_id, $property_id, $values)
+    public static function saveValue($user_id, $property_id, $activity_id, $values)
     {
         $params = [
             'user_id' => $user_id,
-            'property_id' => $property_id
+            'property_id' => $property_id,
+            'activity_id' => $activity_id,
         ];
         
         // maybe the setting already exists
