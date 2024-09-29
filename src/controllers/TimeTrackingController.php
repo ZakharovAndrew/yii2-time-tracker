@@ -95,7 +95,7 @@ class TimeTrackingController extends ParentController
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Module::t('The start of the working day is marked'));
             } else {
-                Yii::$app->session->setFlash('error', 'Ошибка проставления начала работы');
+                Yii::$app->session->setFlash('error', Module::t('Error in setting the start date of work.'));
             }
             
             return $this->redirect('index');
@@ -167,7 +167,7 @@ class TimeTrackingController extends ParentController
         if ($model->save()) {
             Yii::$app->session->setFlash('success', Module::t('The end of the working day is marked'));
         } else {
-            Yii::$app->session->setFlash('error', 'Ошибка проставления начала работы');
+            Yii::$app->session->setFlash('error', Module::t('Error in setting the start date of work.'));
         }
         
         return $this->redirect('index');
@@ -335,12 +335,12 @@ class TimeTrackingController extends ParentController
         
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                Yii::$app->session->setFlash('success', 'Activity added');
+                Yii::$app->session->setFlash('success', Module::t('Activity added'));
                 return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
             }
         } 
         
-        Yii::$app->session->setFlash('error', 'Ошибка при добавление активности пользователю');
+        Yii::$app->session->setFlash('error', Module::t('Error when adding activity to a user.'));
         
         return $this->redirect(['index']);
     }
