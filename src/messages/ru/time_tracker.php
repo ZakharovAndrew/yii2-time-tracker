@@ -76,6 +76,7 @@ return [
     'String' => 'Строка',
     'Date' => 'Дата',
     'Time' => 'Время',
+    'Checkbox' => 'Чекбокс',
     'Values' => 'Значения',
     'Position' => 'Позиция',
     'Update Activity Property' => 'Обновить свойство активности',

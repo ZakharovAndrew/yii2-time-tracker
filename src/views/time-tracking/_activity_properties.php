@@ -17,6 +17,8 @@ use ZakharovAndrew\TimeTracker\models\ActivityProperty;
                     'class' => 'form-control',
                     'prompt' => ''
                 ]);
+        } else if ($property->type == ActivityProperty::TYPE_CHECKBOX) {
+            echo Html::checkbox($property->id, $property->getUserPropertyValue($activity_id));
         } else {
             // determine the type
             $inputType = 'text';
