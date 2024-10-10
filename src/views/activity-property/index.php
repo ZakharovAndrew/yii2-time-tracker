@@ -31,7 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
-            'type',
+            [
+                'attribute' => 'type',
+                'format' => 'raw',
+                'filter' => ActivityProperty::getTypeOfProperties(),
+                'value' => function ($model) {
+                    return ActivityProperty::getTypeOfProperties()[$model->type] ?? '';
+                },
+            ],
             'pos',
             'values:ntext',
             [
