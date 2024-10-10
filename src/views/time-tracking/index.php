@@ -344,7 +344,7 @@ $classModal::begin([
 
 echo $this->render('_form_add', [
         'model' => new TimeTracking(),
-        'properties' => \ZakharovAndrew\TimeTracker\models\ActivityProperty::find()->all()
+        'properties' => \ZakharovAndrew\TimeTracker\models\ActivityProperty::find()->orderBy('pos ASC')->all()
     ]);
 
 $classModal::end();
