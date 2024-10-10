@@ -54,6 +54,25 @@ $(".settings-modal .btn-modal-close").click(function() {
     $(this).parent().parent().removeClass('show');
 });
         
+// filter
+$(document).on('keyup', '#users-list-filter', function() {
+    let str = $(this).val().toLowerCase();
+    let filter_item = $(this).data('filter-item');
+
+    if (str == '') {
+        $(filter_item).show();
+        return;
+    }
+
+    $(filter_item).each(function(){
+        if ($(this).html().toLowerCase().includes(str)) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });        
+});
+        
 JS;
 $this->registerJs($script, yii\web\View::POS_READY);
 ?>
@@ -64,6 +83,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
 <?= $this->render('_timeline_style') ?>
 <style>
     h1 {display:inline-block}
+    .form-users-list .search-box {
+        margin-bottom:5px;
+    }
 </style>
 <div class="time-tracking-statistics">
 
@@ -192,10 +214,11 @@ $classModal::end();
     
     <label>Пользователи</label>
     <div class="form-users-list">
+        <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item"></div>
         <?php
-        $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->all();
+        $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->orderBy('name')->all();
         foreach ($users as $user) {
-            echo Html::checkbox('users[]', false, ['value' => $user->id, 'label' => $user->name]);
+            echo '<div class="users-list-item">'.Html::checkbox('users[]', false, ['value' => $user->id, 'label' => $user->name]).'</div>';
         } ?>
     </div>
 
