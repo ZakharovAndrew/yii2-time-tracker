@@ -13,6 +13,7 @@ use ZakharovAndrew\TimeTracker\Module;
  * @property int|null $type
  * @property int|null $pos
  * @property string|null $values
+ * @property string|null $params
  */
 class ActivityProperty extends \yii\db\ActiveRecord
 {
@@ -39,6 +40,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
         return [
             [['type', 'pos'], 'integer'],
             [['values'], 'string'],
+            [['params'], 'safe'],
             [['name'], 'string', 'max' => 200],
         ];
     }
@@ -67,6 +69,18 @@ class ActivityProperty extends \yii\db\ActiveRecord
             static::TYPE_CHECKBOX => Module::t('Checkbox'),
         ];
     }
+    
+    public static function getComparisonList()
+    {
+        return [
+            '=' => '=',
+            '>' => '>',
+            '<' => '<',
+            '<>' => Module::t('not equal'),
+            'contains' => Module::t('contains')
+        ];
+    }
+    
     
     public function getUserPropertyValue($activity_id, $user_id = null)
     {
@@ -101,4 +115,33 @@ class ActivityProperty extends \yii\db\ActiveRecord
         
         return array_combine($arr, $arr);
     }
+    
+    public function load($data, $form_name = null)
+    {
+        $result = parent::load($data, $form_name);
+        
+        $this->params = json_encode($this->params, JSON_UNESCAPED_UNICODE);
+        
+        return $result;
+    }
+    
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if (is_array($this->params)) {
+                $this->params = json_encode($this->params, JSON_UNESCAPED_UNICODE);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public function afterFind()
+    {
+        parent::afterFind();
+        $this->params = json_decode($this->params ?? '', JSON_UNESCAPED_UNICODE);
+        return true;
+    }    
 }

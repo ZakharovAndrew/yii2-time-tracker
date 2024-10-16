@@ -83,4 +83,14 @@ return [
     'Update Activity Property' => 'Обновить свойство активности',
     'Error in setting the start date of work.' => 'Ошибка проставления начала работы',
     'Error when adding activity to a user.' => 'Ошибка при добавление активности пользователю',
+    
+    'Visibility conditions' => 'Условия видимости',
+    'not equal' => 'не равно',
+    'contains' => 'содержит',
+    'Value' => 'Значение',
+    
+    'Username' => 'Логин',
+    'Sex' => 'Пол',
+    'Phone' => 'Телефон',
+    
 ];
