@@ -38,7 +38,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'pos'], 'integer'],
+            [['type', 'pos', 'required'], 'integer'],
             [['values'], 'string'],
             [['params'], 'safe'],
             [['name'], 'string', 'max' => 200],
@@ -56,6 +56,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
             'type' => Module::t('Type'),
             'pos' => Module::t('Position'),
             'values' => Module::t('Values'),
+            'required' => Module::t('Required'),
         ];
     }
     

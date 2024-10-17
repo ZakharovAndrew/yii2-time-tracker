@@ -15,13 +15,14 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             ])
             ->asArray()
             ->all(), 'code', 'values');
+
 ?>
 
 <?php foreach ($properties as $property) {
     // property value
     $value = $property->getUserPropertyValue($activity_id);
 
-    $hide = false;
+    $show = true;
     
     if (is_array($property->params) && isset($property->params['user_property'])) {
         foreach ($property->params['user_property'] as $param) {
@@ -29,21 +30,36 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
                 continue;
             }
             
-            if (!isset($user_settings[$param['name']])) {
-                $hide = true;
+            if (!isset($user_settings[$param['name']]) && $param['name'] == 'AND') {
+                $show = false;
                 continue;
             }
             
             //compare
             switch ($param['comparison']) {
                 case '=':
-                    $hide = ($user_settings[$param['name']] != $param['value']);
+                    $compare = ($user_settings[$param['name']] == $param['value']);
                     break;
+                case '<>':
+                    $compare = ($user_settings[$param['name']] != $param['value']);
+                    break;
+                case '>':
+                    $compare = ((int)$user_settings[$param['name']] > (int)$param['value']);
+                    break;
+                case '<':
+                    $compare = ((int)$user_settings[$param['name']] < (int)$param['value']);
+                    break;
+            }
+            
+            if ($param['logic'] == 'OR') {
+                $show = $show || $compare;
+            } else {
+                $show = $show && $compare;
             }
         }
     }
     
-    if ($hide) {
+    if (!$show) {
         continue;
     }
 ?>
@@ -54,10 +70,11 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             echo Html::dropDownList($property->id, $value, $property->getValues(), [
                     'id' => 'property-'.$property->id,
                     'class' => 'form-control',
-                    'prompt' => ''
+                    'prompt' => '',
+                    'required' => $property->required
                 ]);
         } else if ($property->type == ActivityProperty::TYPE_CHECKBOX) {
-            echo Html::checkbox($property->id, $value);
+            echo Html::checkbox($property->id, $value, ['required' => $property->required]);
         } else {
             // determine the type
             $inputType = 'text';
@@ -66,7 +83,7 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             } else if ($property->type == ActivityProperty::TYPE_DATE) {
                 $inputType = 'date';
             }
-            echo Html::input($inputType, $property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'form-control']);
+            echo Html::input($inputType, $property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'form-control', 'required' => $property->required]);
         }?>
     </div>
 <?php } ?>

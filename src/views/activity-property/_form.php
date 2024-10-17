@@ -26,10 +26,15 @@ UserAssets::register($this);
 
     <?= $form->field($model, 'values')->textarea(['rows' => 6]) ?>
     
+    <?= $form->field($model, 'required')->dropDownList([ 0 => Module::t('No'), 1 => Module::t('Yes')], ['class' => 'form-control form-select']) ?>
+    
     <h3><?= Module::t('Visibility conditions') ?></h3>
     <?php for($i = 1; $i <= 10; $i++) { ?>
     <div class="row" style="padding-bottom: 15px;">
-        <div class="col-md-5">
+        <div class="col-md-2">
+            <?=$form->field($model, "params[user_property][$i][logic]")->dropDownList(['AND' => 'И', 'OR' => 'ИЛИ'], ['prompt' => '', 'class' => 'form-control form-select'])->label("Логика"); ?>
+        </div>
+        <div class="col-md-4">
             <?=$form->field($model, "params[user_property][$i][name]")->dropDownList(array_merge([
                     'email' => 'Email',
                     'username' => Module::t('Username'),
@@ -41,7 +46,7 @@ UserAssets::register($this);
         <div class="col-md-2">
             <?=$form->field($model, "params[user_property][$i][comparison]")->dropDownList(ActivityProperty::getComparisonList(), ['prompt' => '', 'class' => 'form-control form-select'])->label("Сравнение"); ?>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <?=$form->field($model, "params[user_property][$i][value]")->textInput()->label("Значение"); ?>
         </div>
     </div>
