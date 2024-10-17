@@ -47,7 +47,7 @@ UserAssets::register($this);
             <?=$form->field($model, "params[user_property][$i][comparison]")->dropDownList(ActivityProperty::getComparisonList(), ['prompt' => '', 'class' => 'form-control form-select'])->label("Сравнение"); ?>
         </div>
         <div class="col-md-4">
-            <?=$form->field($model, "params[user_property][$i][value]")->textInput()->label("Значение"); ?>
+            <?=$form->field($model, "params[user_property][$i][value]")->textInput()->label(Module::t('Value')); ?>
         </div>
     </div>
     <?php } ?>
