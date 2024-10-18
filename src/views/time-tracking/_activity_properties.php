@@ -30,7 +30,8 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
                 continue;
             }
             
-            if (!isset($user_settings[$param['name']]) && $param['name'] == 'AND') {
+            $user_settings_value = $user_settings[$param['name']] ?? null;
+            if (!isset($user_settings_value)) {
                 $show = false;
                 continue;
             }
@@ -38,16 +39,16 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             //compare
             switch ($param['comparison']) {
                 case '=':
-                    $compare = ($user_settings[$param['name']] == $param['value']);
+                    $compare = ($user_settings_value == $param['value']);
                     break;
                 case '<>':
-                    $compare = ($user_settings[$param['name']] != $param['value']);
+                    $compare = ($user_settings_value != $param['value']);
                     break;
                 case '>':
-                    $compare = ((int)$user_settings[$param['name']] > (int)$param['value']);
+                    $compare = ((int)$user_settings_value > (int)$param['value']);
                     break;
                 case '<':
-                    $compare = ((int)$user_settings[$param['name']] < (int)$param['value']);
+                    $compare = ((int)$user_settings_value < (int)$param['value']);
                     break;
             }
             
@@ -66,15 +67,16 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
     <div class="form-group">
         <label><?= $property->name ?></label>
         <?php
+        $required = ($property->required ?? false) == true;
         if ($property->type == ActivityProperty::TYPE_STRING && !empty($property->getValues())) {
             echo Html::dropDownList($property->id, $value, $property->getValues(), [
                     'id' => 'property-'.$property->id,
                     'class' => 'form-control',
                     'prompt' => '',
-                    'required' => $property->required
+                    'required' => $required
                 ]);
         } else if ($property->type == ActivityProperty::TYPE_CHECKBOX) {
-            echo Html::checkbox($property->id, $value, ['required' => $property->required]);
+            echo Html::checkbox($property->id, $value, ['required' => $required]);
         } else {
             // determine the type
             $inputType = 'text';
@@ -83,7 +85,7 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             } else if ($property->type == ActivityProperty::TYPE_DATE) {
                 $inputType = 'date';
             }
-            echo Html::input($inputType, $property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'form-control', 'required' => $property->required]);
+            echo Html::input($inputType, $property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'form-control', 'required' => $required]);
         }?>
     </div>
 <?php } ?>
