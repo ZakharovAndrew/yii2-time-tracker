@@ -30,11 +30,12 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
                 continue;
             }
             
-            $user_settings_value = $user_settings[$param['name']] ?? null;
-            if (!isset($user_settings_value)) {
+            if (!isset($user_settings[$param['name']]) && $param['logic'] == 'AND') {
                 $show = false;
                 continue;
             }
+            
+            $user_settings_value = $user_settings[$param['name']] ?? null;
             
             //compare
             switch ($param['comparison']) {
