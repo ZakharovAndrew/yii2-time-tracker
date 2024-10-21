@@ -218,7 +218,8 @@ $classModal::end();
         <?php
         $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->orderBy('name')->all();
         foreach ($users as $user) {
-            echo '<div class="users-list-item">'.Html::checkbox('users[]', false, ['value' => $user->id, 'label' => $user->name]).'</div>';
+            $value = in_array($user->id, $selected_user_ids ?? []);
+            echo '<div class="users-list-item">'.Html::checkbox('users[]', $value, ['value' => $user->id, 'label' => $user->name]).'</div>';
         } ?>
     </div>
 

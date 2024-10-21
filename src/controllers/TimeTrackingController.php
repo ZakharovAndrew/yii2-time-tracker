@@ -235,6 +235,7 @@ class TimeTrackingController extends ParentController
             'datetime_start' => $datetime_start,
             'datetime_stop' => $datetime_stop,
             'activities' => Activity::getList(),
+            'selected_user_ids' => $selectedUserIds,
             'users' => ArrayHelper::map(
                         \ZakharovAndrew\user\models\User::find()
                             ->where(['id' => $users])
