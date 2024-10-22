@@ -64,7 +64,7 @@
     content: '';
     width: 10px;
     height: 10px;
-    border-radius: .25rem;
+    border-radius: 50%;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -72,28 +72,21 @@
     background: #fff;
 }
 .timeline-icon .badge-dot {
-    box-shadow: 0 0 0 5px #fff;
+    box-shadow: 0 0 0 2px #fff;
 }
 
 .badge-dot {
+    position: relative;
     font-weight: 700;
     text-transform: uppercase;
     padding: 5px 10px;
-    min-width: 19px;
-    
     text-indent: -999em;
     padding: 0;
     width: 8px;
     height: 8px;
-    border: transparent solid 1px;
-    border-radius: 30px;
-    min-width: 2px;
-}
-
-.badge-dot-xl {
+    border-radius:50%;
     width: 18px;
     height: 18px;
-    position: relative;
 }
 
 .timeline-header {
