@@ -6,7 +6,7 @@
 }
 .timeline-element {
     position: relative;
-    margin: 0 0 1rem;
+    padding: 0 0 1rem;
 }
 .vertical-timeline::before {
     content: '';
@@ -109,7 +109,7 @@
     padding: 3px 7px;
     margin-bottom: 5px;
 }
-.vertical-timeline:hover .btn-edit-activity, .vertical-timeline:hover .btn-delete-activity {
+.timeline-element:hover .btn-edit-activity, .timeline-element:hover .btn-delete-activity {
     display:inline-block;
 }
 .btn-add-activity {

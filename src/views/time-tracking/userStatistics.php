@@ -43,12 +43,12 @@ $this->registerJs($script, yii\web\View::POS_READY);
                     <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>
                     
                 <?php }?></b>
-                <?php foreach ($item as $activity) {?>
                 <div class="vertical-timeline">
+                <?php foreach ($item as $activity) {?>
                     <div class="timeline-element">
                         <div>
                             <span class="timeline-icon">
-                                <i class="badge badge-dot badge-dot-xl badge-warning activity-<?= $activity->activity_id ?>"> </i>
+                                <i class="badge badge-dot activity-<?= $activity->activity_id ?>"> </i>
                             </span>
                             <div class="timeline-content">
                                 <h4 class="timeline-title"><?= Activity::getList()[$activity->activity_id] ?? ''  ?></h4>
@@ -83,9 +83,8 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             </div>
                         </div>
                     </div>
-                </div>
-
                 <?php } ?>
+                </div>
             </div>
         </td>
         <?php } ?>

@@ -54,25 +54,6 @@ $(".settings-modal .btn-modal-close").click(function() {
     $(this).parent().parent().removeClass('show');
 });
         
-// filter
-$(document).on('keyup', '#users-list-filter', function() {
-    let str = $(this).val().toLowerCase();
-    let filter_item = $(this).data('filter-item');
-
-    if (str == '') {
-        $(filter_item).show();
-        return;
-    }
-
-    $(filter_item).each(function(){
-        if ($(this).html().toLowerCase().includes(str)) {
-            $(this).show();
-        } else {
-            $(this).hide();
-        }
-    });        
-});
-        
 JS;
 $this->registerJs($script, yii\web\View::POS_READY);
 ?>
@@ -85,14 +66,6 @@ $this->registerJs($script, yii\web\View::POS_READY);
     h1 {display:inline-block}
     .form-users-list .search-box {
         margin-bottom:5px;
-    }
-    .search-box {
-        background: #f3f9fe;
-        /* border-radius: 8px; */
-        padding: 12px 16px 3px 16px;
-        max-height: 250px;
-        overflow-y: auto;
-        margin: 5px -15px 0;
     }
 </style>
 <div class="time-tracking-statistics">
@@ -140,7 +113,6 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 'date' => date('d.m.Y', strtotime($activity->datetime_at)),
                                 'comment' => $activity->comment ?? ''
                             ];
-                            
                         }
                         
                         //not current day
@@ -191,7 +163,7 @@ $classModal::end();
 
 <div class="settings-modal" data-modal-name="settings">
     <div class="settings-modal-title">
-        <div>Фильтр</div>
+        <div><?= Module::t('Filter') ?></div>
         <div class="btn btn-modal-close">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14px" height="14px" viewBox="0 0 50 50" version="1.1">
 <g id="surface1">
@@ -220,9 +192,9 @@ $classModal::end();
         <?= Html::input('input', 'username', $username ?? '', ['class' => 'form-control']) ?>
     </div> -->
     
-    <label>Пользователи</label>
-    <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item"></div>
+    <label><?= Module::t('Users') ?></label>
     <div class="form-users-list">
+        <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item" class="filter-control"></div>
         <?php
         $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->orderBy('name')->all();
         foreach ($users as $user) {
@@ -241,21 +213,6 @@ $classModal::end();
 
 <script>
     let data = <?= json_encode($activity_list, JSON_UNESCAPED_UNICODE) ?>;
-    
-    function getActivityHtml(activity) {
-        return `<div class="timeline-element">
-                    <div>
-                        <span class="timeline-icon">
-                            <i class="badge badge-dot badge-dot-xl badge-warning activity-${activity.id}"> </i>
-                        </span>
-                        <div class="timeline-content">
-                            <h4 class="timeline-title">${activity.activity}</h4>
-                            <p> ${activity.comment}</p>
-                            <span class="timeline-date">${activity.time}</span>
-                        </div>
-                    </div>
-                </div>`;
-    }
 </script>
 
 
