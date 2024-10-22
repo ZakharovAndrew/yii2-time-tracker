@@ -87,6 +87,8 @@
     border-radius:50%;
     width: 18px;
     height: 18px;
+    color: #212529;
+    background-color: #ae71ce;
 }
 
 .timeline-header {
@@ -100,10 +102,7 @@
     box-shadow: none;
     margin-bottom: 0;
 }
-.badge-warning {
-    color: #212529;
-    background-color: #ae71ce;
-}
+
 .btn-edit-activity, .btn-delete-activity {
     display:none;
     font-size: 12px;
