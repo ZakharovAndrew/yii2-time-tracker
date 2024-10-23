@@ -16,6 +16,12 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 
     <?= $form->field($model, 'activity_id')->dropDownList(Activity::getActivityByUserId($user_id, true), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
+    <?= $this->render('_activity_properties', [
+        'properties' => \ZakharovAndrew\TimeTracker\models\ActivityProperty::find()->orderBy('pos ASC')->all(),
+        'activity_id' => null,
+        'user_id' => $model->user_id
+    ]) ?>
+    
     <div class="form-group">
         <label><?= Module::t('Activity time') ?></label>
         <?= Html::input('time', 'activity_time', '', ['class' => 'form-control', 'id'=> "timetracking-activity_time"]); ?>

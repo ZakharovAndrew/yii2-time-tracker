@@ -40,7 +40,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
 
             <td>
                 <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?><?php if ($is_editor) {?>
-                    <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>
+                    <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-bs-toggle="modal" data-target="#form-add-activity" data-bs-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>
                     
                 <?php }?></b>
                 <div class="vertical-timeline">

@@ -23,7 +23,8 @@ use ZakharovAndrew\TimeTracker\Module;
     
     <?= $this->render('_activity_properties', [
         'properties' => $properties,
-        'activity_id' => $model->id
+        'activity_id' => $model->activity_id,
+        'user_id' => \Yii::$app->user->id
     ]) ?>
 
     <div class="form-group">

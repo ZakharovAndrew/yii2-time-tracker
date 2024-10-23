@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use ZakharovAndrew\TimeTracker\models\ActivityProperty;
+use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\user\models\UserSettings;
 
 /** @var yii\web\View $this */
@@ -11,7 +12,7 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             ->select(['user_settings_config.code', 'user_settings.values'])
             ->leftJoin('user_settings_config', 'user_settings.setting_config_id = user_settings_config.id')
             ->where([
-                'user_settings.user_id' => \Yii::$app->user->id
+                'user_settings.user_id' => $user_id
             ])
             ->asArray()
             ->all(), 'code', 'values');

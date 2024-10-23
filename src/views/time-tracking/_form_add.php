@@ -18,7 +18,8 @@ use ZakharovAndrew\TimeTracker\models\Activity;
     
     <?= $this->render('_activity_properties', [
         'properties' => $properties,
-        'activity_id' => null
+        'activity_id' => null,
+        'user_id' => \Yii::$app->user->id
     ]) ?>
     
     <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
