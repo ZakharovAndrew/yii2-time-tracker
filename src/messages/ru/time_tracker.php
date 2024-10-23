@@ -71,6 +71,7 @@ return [
     'Apply' => 'Применить',
     
     'Activity Properties' => 'Свойства активности',
+    'Activity Property' => 'Свойство активности',
     'Create Activity Property' => 'Создать свойство активности',
     'Type' => 'Тип',
     'Integer' => 'Целое число',

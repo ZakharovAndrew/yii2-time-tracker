@@ -53,7 +53,7 @@ class Activity extends \yii\db\ActiveRecord
     
     public static function  getDropdownList()
     {
-        return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'name');
+        return ArrayHelper::map(static::find()->asArray()->cache(600)->all(), 'id', 'name');
     }
     
     public static function  getActivityColors()
@@ -108,7 +108,7 @@ class Activity extends \yii\db\ActiveRecord
         return ArrayHelper::map(static::userActivity($user_id, "t.comment_templates <> '' AND t.comment_templates IS NOT NULL"), 'id', 'comment_templates');
     }
     
-    public static function  getList()
+    public static function getList()
     {
         $list = static::getDropdownList();
         

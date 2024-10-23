@@ -51,6 +51,25 @@ UserAssets::register($this);
         </div>
     </div>
     <?php } ?>
+    
+    <h3><?= Module::t('Visibility conditions') ?> (<?= Module::t('Activity Properties') ?>)</h3>
+    <?php for($i = 1; $i <= 10; $i++) { ?>
+    <div class="row" style="padding-bottom: 15px;">
+        <div class="col-md-2">
+            <?=$form->field($model, "params[activity_property][$i][logic]")->dropDownList(['AND' => 'И', 'OR' => 'ИЛИ'], ['prompt' => '', 'class' => 'form-control form-select'])->label("Логика"); ?>
+        </div>
+        <div class="col-md-4">
+            <?=$form->field($model, "params[activity_property][$i][name]")->dropDownList(\yii\helpers\ArrayHelper::map(ActivityProperty::find()->where(['<>', 'id', $model->id])->asArray()->all(), "id", "name")
+                , ['prompt' => '', 'class' => 'form-control form-select'])->label(Module::t('Activity Property'). " #$i"); ?>
+        </div>
+        <div class="col-md-2">
+            <?=$form->field($model, "params[activity_property][$i][comparison]")->dropDownList(array_merge(ActivityProperty::getComparisonList(), ['checked' => 'checked']), ['prompt' => '', 'class' => 'form-control form-select'])->label("Сравнение"); ?>
+        </div>
+        <div class="col-md-4">
+            <?=$form->field($model, "params[activity_property][$i][value]")->textInput()->label(Module::t('Value')); ?>
+        </div>
+    </div>
+    <?php } ?>
 
     <div class="form-group">
         <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>

@@ -17,6 +17,8 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             ->asArray()
             ->all(), 'code', 'values');
 
+$js_logic = '';
+
 ?>
 
 <?php foreach ($properties as $property) {
@@ -65,6 +67,44 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
     if (!$show) {
         continue;
     }
+    
+    
+    if (is_array($property->params) && isset($property->params['activity_property'])) {
+        $comparison = [
+            '=' => '==',
+            '<>' => '!=',
+            '>' => '>',
+            '<' => '<',
+        ];
+        $property_logic = [];
+        foreach ($property->params['activity_property'] as $param) {
+            if (empty($param['comparison']) || empty($param['name'])) {
+                continue;
+            }
+            
+            if (isset($comparison[$param['comparison']])) {
+                $rule = '($("#property-'.$param['name'].'").val()'.$comparison[$param['comparison']].$param['value'].' )';
+            } else if ($param['comparison'] == 'checked') {
+                $rule = '($("#property-'.$param['name'].'").is(":checked"))';
+            } else if ($param['comparison'] == 'contain') {
+                $rule = '($("#property-'.$param['name'].'").val().includes("'.$param['value'].'") )';
+            }                    
+            
+            if (count($property_logic) == 0) {
+                $property_logic[] = $rule;
+            } else {
+                if ($param['logic'] == 'OR') {
+                    $property_logic[] = '||'.$rule;
+                } else {
+                    $property_logic[] = '&&'.$rule;
+                }
+            }
+            
+        }
+        if (count($property_logic) > 0) {
+            $js_logic .= 'if ('.implode('', $property_logic).') {$("#property-'.$property->id.'").parent().show()} else {$("#property-'.$property->id.'").parent().hide()}'."\n";
+        }
+    }
 ?>
     <div class="form-group">
         <label><?= $property->name ?></label>
@@ -73,12 +113,12 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
         if ($property->type == ActivityProperty::TYPE_STRING && !empty($property->getValues())) {
             echo Html::dropDownList($property->id, $value, $property->getValues(), [
                     'id' => 'property-'.$property->id,
-                    'class' => 'form-control',
+                    'class' => 'form-control activity-property',
                     'prompt' => '',
                     'required' => $required
                 ]);
         } else if ($property->type == ActivityProperty::TYPE_CHECKBOX) {
-            echo Html::checkbox($property->id, $value, ['required' => $required]);
+            echo Html::checkbox($property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'activity-property', 'required' => $required]);
         } else {
             // determine the type
             $inputType = 'text';
@@ -87,7 +127,22 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             } else if ($property->type == ActivityProperty::TYPE_DATE) {
                 $inputType = 'date';
             }
-            echo Html::input($inputType, $property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'form-control', 'required' => $required]);
+            echo Html::input($inputType, $property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'form-control activity-property', 'required' => $required]);
         }?>
     </div>
-<?php } ?>
+<?php }
+
+// JS SCRIPT for show/hide the properties
+
+$script = <<< JS
+function activity_property_check() {
+    $js_logic
+}
+activity_property_check();
+        
+$('.activity-property').on('change keyup', function () {
+    activity_property_check();
+});
+JS;
+
+$this->registerJs($script, yii\web\View::POS_READY);
