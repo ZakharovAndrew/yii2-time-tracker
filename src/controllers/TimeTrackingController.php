@@ -197,30 +197,7 @@ class TimeTrackingController extends ParentController
             $roles = array_merge(explode(',', $params), $roles);
         }
         
-        if (count($roles) == 0) {
-            $query = TimeTracking::find()
-                ->leftJoin('users', 'users.id = time_tracking.user_id')
-                ->andWhere(['>', 'datetime_at', $start_day])
-                ->andWhere(['<=', 'datetime_at', $stop_day])
-                //->andWhere('users.id' => $users)
-                ->orderBy('datetime_at');
-        } else {
-            $query = TimeTracking::find()
-                ->leftJoin('user_roles', 'user_roles.user_id = time_tracking.user_id')
-                ->leftJoin('roles', 'user_roles.role_id = roles.id')
-                ->leftJoin('users', 'users.id = time_tracking.user_id')
-                ->where(['roles.code' => $roles])
-                ->andWhere(['>', 'datetime_at', $start_day])
-                ->andWhere(['<=', 'datetime_at', $stop_day])
-                //->andWhere('LIKE', 'users.name', $username)
-                ->orderBy('datetime_at');
-        }
-        
-        if (is_array($selectedUserIds) && count($selectedUserIds) > 0) {
-            $query->andWhere(['time_tracking.user_id' => $selectedUserIds]);
-        }
-        
-        $model = $query->all();
+        $model = TimeTracking::getActivityList($start_day, $stop_day, $selectedUserIds, $roles);
         
         $timeline = [];
         $users = [];

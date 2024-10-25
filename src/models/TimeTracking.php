@@ -81,6 +81,42 @@ class TimeTracking extends \yii\db\ActiveRecord
         return array_intersect_key($list, $user_roles);
     }
     
+    /**
+     * Get a list of activities for the selected period
+     * 
+     * @param string $start_day - Start of interval (format Y-m-d)
+     * @param string $stop_day - Finish of interval (format Y-m-d)
+     * @param array $user - List of user IDs
+     * @param array $roles - List of user role IDs
+     */
+    public static function getActivityList($start_day, $stop_day, $user = [], $roles = [])
+    {
+        if (!is_array($roles) || count($roles) == 0) {
+            $query = static::find()
+                ->leftJoin('users', 'users.id = time_tracking.user_id')
+                ->andWhere(['>', 'datetime_at', $start_day])
+                ->andWhere(['<=', 'datetime_at', $stop_day])
+                //->andWhere('users.id' => $users)
+                ->orderBy('datetime_at');
+        } else {
+            $query = static::find()
+                ->leftJoin('user_roles', 'user_roles.user_id = time_tracking.user_id')
+                ->leftJoin('roles', 'user_roles.role_id = roles.id')
+                ->leftJoin('users', 'users.id = time_tracking.user_id')
+                ->where(['roles.code' => $roles])
+                ->andWhere(['>', 'datetime_at', $start_day])
+                ->andWhere(['<=', 'datetime_at', $stop_day])
+                //->andWhere('LIKE', 'users.name', $username)
+                ->orderBy('datetime_at');
+        }
+        
+        if (is_array($user) && count($user) > 0) {
+            $query->andWhere(['time_tracking.user_id' => $selectedUserIds]);
+        }
+        
+        return $query->all();
+    }
+    
     public function beforeSave($insert)
     {
         $this->datetime_update = date('Y-m-d H:i:s');
