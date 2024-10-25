@@ -41,7 +41,7 @@ UserAssets::register($this);
                     'sex' => Module::t('Sex'),
                     'phone' => Module::t('Phone'),
                 ], \yii\helpers\ArrayHelper::map(UserSettingsConfig::find()->asArray()->all(), "code", "title")
-                ), ['prompt' => '', 'class' => 'form-control form-select'])->label("Свойство пользователя № $i"); ?>
+                ), ['prompt' => '', 'class' => 'form-control form-select'])->label(Module::t('User Property')." # $i"); ?>
         </div>
         <div class="col-md-2">
             <?=$form->field($model, "params[user_property][$i][comparison]")->dropDownList(ActivityProperty::getComparisonList(), ['prompt' => '', 'class' => 'form-control form-select'])->label("Сравнение"); ?>
@@ -53,13 +53,15 @@ UserAssets::register($this);
     <?php } ?>
     
     <h3><?= Module::t('Visibility conditions') ?> (<?= Module::t('Activity Properties') ?>)</h3>
+    <?php $allow_activities = \yii\helpers\ArrayHelper::map(ActivityProperty::find()->where(['<>', 'id', $model->id ?? 0])->asArray()->all(), "id", "name");
+    ?>
     <?php for($i = 1; $i <= 10; $i++) { ?>
     <div class="row" style="padding-bottom: 15px;">
         <div class="col-md-2">
             <?=$form->field($model, "params[activity_property][$i][logic]")->dropDownList(['AND' => 'И', 'OR' => 'ИЛИ'], ['prompt' => '', 'class' => 'form-control form-select'])->label("Логика"); ?>
         </div>
         <div class="col-md-4">
-            <?=$form->field($model, "params[activity_property][$i][name]")->dropDownList(\yii\helpers\ArrayHelper::map(ActivityProperty::find()->where(['<>', 'id', $model->id])->asArray()->all(), "id", "name")
+            <?=$form->field($model, "params[activity_property][$i][name]")->dropDownList($allow_activities
                 , ['prompt' => '', 'class' => 'form-control form-select'])->label(Module::t('Activity Property'). " #$i"); ?>
         </div>
         <div class="col-md-2">
