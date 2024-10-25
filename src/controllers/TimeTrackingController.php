@@ -197,25 +197,17 @@ class TimeTrackingController extends ParentController
             $roles = array_merge(explode(',', $params), $roles);
         }
         
-        $model = TimeTracking::getActivityList($start_day, $stop_day, $selectedUserIds, $roles);
-        
-        $timeline = [];
-        $users = [];
-        foreach ($model as $item) {
-            $item_name = date('Y-m-d', strtotime($item->datetime_at));
-            $timeline[$item_name][$item->user_id][] = $item;
-            $users[$item->user_id] = $item->user_id;
-        }
-        
+        $model = TimeTracking::getActivityByDay($start_day, $stop_day, $selectedUserIds, $roles);
+          
         return $this->render('statistics', [
-            'timeline' => $timeline,
+            'timeline' => $model['days'],
             'datetime_start' => $datetime_start,
             'datetime_stop' => $datetime_stop,
             'activities' => Activity::getList(),
             'selected_user_ids' => $selectedUserIds,
             'users' => ArrayHelper::map(
                         \ZakharovAndrew\user\models\User::find()
-                            ->where(['id' => $users])
+                            ->where(['id' => $model['users_id']])
                             ->orderBy('name')
                             ->all(),
                         'id', 'name'

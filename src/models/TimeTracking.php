@@ -111,10 +111,37 @@ class TimeTracking extends \yii\db\ActiveRecord
         }
         
         if (is_array($user) && count($user) > 0) {
-            $query->andWhere(['time_tracking.user_id' => $selectedUserIds]);
+            $query->andWhere(['time_tracking.user_id' => $user]);
         }
         
         return $query->all();
+    }
+    
+    /**
+     * Get a list of activities by day for the selected period
+     * 
+     * @param string $start_day - Start of interval (format Y-m-d)
+     * @param string $stop_day - Finish of interval (format Y-m-d)
+     * @param array $user - List of user IDs
+     * @param array $roles - List of user role IDs
+     */
+    public static function getActivityByDay($start_day, $stop_day, $user = [], $roles = [])
+    {
+        $model = static::getActivityList($start_day, $stop_day, $user = [], $roles = []);
+        
+        $timeline = [];
+        $users = [];
+        
+        foreach ($model as $item) {
+            $item_name = date('Y-m-d', strtotime($item->datetime_at));
+            $timeline[$item_name][$item->user_id][] = $item;
+            $users[$item->user_id] = $item->user_id;
+        }
+        
+        return [
+            'days' => $timeline,
+            'users_id' => array_keys($users)
+        ];
     }
     
     public function beforeSave($insert)

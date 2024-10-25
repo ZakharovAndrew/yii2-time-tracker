@@ -20,27 +20,11 @@ $this->title = Module::t('Statistics');
 $this->params['breadcrumbs'][] = ['label' => Module::t('Time Tracking'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$str = Module::t('Activities');
-
 // for json
 $activity_list = [];
 $i = 1;
 
 $script = <<< JS
-        
-$('[data-toggle="popover"]').click(function() {
-    let id = $(this).data('id');
-    let day = $(this).data('day');
-
-    let content = '<div class="vertical-timeline">';
-    data[id].forEach((activity) => content += getActivityHtml(activity));
-    content += '</div>';
-        
-    // prepare and show modal
-    $("#popover-modal .modal-body").html(content);
-    $("#popover-modal-title").html('$str ' + $(this).data('user'));
-    $('#popover-modal').modal('show');
-});
 $("h1").append('<div id="filter" class="btn mg-top--10"><svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.906 300.906" xml:space="preserve"><path d="M288.953 0h-277c-5.522 0-10 4.478-10 10v49.531c0 5.522 4.478 10 10 10h12.372l91.378 107.397v113.978a10 10 0 0 0 15.547 8.32l49.5-33a9.999 9.999 0 0 0 4.453-8.32v-80.978l91.378-107.397h12.372c5.522 0 10-4.478 10-10V10c0-5.522-4.477-10-10-10zM167.587 166.77a9.999 9.999 0 0 0-2.384 6.48v79.305l-29.5 19.666V173.25a9.997 9.997 0 0 0-2.384-6.48L50.585 69.531h199.736l-82.734 97.239zM278.953 49.531h-257V20h257v29.531z"/></svg></div>');
 $("#filter").click(function() {
     if ($(".settings-modal").hasClass('show')) {
@@ -62,6 +46,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
   />
 <?= $this->render('_timeline_style') ?>
+<?= $this->render('_activity_modal') ?>
 <style>
     h1 {display:inline-block}
     .form-users-list .search-box {
@@ -102,9 +87,6 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             if ($activity->activity_id == Activity::WORK_START) {
                                 $start = date('H:i', strtotime($activity->datetime_at));
                             }
-                            if ($activity->activity_id == Activity::WORK_STOP) {
-                                $stop = date('H:i', strtotime($activity->datetime_at));
-                            }
                                             
                             $activity_list[$i][] = [
                                 'id' => $activity->activity_id,
@@ -115,7 +97,15 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             ];
                         }
                         
-                        //not current day
+                        // last status
+                        $end_activity = end($item[$user_id]);
+                        
+                        // find stop day
+                        if ($end_activity->activity_id == Activity::WORK_STOP) {
+                            $stop = date('H:i', strtotime($activity->datetime_at));
+                        }
+                        
+                        // not current day
                         if (date('d.m.Y', strtotime($day)) != date('d.m.Y') || !empty($stop)) {
                             $time_diff = round((strtotime($stop ?? $start) - strtotime($start))/3600);
                             if ($time_diff < 6) {
@@ -129,8 +119,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                         
                         
                         
-                        // last status
-                        $end_activity =  end($item[$user_id]);
+                        
                         $hint = '';
                         if ($end_activity->activity_id != Activity::WORK_STOP && $end_activity->activity_id != Activity::WORK_START) {
                             $hint = '<div class="last_activity">'.$activities[$activity->activity_id].'</div>';
@@ -151,15 +140,6 @@ $this->registerJs($script, yii\web\View::POS_READY);
     <?php } ?>
 
 </div>
-
-<?php
-$classModal::begin([
-    'id' => 'popover-modal',
-    ($bootstrapVersion==3 ? 'header' : 'title') => '<h2 id="popover-modal-title">'.Module::t('Activities').'</h2>',
-]);
-
-$classModal::end();
-?>
 
 <div class="settings-modal" data-modal-name="settings">
     <div class="settings-modal-title">
