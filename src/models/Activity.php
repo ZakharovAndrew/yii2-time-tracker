@@ -107,7 +107,7 @@ class Activity extends \yii\db\ActiveRecord
     {
         return ArrayHelper::map(static::userActivity($user_id, "t.comment_templates <> '' AND t.comment_templates IS NOT NULL"), 'id', 'comment_templates');
     }
-    
+        
     public static function getList()
     {
         $list = static::getDropdownList();

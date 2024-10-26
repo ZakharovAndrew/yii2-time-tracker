@@ -4,6 +4,7 @@ namespace ZakharovAndrew\TimeTracker\models;
 
 use Yii;
 use ZakharovAndrew\TimeTracker\Module;
+use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\user\models\Roles;
 use \yii\helpers\ArrayHelper;
 
@@ -142,6 +143,16 @@ class TimeTracking extends \yii\db\ActiveRecord
             'days' => $timeline,
             'users_id' => array_keys($users)
         ];
+    }
+    
+    public function isWorkDay()
+    {
+        return $this->activity_id == Activity::WORK_START;
+    }
+    
+    public function isWorkBreak()
+    {
+        return $this->activity_id == Activity::WORK_BREAK;
     }
     
     public function beforeSave($insert)

@@ -42,16 +42,16 @@ class TimeTrackingController extends ParentController
             
             $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
 
-            if ($activity->activity_id != Activity::WORK_STOP) {
+            if (!$activity->isWorkDay()) {
                 $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
             }
             
             // sum up working hours
-            if ($activity->activity_id != Activity::WORK_STOP && $activity->activity_id != Activity::WORK_BREAK) {
+            if (!$activity->isWorkDay() && $activity->activity_id != Activity::WORK_BREAK) {
                 $workTime += $activityTime;
             }
             // sum up working hours
-            if ($activity->activity_id == Activity::WORK_BREAK) {
+            if ($activity->isWorkBreak()) {
                 $breakTime += $activityTime;
             }
             
@@ -115,7 +115,6 @@ class TimeTrackingController extends ParentController
             Yii::$app->session->setFlash('error', Modulte::t("You haven't started work yet!"));
             return $this->redirect('index');
         }
-        
         
         $last_activity = end($user_activity);
         
@@ -206,7 +205,7 @@ class TimeTrackingController extends ParentController
             'activities' => Activity::getList(),
             'selected_user_ids' => $selectedUserIds,
             'users' => ArrayHelper::map(
-                        \ZakharovAndrew\user\models\User::find()
+                        User::find()
                             ->where(['id' => $model['users_id']])
                             ->orderBy('name')
                             ->all(),
