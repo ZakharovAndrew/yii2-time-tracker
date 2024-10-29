@@ -93,8 +93,7 @@ class RoleActivitySearch extends RoleActivity
         $query->andFilterWhere([
             'id' => $this->id,
             'roles.id' => $this->role_id,
-            /*'activity_id' => $this->activity_id,
-            'pos' => $this->pos,*/
+            /*'activity_id' => $this->activity_id, */
         ]);
 
         return $dataProvider;

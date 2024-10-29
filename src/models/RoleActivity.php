@@ -64,14 +64,12 @@ class RoleActivity extends \yii\db\ActiveRecord
      */
     public function getActivities()
     {
-        $arr = self::find()
+        return ArrayHelper::map(self::find()
                 ->select(['activity_id', 'time_tracking_activity.name'])
                 ->leftJoin('time_tracking_activity', 'time_tracking_activity.id = activity_id')
                 ->where(['role_id' => $this->role_id])
                 ->orderBy('pos')
                 ->asArray()
-                ->all();
-        
-        return ArrayHelper::map($arr, 'activity_id', 'name');
+                ->all(), 'activity_id', 'name');
     }
 }
