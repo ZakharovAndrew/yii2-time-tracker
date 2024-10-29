@@ -4,7 +4,6 @@ use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use yii\helpers\Html;
-use yii\helpers\Url;
 
 $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
 $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Modal";
@@ -365,3 +364,12 @@ $classModal::end();
         </ul>
     </div>
 </div>
+
+<?php if (\Yii::$app->session->get('add_activity') == '1') {
+$script = <<< JS
+$("#time-tracking-add-activity").modal('show');
+JS;
+
+$this->registerJs($script, yii\web\View::POS_READY); 
+\Yii::$app->session->remove('add_activity');
+} ?>
