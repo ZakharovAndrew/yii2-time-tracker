@@ -90,7 +90,7 @@ class TimeTracking extends \yii\db\ActiveRecord
      * @param array $user - List of user IDs
      * @param array $roles - List of user role IDs
      */
-    public static function getActivityList($start_day, $stop_day, $user = [], $roles = [])
+    public static function getActivityList($start_day, $stop_day, $user = null, $roles = [])
     {
         if (!is_array($roles) || count($roles) == 0) {
             $query = static::find()
@@ -111,7 +111,7 @@ class TimeTracking extends \yii\db\ActiveRecord
                 ->orderBy('datetime_at');
         }
         
-        if (is_array($user) && count($user) > 0) {
+        if (!empty($user)) {
             $query->andWhere(['time_tracking.user_id' => $user]);
         }
         

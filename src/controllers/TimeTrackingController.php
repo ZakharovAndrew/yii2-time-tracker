@@ -195,7 +195,7 @@ class TimeTrackingController extends ParentController
             
             $roles = array_merge(explode(',', $params), $roles);
         }
-        
+
         $model = TimeTracking::getActivityByDay($start_day, $stop_day, $selectedUserIds, $roles);
           
         return $this->render('statistics', [
