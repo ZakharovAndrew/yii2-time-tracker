@@ -87,7 +87,7 @@ class TimeTracking extends \yii\db\ActiveRecord
      * 
      * @param string $start_day - Start of interval (format Y-m-d)
      * @param string $stop_day - Finish of interval (format Y-m-d)
-     * @param array $user - List of user IDs
+     * @param mixed $user - List of user IDs
      * @param array $roles - List of user role IDs
      */
     public static function getActivityList($start_day, $stop_day, $user = null, $roles = [])
@@ -123,12 +123,12 @@ class TimeTracking extends \yii\db\ActiveRecord
      * 
      * @param string $start_day - Start of interval (format Y-m-d)
      * @param string $stop_day - Finish of interval (format Y-m-d)
-     * @param array $user - List of user IDs
+     * @param mixed $user - List of user IDs
      * @param array $roles - List of user role IDs
      */
     public static function getActivityByDay($start_day, $stop_day, $user = [], $roles = [])
     {
-        $model = static::getActivityList($start_day, $stop_day, $user = [], $roles = []);
+        $model = static::getActivityList($start_day, $stop_day, $user, $roles = []);
         
         $timeline = [];
         $users = [];
