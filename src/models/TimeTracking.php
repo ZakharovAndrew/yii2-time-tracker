@@ -145,9 +145,14 @@ class TimeTracking extends \yii\db\ActiveRecord
         ];
     }
     
-    public function isWorkDay()
+    public function isWorkStart()
     {
         return $this->activity_id == Activity::WORK_START;
+    }
+    
+    public function isWorkStop()
+    {
+        return $this->activity_id == Activity::WORK_STOP;
     }
     
     public function isWorkBreak()

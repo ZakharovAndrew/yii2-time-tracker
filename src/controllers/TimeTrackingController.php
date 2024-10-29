@@ -42,15 +42,16 @@ class TimeTrackingController extends ParentController
             
             $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
 
-            if (!$activity->isWorkDay()) {
+            if (!$activity->isWorkStop()) {
                 $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
             }
             
             // sum up working hours
-            if (!$activity->isWorkDay() && $activity->activity_id != Activity::WORK_BREAK) {
+            if (!$activity->isWorkStop() && !$activity->isWorkBreak()) {
                 $workTime += $activityTime;
             }
-            // sum up working hours
+            
+            // sum up breaking hours
             if ($activity->isWorkBreak()) {
                 $breakTime += $activityTime;
             }
@@ -94,6 +95,7 @@ class TimeTrackingController extends ParentController
             
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', Module::t('The start of the working day is marked'));
+                Yii::$app->session['add_activity'] = 1;
             } else {
                 Yii::$app->session->setFlash('error', Module::t('Error in setting the start date of work.'));
             }
