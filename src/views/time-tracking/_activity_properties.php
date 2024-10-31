@@ -23,8 +23,8 @@ $js_logic = '';
 
 <?php foreach ($properties as $property) {
     // property value
-    $value = $property->getUserPropertyValue($activity_id);
-
+    $value = $property->getUserPropertyValue($activity_id, $user_id);
+    
     $show = true;
     
     if (is_array($property->params) && isset($property->params['user_property'])) {

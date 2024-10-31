@@ -52,6 +52,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
     .form-users-list .search-box {
         margin-bottom:5px;
     }
+    .settings-modal .search-box {
+        background: #f3f9fe;
+    }
 </style>
 <div class="time-tracking-statistics">
 
@@ -173,8 +176,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
     </div> -->
     
     <label><?= Module::t('Users') ?></label>
+    <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item" class="filter-control"></div>
     <div class="form-users-list">
-        <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item" class="filter-control"></div>
+        
         <?php
         $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->orderBy('name')->all();
         foreach ($users as $user) {
