@@ -3,6 +3,7 @@
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\user\models\User;
+use ZakharovAndrew\user\models\UserSettingsConfig;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use ZakharovAndrew\TimeTracker\assets\TimeTrackerAssets;
@@ -54,6 +55,27 @@ $this->registerJs($script, yii\web\View::POS_READY);
     }
     .settings-modal .search-box {
         background: #f3f9fe;
+    }
+    /* Designing for scroll-bar */
+    .scroll-bar-left::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    /* Track */
+    .scroll-bar-left::-webkit-scrollbar-track {
+        background: gainsboro;
+        border-radius: 5px;
+    }
+
+    /* Handle */
+    .scroll-bar-left::-webkit-scrollbar-thumb {
+        background: black;
+        border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    .scroll-bar-left::-webkit-scrollbar-thumb:hover {
+        background: #555;
     }
 </style>
 <div class="time-tracking-statistics">
@@ -160,7 +182,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
         'action' => ['statistics'],
         'method' => 'get',
     ]); ?>
-
+<div class="settings-filter-form-group scroll-bar-left" style="overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 128px);">
     <div class="form-group">
         <label>Дата с</label>
         <?= Html::input('date', 'datetime_start', $datetime_start ?? '', ['class' => 'form-control']) ?>
@@ -174,19 +198,47 @@ $this->registerJs($script, yii\web\View::POS_READY);
         <label>ФИО</label>
         <?= Html::input('input', 'username', $username ?? '', ['class' => 'form-control']) ?>
     </div> -->
-    
-    <label><?= Module::t('Users') ?></label>
-    <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item" class="filter-control"></div>
-    <div class="form-users-list">
-        
-        <?php
-        $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->orderBy('name')->all();
-        foreach ($users as $user) {
-            $value = in_array($user->id, $selected_user_ids ?? []);
-            echo '<div class="users-list-item">'.Html::checkbox('users[]', $value, ['value' => $user->id, 'label' => $user->name]).'</div>';
-        } ?>
-    </div>
+    <div class="form-group">
+        <label><?= Module::t('Users') ?></label>
+        <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item" class="filter-control"></div>
+        <div class="form-users-list">
 
+            <?php
+            $users = User::find()->where(['<>', 'status', User::STATUS_DELETED])->orderBy('name')->all();
+            foreach ($users as $user) {
+                $value = in_array($user->id, $selected_user_ids ?? []);
+                echo '<div class="users-list-item">'.Html::checkbox('users[]', $value, ['value' => $user->id, 'label' => $user->name]).'</div>';
+            } ?>
+        </div>
+    </div>
+    <?php foreach ($settings as $setting) {?>
+            <div class="form-group">
+                
+                <?php
+                if ($setting->type == 2 && !empty($setting->getValues())) {?>
+                <label><?= $setting->title ?></label>
+                <div class="form-users-list">
+                    <?php foreach ($setting->getValues() as $setting_value_id => $setting_value) {
+                        $value = in_array($setting_value_id, $selected_settings[$setting->code] ?? []);
+                        echo '<div class="users-list-item">'.Html::checkbox('selected_settings['.$setting->code.'][]', $value, ['value' => $setting_value_id, 'label' => $setting_value]).'</div>';
+                    }?>
+                </div>
+                <?php 
+                } /*else if ($setting->type == UserSettingsConfig::TYPE_CHECKBOX) {
+                    echo Html::checkbox($setting->code, $setting->getUserSettingValue());
+                } else {
+                    // determine the type
+                    $inputType = 'text';
+                    if ($setting->type == UserSettingsConfig::TYPE_TIME) {
+                        $inputType = 'time';
+                    } else if ($setting->type == UserSettingsConfig::TYPE_DATE) {
+                        $inputType = 'date';
+                    }
+                    echo Html::input($inputType, $setting->code, $setting->getUserSettingValue(), ['id' => 'settings-'.$setting->code, 'class' => 'form-control']);
+                }*/?>
+            </div>
+        <?php } ?>
+</div>
     <div class="form-group bottom-panel">
         <?= Html::submitButton(Module::t('Apply'), ['class' => 'btn btn-primary']) ?>
     </div>
