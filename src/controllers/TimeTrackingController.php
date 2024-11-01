@@ -357,7 +357,7 @@ class TimeTrackingController extends ParentController
                 $properties = ActivityProperty::find()->all();
                 foreach ($properties as $property) {
                     $value = Yii::$app->request->post($property->id) ?? null;
-                    UserActivityProperty::saveValue(Yii::$app->user->id, $property->id, $id, $value);
+                    UserActivityProperty::saveValue($model->user_id, $property->id, $id, $value);
                 }
                 
                 return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
