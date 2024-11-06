@@ -56,27 +56,27 @@ $this->registerJs($script, yii\web\View::POS_READY);
     .settings-modal .search-box {
         background: #f3f9fe;
     }
-    /* Designing for scroll-bar */
-    .scroll-bar-left::-webkit-scrollbar {
-        width: 5px;
-    }
-
-    /* Track */
-    .scroll-bar-left::-webkit-scrollbar-track {
-        background: gainsboro;
-        border-radius: 5px;
-    }
-
-    /* Handle */
-    .scroll-bar-left::-webkit-scrollbar-thumb {
-        background: black;
-        border-radius: 5px;
-    }
-
-    /* Handle on hover */
-    .scroll-bar-left::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
+            /* Designing for scroll-bar */
+        .scroll-bar-left::-webkit-scrollbar {
+            width: 5px;
+        }
+    
+        /* Track */
+        .scroll-bar-left::-webkit-scrollbar-track {
+            background: gainsboro;
+            border-radius: 5px;
+        }
+    
+        /* Handle */
+        .scroll-bar-left::-webkit-scrollbar-thumb {
+            background: black;
+            border-radius: 5px;
+        }
+    
+        /* Handle on hover */
+        .scroll-bar-left::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
 </style>
 <div class="time-tracking-statistics">
 

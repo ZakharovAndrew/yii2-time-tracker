@@ -26,7 +26,7 @@ $js_logic = '';
     $value = $property->getUserPropertyValue($activity_id, $user_id);
     
     $show = true;
-    
+       
     if (is_array($property->params) && isset($property->params['user_property'])) {
         foreach ($property->params['user_property'] as $param) {
             if (empty($param['comparison'])) {
@@ -68,7 +68,7 @@ $js_logic = '';
         continue;
     }
     
-    
+    $js_logic1 = '';
     if (is_array($property->params) && isset($property->params['activity_property'])) {
         $comparison = [
             '=' => '==',
@@ -102,8 +102,17 @@ $js_logic = '';
             
         }
         if (count($property_logic) > 0) {
-            $js_logic .= 'if ('.implode('', $property_logic).') {$("#property-'.$property->id.'").parent().show()} else {$("#property-'.$property->id.'").parent().hide()}'."\n";
+            $js_logic1 = 'if ('.implode('', $property_logic).') {$("#property-'.$property->id.'").parent().show()} else {$("#property-'.$property->id.'").parent().hide()}'."\n";
         }
+    }
+    
+    // show when activity is selected
+    $list = $property->params['show_when_activity'] ?? [];
+    if (count($list) > 0) {
+        $js_logic1 = $js_logic1 == '' ? '$("#property-'.$property->id.'").parent().show();' : $js_logic1;
+        $js_logic .= '$("#timetracking-activity_id").on("change keyup", function (){if ([' . implode(',',$list) . '].includes($("#timetracking-activity_id").val() * 1)) { console.log("Типа должен показывать"); '.$js_logic1.'} else {console.log("Типа НЕ должен показывать");$("#property-'.$property->id.'").parent().hide();}  });';
+    } else {
+        $js_logic .= '$("#property-'.$property->id.'").parent().hide();';
     }
 ?>
     <div class="form-group">

@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\TimeTracker\models\ActivityProperty;
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\user\assets\UserAssets;
@@ -13,6 +14,11 @@ UserAssets::register($this);
 /** @var ZakharovAndrew\TimeTracker\models\ActivityProperty $model */
 /** @var yii\widgets\ActiveForm $form */
 ?>
+
+<style>
+    #activityproperty-params-show_when_activity label {width:24%}
+    
+</style>
 
 <div class="activity-property-form white-block">
 
@@ -72,6 +78,10 @@ UserAssets::register($this);
         </div>
     </div>
     <?php } ?>
+    
+    <h3><?= Module::t('Activities for which to display a property') ?></h3>
+    
+    <?= $form->field($model, 'params[show_when_activity]')->checkboxList(Activity::getDropdownList())->label(false); ?>
 
     <div class="form-group">
         <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>
