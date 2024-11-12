@@ -24,7 +24,7 @@ class Module extends \yii\base\Module
     /**
      * @var string Module version
      */
-    protected $version = "0.0.4";
+    protected $version = "0.1.0";
 
     /**
      * @var string Alias for module
@@ -43,6 +43,13 @@ class Module extends \yii\base\Module
      */
     public $availableRolesForViewingStatistics = [
         'admin' => '*'
+    ];
+    
+    /**
+     * @var array list of user properties in statistics
+     */
+    public $statisticUserProperties = [
+        
     ];
     
     /**
