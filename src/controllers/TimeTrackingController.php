@@ -240,7 +240,11 @@ class TimeTrackingController extends ParentController
         
         
         $settings = UserSettingsConfig::find()->where([
-            'access_level' => [1, 2]
+            'access_level' => [
+                UserSettingsConfig::CHANGE_USER_AND_ADMIN,
+                UserSettingsConfig::CHANGE_USER_ONLY,
+                UserSettingsConfig::CHANGE_ADMIN_ONLY
+            ]
         ])->all();
           
         return $this->render('statistics', [
