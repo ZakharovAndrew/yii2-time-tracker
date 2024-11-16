@@ -56,27 +56,27 @@ $this->registerJs($script, yii\web\View::POS_READY);
     .settings-modal .search-box {
         background: #f3f9fe;
     }
-            /* Designing for scroll-bar */
-        .scroll-bar-left::-webkit-scrollbar {
-            width: 5px;
-        }
-    
-        /* Track */
-        .scroll-bar-left::-webkit-scrollbar-track {
-            background: gainsboro;
-            border-radius: 5px;
-        }
-    
-        /* Handle */
-        .scroll-bar-left::-webkit-scrollbar-thumb {
-            background: black;
-            border-radius: 5px;
-        }
-    
-        /* Handle on hover */
-        .scroll-bar-left::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
+    /* Designing for scroll-bar */
+    .scroll-bar-left::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    /* Track */
+    .scroll-bar-left::-webkit-scrollbar-track {
+        background: gainsboro;
+        border-radius: 5px;
+    }
+
+    /* Handle */
+    .scroll-bar-left::-webkit-scrollbar-thumb {
+        background: black;
+        border-radius: 5px;
+    }
+
+    /* Handle on hover */
+    .scroll-bar-left::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
 </style>
 <div class="time-tracking-statistics">
 
@@ -89,6 +89,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
             <thead>
                 <tr>
                     <th class="time-tracking-user"><?= Module::t('User') ?></th>
+                    <?php foreach ($user_properties_column as $property) {?>
+                    <th><?= $property->title; ?></th>
+                    <?php } ?>
                     <?php foreach ($timeline as $day => $item) { $class = (date('N', strtotime($day)) > 5) ? 'td-holiday ' : '';?>
                     <th class="<?= $class ?>"><?= date('d.m.Y', strtotime($day))  ?></th>
                     <?php } ?>
@@ -101,6 +104,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
                 <td>
                     <?= Html::a($user_name, ['user-statistics', 'user_id' => $user_id], ['class' => '']) ?>
                 </td>
+                <?php foreach ($user_properties_column as $property) {?>
+                <td><?= $property->getUserSettingValue($user_id) ?></td>
+                <?php } ?>
                 <?php foreach ($timeline as $day => $item) {
                     $class = (date('N', strtotime($day)) > 5) ? 'td-holiday ' : '';
                     /*$item_name = date('Y-m-d', strtotime($item[$user_id]->datetime_at));*/?>
