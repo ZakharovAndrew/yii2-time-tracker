@@ -16,8 +16,7 @@ UserAssets::register($this);
 ?>
 
 <style>
-    #activityproperty-params-show_when_activity label {width:24%}
-    
+    #activityproperty-params-show_when_activity label, #activityproperty-params-required_when_activity label {width:24%}
 </style>
 
 <div class="activity-property-form white-block">
@@ -80,8 +79,10 @@ UserAssets::register($this);
     <?php } ?>
     
     <h3><?= Module::t('Activities for which to display a property') ?></h3>
-    
     <?= $form->field($model, 'params[show_when_activity]')->checkboxList(Activity::getDropdownList())->label(false); ?>
+    
+    <h3><?= Module::t('Activities for which the property is required') ?></h3>
+    <?= $form->field($model, 'params[required_when_activity]')->checkboxList(Activity::getDropdownList())->label(false); ?>
 
     <div class="form-group">
         <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>
