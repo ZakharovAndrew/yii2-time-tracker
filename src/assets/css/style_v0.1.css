@@ -167,3 +167,26 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
 .settings-modal .form-users-list label input{
     margin-right: 6px;
 }
+
+#comment-menu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+}
+#comment-menu .btn {
+    padding: 2px;
+    margin: 0;
+    line-height: 1;
+    margin-top: -8px;
+}
+#comment-menu .search-box {
+    background: #E1F5FE;
+    padding: 4px;
+    font-size: 13px;
+    border-radius: 6px;
+}
+#comment-menu .search-box input {
+    border: 1px solid #a0d0e5;
+    border-radius: 6px;
+}

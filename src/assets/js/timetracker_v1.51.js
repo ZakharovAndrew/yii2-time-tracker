@@ -35,3 +35,47 @@ $(document).on('keyup', '.filter-control', function() {
         }
     });        
 });
+
+$("time-tracking-index .comment-templates-item").on('click', function() {
+    let comment = $("#timetracking-comment").val();
+    if (comment.trim() !== '') {
+        comment += '.';
+    }
+    let commentTemplate = $(this);
+    if (commentTemplate) {
+        $("#timetracking-comment").val(comment + commentTemplate.text());
+    }
+    $("#comment-templates-modal").modal('hide');
+});
+
+// filter
+$(document).on('keyup', '#comment-templates-filter', function() {
+    let str = $('#comment-templates-filter').val().toLowerCase();
+
+    if (str === '') {
+        $('.comment-templates-item').show();
+        return;
+    }
+
+    $('.comment-templates-item').each(function(){
+        if ($(this).html().toLowerCase().includes(str)) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });        
+});
+
+$('.field-timetracking-comment').append($("#comment-menu"));
+
+$("#timetracking-activity_id").on('change', function() {
+    let id = $(this).val();
+    $("#comment-menu").hide();
+    $(".comment-templates").hide();
+    if ($(".comment-templates-"+id).length > 0) {
+        $("#comment-templates-filter").val("");
+        $("#comment-menu").show();
+        $(".comment-templates-"+id).show();
+    }
+}
+);
