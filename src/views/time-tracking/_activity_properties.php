@@ -24,6 +24,7 @@ $js_logic = '';
 <?php foreach ($properties as $property) {
     // property value
     $value = $property->getUserPropertyValue($activity_id, $user_id);
+    $required = ($property->required ?? false) == true;
     
     $show = true;
        
@@ -83,7 +84,7 @@ $js_logic = '';
             }
             
             if (isset($comparison[$param['comparison']])) {
-                $rule = '($("#property-'.$param['name'].'").val()'.$comparison[$param['comparison']].$param['value'].' )';
+                $rule = '($("#property-'.$param['name'].'").val()'.$comparison[$param['comparison']].'"'.$param['value'].'" )';
             } else if ($param['comparison'] == 'checked') {
                 $rule = '($("#property-'.$param['name'].'").is(":checked"))';
             } else if ($param['comparison'] == 'contain') {
@@ -108,17 +109,26 @@ $js_logic = '';
     
     // show when activity is selected
     $list = $property->params['show_when_activity'] ?? [];
-    if (count($list) > 0) {
+    if (is_array($list) && count($list) > 0) {
         $js_logic1 = $js_logic1 == '' ? '$("#property-'.$property->id.'").parent().show();' : $js_logic1;
-        $js_logic .= '$("#timetracking-activity_id").on("change keyup", function (){if ([' . implode(',',$list) . '].includes($("#timetracking-activity_id").val() * 1)) { console.log("Типа должен показывать"); '.$js_logic1.'} else {console.log("Типа НЕ должен показывать");$("#property-'.$property->id.'").parent().hide();}  });';
+        $js_logic .= 'if ([' . implode(',',$list) . '].includes($("#timetracking-activity_id").val() * 1)) {'.$js_logic1.'} else {$("#property-'.$property->id.'").parent().hide();}';
     } else {
         $js_logic .= '$("#property-'.$property->id.'").parent().hide();';
+    }
+    
+    // required when activity is selected
+    $list = $property->params['required_when_activity'] ?? [];
+    if (!$required) {
+        if (is_array($list) && count($list) > 0) {
+            $js_logic .= '$("#property-'.$property->id.'").attr("required", ($("#property-'.$property->id.'").is(":visible") && [' . implode(',',$list) . '].includes($("#timetracking-activity_id").val() * 1)));';
+        } else {
+            $js_logic .= '$("#property-'.$property->id.'").attr("required", false);';
+        }
     }
 ?>
     <div class="form-group">
         <label><?= $property->name ?></label>
         <?php
-        $required = ($property->required ?? false) == true;
         if ($property->type == ActivityProperty::TYPE_STRING && !empty($property->getValues())) {
             echo Html::dropDownList($property->id, $value, $property->getValues(), [
                     'id' => 'property-'.$property->id,
@@ -148,8 +158,8 @@ function activity_property_check() {
     $js_logic
 }
 activity_property_check();
-        
-$('.activity-property').on('change keyup', function () {
+
+$('.activity-property, #timetracking-activity_id').on('change keyup', function () {
     activity_property_check();
 });
 JS;
