@@ -110,7 +110,7 @@ class TimeTracking extends \yii\db\ActiveRecord
                 //->andWhere('LIKE', 'users.name', $username)
                 ->orderBy('datetime_at');
         }
-        
+                
         if (!empty($user)) {
             $query->andWhere(['time_tracking.user_id' => $user]);
         }

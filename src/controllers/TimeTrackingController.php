@@ -218,10 +218,12 @@ class TimeTrackingController extends ParentController
                 $query->andWhere(['us'.$setting_i.'.values' => $setting_value]);
                 $setting_i++;
             }
+            
+            // if user IDs are specified
             if (!empty($selectedUserIds)) {
                 $query->andWhere(['u.id' => $selectedUserIds]);
             }
-            //$query->andWhere(['asd' => $selectedUserIds]);
+
             $users = ArrayHelper::getColumn($query->asArray()->all(), 'id');
             
             if (count($users) == 0) {
@@ -261,7 +263,10 @@ class TimeTrackingController extends ParentController
                             ->all(),
                         'id', 'name'
                     ),
-            'settings' => $settings
+            'settings' => $settings,
+            'user_properties_column' => UserSettingsConfig::find()->where([
+                'code' => Yii::$app->getModule('timetracker')->statisticUserProperties
+            ])->all()
         ]);
     }
     
@@ -345,6 +350,11 @@ class TimeTrackingController extends ParentController
         ]);
     }
     
+    /**
+     * 
+     * @return string|\yii\web\Response
+     * @throws NotFoundHttpException
+     */
     public function actionAdd()
     {
         if (!Yii::$app->user->identity->hasRole('time_tracking_editor')) {
@@ -356,6 +366,14 @@ class TimeTrackingController extends ParentController
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 Yii::$app->session->setFlash('success', Module::t('Activity added'));
+                
+                // save user activity property
+                $properties = ActivityProperty::find()->all();
+                foreach ($properties as $property) {
+                    $value = Yii::$app->request->post($property->id) ?? null;
+                    UserActivityProperty::saveValue($model->user_id, $property->id, $model->id, $value);
+                }
+                
                 return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
             }
         } 
