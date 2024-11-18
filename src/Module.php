@@ -76,17 +76,21 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        $this->registerTranslations();
+        static::registerTranslations();
     }
     
     /**
      * Registers the translation files
      */
-    protected function registerTranslations()
+    protected static function registerTranslations()
     {
+        if (isset(Yii::$app->i18n->translations['extension/yii2-time-tracker/*'])) {
+            return;
+        }
+
         Yii::$app->i18n->translations['extension/yii2-time-tracker/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
-            'sourceLanguage' => $this->sourceLanguage,
+            'sourceLanguage' => 'en-US'
             'basePath' => '@vendor/zakharov-andrew/yii2-time-tracker/src/messages',
             'on missingTranslation' => ['app\components\TranslationEventHandler', 'handleMissingTranslation'],
             'fileMap' => [
@@ -108,6 +112,8 @@ class Module extends \yii\base\Module
      */
     public static function t($message, $params = [], $language = null)
     {
+        static::registerTranslations();
+
         $category = 'time-tracker';
         return Yii::t('extension/yii2-time-tracker/' . $category, $message, $params, $language);
     }
