@@ -105,7 +105,7 @@ class TimeTrackingController extends ParentController
             return $this->redirect('index');
         }
         
-        Yii::$app->session->setFlash('error', Modulte::t('The start of work has already been marked'));
+        Yii::$app->session->setFlash('error', Module::t('The start of work has already been marked'));
         
         return $this->redirect('index');
     }
@@ -116,7 +116,7 @@ class TimeTrackingController extends ParentController
      
         // you cannot enter an activity if the working day has not started
         if (!$user_activity) {
-            Yii::$app->session->setFlash('error', Modulte::t("You haven't started work yet!"));
+            Yii::$app->session->setFlash('error', Module::t("You haven't started work yet!"));
             return $this->redirect('index');
         }
         
