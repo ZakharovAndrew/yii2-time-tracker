@@ -24,7 +24,7 @@ class Module extends \yii\base\Module
     /**
      * @var string Module version
      */
-    protected $version = "0.1.0";
+    protected $version = "0.1.3";
 
     /**
      * @var string Alias for module
@@ -90,7 +90,7 @@ class Module extends \yii\base\Module
 
         Yii::$app->i18n->translations['extension/yii2-time-tracker/*'] = [
             'class' => 'yii\i18n\PhpMessageSource',
-            'sourceLanguage' => 'en-US'
+            'sourceLanguage' => 'en-US',
             'basePath' => '@vendor/zakharov-andrew/yii2-time-tracker/src/messages',
             'on missingTranslation' => ['app\components\TranslationEventHandler', 'handleMissingTranslation'],
             'fileMap' => [
