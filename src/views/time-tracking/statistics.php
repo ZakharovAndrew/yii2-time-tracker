@@ -39,6 +39,38 @@ $(".settings-modal .btn-modal-close").click(function() {
     $(this).parent().parent().removeClass('show');
 });
         
+const tableContainer = document.getElementById('tableContainer');
+
+let isDragging = false;
+let startY, startX, scrollTop, scrollLeft;
+
+tableContainer.addEventListener('mousedown', (e) => {
+        console.log('start');
+    isDragging = true;
+    startX = e.pageX - tableContainer.offsetLeft;
+    startY = e.pageY - tableContainer.offsetTop;
+    scrollTop = tableContainer.scrollTop;
+    scrollLeft = tableContainer.scrollLeft;
+});
+
+tableContainer.addEventListener('mouseleave', () => {
+    isDragging = false;
+});
+
+tableContainer.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+
+tableContainer.addEventListener('mousemove', (e) => {
+    if (!isDragging) return; // если не перетаскиваем, выходим
+    e.preventDefault();
+    const x = e.pageX - tableContainer.offsetLeft;
+    const y = e.pageY - tableContainer.offsetTop;
+    const walkX = (x - startX) * 1; // скорость прокрутки
+    const walkY = (y - startY) * 1; // скорость прокрутки
+    tableContainer.scrollLeft = scrollLeft - walkX;
+    tableContainer.scrollTop = scrollTop - walkY;
+});
 JS;
 $this->registerJs($script, yii\web\View::POS_READY);
 ?>
@@ -77,20 +109,58 @@ $this->registerJs($script, yii\web\View::POS_READY);
     .scroll-bar-left::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
+
+.table-timeline th {
+    position: sticky; /* Фиксируем элемент */
+    top: 0; /* Располагаем его в верхней части контейнера */
+    background-color: white; /* Установите цвет фона, чтобы текст не сливался с фоном при прокрутке */
+    z-index: 10;
+}
+.time-tracking-statistics {
+    width: auto;
+    height: calc(100vh - 236px);
+    box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
+    border-radius: 15px;
+    padding: 15px;
+    background: #fff;
+    display:flex;
+}
+.time-tracking-box-scroll {
+    overflow: auto;
+}
+.sticky, .table-timeline td:first-child {
+    position: sticky;
+    background-color: white;
+    z-index: 11;
+}
+.table-timeline td:first-child, .time-tracking-statistics thead th:first-child {
+    left:0;
+}
+.time-tracking-statistics thead th:first-child {
+    z-index: 12;
+}
+.disable-select {
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
+}
 </style>
+
+<?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>   
+
 <div class="time-tracking-statistics">
 
-    <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>   
     
     <?php if ($timeline) { ?>
     
-    <div class="time-tracking-box animate__animated animate__fast animate__fadeInUp">
-        <table class="table">
+    <div id="tableContainer" class="time-tracking-box-scroll animate__animated animate__fast animate__fadeInUp">
+        <table class="table table-timeline disable-select">
             <thead>
                 <tr>
-                    <th class="time-tracking-user"><?= Module::t('User') ?></th>
+                    <th class="time-tracking-user sticky"><?= Module::t('User') ?></th>
                     <?php foreach ($user_properties_column as $property) {?>
-                    <th><?= $property->title; ?></th>
+                    <th class="time-tracking-user-property sticky"><?= $property->title; ?></th>
                     <?php } ?>
                     <?php foreach ($timeline as $day => $item) { $class = (date('N', strtotime($day)) > 5) ? 'td-holiday ' : '';?>
                     <th class="<?= $class ?>"><?= date('d.m.Y', strtotime($day))  ?></th>
