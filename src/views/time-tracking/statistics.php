@@ -145,6 +145,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
   -ms-user-select: none;      
   user-select: none;
 }
+#tableContainer {
+    width: -webkit-fill-available;
+}
 </style>
 
 <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>   
@@ -185,7 +188,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                         $stop = '';
                         
                         foreach ($item[$user_id] as $activity) {
-                            if ($activity->activity_id == Activity::WORK_START) {
+                            if ($activity->activity_id == Activity::WORK_START && $start == '') {
                                 $start = date('H:i', strtotime($activity->datetime_at));
                             }
                                             
