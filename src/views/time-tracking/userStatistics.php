@@ -31,10 +31,21 @@ $this->registerJs($script, yii\web\View::POS_READY);
 //echo Html::a('+', ['add', 'id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'btn btn-sm btn-primary btn-add-activity', 'title'=>Module::t('Add Activity')]);
 ?>
 <?= $this->render('_timeline_style') ?>
+<style>
+.table-user-statistics {
+    width: auto;
+    height: calc(100vh - 236px);
+    box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
+    border-radius: 15px;
+    padding: 15px;
+    background: #fff;
+    display: flex
+;
+</style>
 
 <div style="background:#fff; padding:15px;border-radius:10px">
     <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-user-statistics">
             <tr>
             <?php foreach ($timeline as $day => $item) {?>
 
