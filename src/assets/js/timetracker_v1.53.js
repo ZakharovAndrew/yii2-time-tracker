@@ -36,7 +36,7 @@ $(document).on('keyup', '.filter-control', function() {
     });        
 });
 
-$("time-tracking-index .comment-templates-item").on('click', function() {
+$(".comment-templates-item").on('click', function() {
     let comment = $("#timetracking-comment").val();
     if (comment.trim() !== '') {
         comment += '.';

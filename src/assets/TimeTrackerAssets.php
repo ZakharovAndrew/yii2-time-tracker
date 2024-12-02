@@ -17,7 +17,7 @@ class TimeTrackerAssets extends AssetBundle
     ];
 
     public $js = [
-        'js/timetracker_v1.51.js',
+        'js/timetracker_v1.53.js',
     ];
 
     public $depends = [
