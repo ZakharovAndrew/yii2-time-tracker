@@ -35,17 +35,15 @@ $this->registerJs($script, yii\web\View::POS_READY);
 .table-user-statistics {
     width: auto;
     height: calc(100vh - 236px);
-    box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
     border-radius: 15px;
     padding: 15px;
     background: #fff;
-    display: flex
-;
+    display: flex;
 </style>
 
 <div style="background:#fff; padding:15px;border-radius:10px">
-    <div class="table-responsive">
-        <table class="table table-bordered table-user-statistics">
+    <div class="table-responsive table-user-statistics">
+        <table class="table table-bordered">
             <tr>
             <?php foreach ($timeline as $day => $item) {?>
 
