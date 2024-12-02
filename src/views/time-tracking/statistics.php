@@ -175,7 +175,13 @@ $this->registerJs($script, yii\web\View::POS_READY);
             <?php foreach ($users as $user_id => $user_name) {?>
             <tr>
                 <td>
-                    <?= Html::a($user_name, ['user-statistics', 'user_id' => $user_id], ['class' => '']) ?>
+                    <?php 
+                    $link_params = ['user-statistics', 'user_id' => $user_id];
+                    if (Yii::$app->user->identity->hasRole('admin')) {
+                        $link_params['datetime_start'] = $datetime_start ?? null;
+                    }
+                    ?>
+                    <?= Html::a($user_name, $link_params, ['class' => '']) ?>
                 </td>
                 <?php foreach ($user_properties_column as $property) {?>
                 <td><?= $property->getUserSettingValue($user_id) ?></td>

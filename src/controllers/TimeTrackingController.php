@@ -270,7 +270,7 @@ class TimeTrackingController extends ParentController
         ]);
     }
     
-    public function actionUserStatistics($user_id = null)
+    public function actionUserStatistics($user_id = null, $datetime_start = null, $datetime_stop = null)
     {
         if (!is_null($user_id) && !Yii::$app->user->identity->hasRole('admin') && !Yii::$app->user->identity->hasRole('time_tracking_editor')) {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -284,7 +284,8 @@ class TimeTrackingController extends ParentController
         
         $model = TimeTracking::find()
                 ->where(['user_id' => $user_id])
-                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime('-7 days'))])
+                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime($datetime_start ?? '-7 days'))])
+                ->andWhere(['<', 'datetime_at', date('Y-m-d 23:59:59', strtotime($datetime_stop ?? 'now'))])
                 ->orderBy('datetime_at')
                 ->all();
         
