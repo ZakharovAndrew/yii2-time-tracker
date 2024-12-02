@@ -14,9 +14,9 @@ UserAssets::register($this);
 
 <div class="role-activity-form">
 
-    
+    <div class="white-block">
     <?php $form = ActiveForm::begin(); ?>
-        <div class="white-block">
+
     <?= $form->field($model, 'activity_id')->dropDownList(\ZakharovAndrew\TimeTracker\models\Activity::getDropdownList(), ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
     <?= $form->field($model, 'pos')->textInput() ?>
