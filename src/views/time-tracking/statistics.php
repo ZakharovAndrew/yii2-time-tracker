@@ -23,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 // for json
 $activity_list = [];
+$bad = [];
 $i = 1;
 
 $script = <<< JS
@@ -173,7 +174,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
             </thead>
             
             <?php foreach ($users as $user_id => $user_name) {?>
-            <tr>
+            <tr id="row<?= $user_id ?>">
                 <td>
                     <?php 
                     $link_params = ['user-statistics', 'user_id' => $user_id];
@@ -224,10 +225,12 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             if (empty($stop)) {
                                 $class .= ' td-danger';
                                 $alert = '⚠ ';
-                            }  
+                            }
+                            if ($show_only_bad == 'on' && $stop == '') {
+                                $bad[$user_id] = $user_id;
+                            }
                         }
-                        
-                        
+      
                         
                         
                         $hint = '';
@@ -250,6 +253,19 @@ $this->registerJs($script, yii\web\View::POS_READY);
     <?php } ?>
 
 </div>
+
+
+<style>
+    <?php
+    if ($show_only_bad == 'on') {
+        foreach ($users as $user_id => $user_name) {
+            if (!isset($bad[$user_id])) {
+                echo '#row'. $user_id .' {display:none}';
+            }
+        }
+    }
+    ?>
+</style>
 
 <div class="settings-modal" data-modal-name="settings">
     <div class="settings-modal-title">
@@ -277,6 +293,10 @@ $this->registerJs($script, yii\web\View::POS_READY);
     <div class="form-group">
         <label>Дата по</label>
         <?= Html::input('date', 'datetime_stop', $datetime_stop ?? '', ['class' => 'form-control']) ?>
+    </div>
+    <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input" name="show_only_bad" id="show_only_bad" <?php if ($show_only_bad == 'on') { echo 'checked';} ?>>
+        <label class="custom-control-label" for="show_only_bad"> Выводить только не завершенные рабочие дни</label>
     </div>
 
     <!-- <div class="form-group">

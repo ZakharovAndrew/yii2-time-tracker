@@ -176,7 +176,7 @@ class TimeTrackingController extends ParentController
         return $this->redirect('index');
     }
     
-    public function actionStatistics($datetime_start = null, $datetime_stop = null, $username = null)
+    public function actionStatistics($datetime_start = null, $datetime_stop = null, $username = null, $show_only_bad = null)
     {
         $selectedUserIds = Yii::$app->request->get('users');
         $selected_settings = Yii::$app->request->get('selected_settings');
@@ -253,6 +253,7 @@ class TimeTrackingController extends ParentController
             'timeline' => $model['days'],
             'datetime_start' => $datetime_start,
             'datetime_stop' => $datetime_stop,
+            'show_only_bad' => $show_only_bad,
             'activities' => Activity::getList(),
             'selected_user_ids' => $selectedUserIds,
             'selected_settings' => $selected_settings,
