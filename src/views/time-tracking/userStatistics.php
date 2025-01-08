@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = ['label' => Module::t('Time Tracking'), 'url' =
 $this->params['breadcrumbs'][] = $this->title;
 
 $script = <<< JS
+    $("h1").append('<div id="filter" class="btn mg-top--10"><svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.906 300.906" xml:space="preserve"><path d="M288.953 0h-277c-5.522 0-10 4.478-10 10v49.531c0 5.522 4.478 10 10 10h12.372l91.378 107.397v113.978a10 10 0 0 0 15.547 8.32l49.5-33a9.999 9.999 0 0 0 4.453-8.32v-80.978l91.378-107.397h12.372c5.522 0 10-4.478 10-10V10c0-5.522-4.477-10-10-10zM167.587 166.77a9.999 9.999 0 0 0-2.384 6.48v79.305l-29.5 19.666V173.25a9.997 9.997 0 0 0-2.384-6.48L50.585 69.531h199.736l-82.734 97.239zM278.953 49.531h-257V20h257v29.531z"/></svg></div>');
     let activity_day = '';
     $(".btn-add-activity").on('click', function() {
         $("#form-add-activity form").first().trigger('reset');
@@ -40,6 +41,8 @@ $this->registerJs($script, yii\web\View::POS_READY);
     background: #fff;
     display: flex;
 </style>
+
+<?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 
 <div style="background:#fff; padding:15px;border-radius:10px">
     <div class="table-responsive table-user-statistics">
