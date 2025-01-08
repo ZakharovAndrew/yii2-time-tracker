@@ -13,7 +13,7 @@ class TimeTrackerAssets extends AssetBundle
     public $sourcePath = '@vendor/zakharov-andrew/yii2-time-tracker/src/assets';
 
     public $css = [
-        'css/style_v0.1.css',
+        'css/style_v0.2.css',
     ];
 
     public $js = [

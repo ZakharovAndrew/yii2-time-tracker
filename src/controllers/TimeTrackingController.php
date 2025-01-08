@@ -271,7 +271,7 @@ class TimeTrackingController extends ParentController
         ]);
     }
     
-    public function actionUserStatistics($user_id = null, $datetime_start = null, $datetime_stop = null)
+    public function actionUserStatistics($user_id = null, $datetime_start = null, $datetime_stop = null, $show_only_bad = null)
     {
         if (!is_null($user_id) && !Yii::$app->user->identity->hasRole('admin') && !Yii::$app->user->identity->hasRole('time_tracking_editor')) {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -283,10 +283,14 @@ class TimeTrackingController extends ParentController
             $user_id = (Yii::$app->user->identity->hasRole('admin') || Yii::$app->user->identity->hasRole('time_tracking_editor')) ? $user_id : Yii::$app->user->id; 
         }
         
+        // start of interval
+        $start_day = !empty($datetime_start) ? $datetime_start : date('Y-m-d 00:00:00', strtotime('-7 days'));
+        $stop_day = !empty($datetime_stop) ? $datetime_stop : date('Y-m-d 23:59:59');
+        
         $model = TimeTracking::find()
                 ->where(['user_id' => $user_id])
-                ->andWhere(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime($datetime_start ?? '-7 days'))])
-                ->andWhere(['<', 'datetime_at', date('Y-m-d 23:59:59', strtotime($datetime_stop ?? 'now'))])
+                ->andWhere(['>', 'datetime_at', $start_day])
+                ->andWhere(['<', 'datetime_at', $stop_day])
                 ->orderBy('datetime_at')
                 ->all();
         
@@ -299,6 +303,9 @@ class TimeTrackingController extends ParentController
         return $this->render('userStatistics', [
             'timeline' => $timeline,
             'user' => User::findOne($user_id),
+            'datetime_start' => $datetime_start,
+            'datetime_stop' => $datetime_stop,
+            'show_only_bad' => $show_only_bad,
             'is_editor' => Yii::$app->user->identity->hasRole('time_tracking_editor')
         ]);
     }

@@ -45,33 +45,35 @@ const tableContainer = document.getElementById('tableContainer');
 let isDragging = false;
 let startY, startX, scrollTop, scrollLeft;
 
-tableContainer.addEventListener('mousedown', (e) => {
-        console.log('start');
-    isDragging = true;
-    startX = e.pageX - tableContainer.offsetLeft;
-    startY = e.pageY - tableContainer.offsetTop;
-    scrollTop = tableContainer.scrollTop;
-    scrollLeft = tableContainer.scrollLeft;
-});
+if (tableContainer) {
+    tableContainer.addEventListener('mousedown', (e) => {
+            console.log('start');
+        isDragging = true;
+        startX = e.pageX - tableContainer.offsetLeft;
+        startY = e.pageY - tableContainer.offsetTop;
+        scrollTop = tableContainer.scrollTop;
+        scrollLeft = tableContainer.scrollLeft;
+    });
 
-tableContainer.addEventListener('mouseleave', () => {
-    isDragging = false;
-});
+    tableContainer.addEventListener('mouseleave', () => {
+        isDragging = false;
+    });
 
-tableContainer.addEventListener('mouseup', () => {
-    isDragging = false;
-});
+    tableContainer.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
 
-tableContainer.addEventListener('mousemove', (e) => {
-    if (!isDragging) return; // если не перетаскиваем, выходим
-    e.preventDefault();
-    const x = e.pageX - tableContainer.offsetLeft;
-    const y = e.pageY - tableContainer.offsetTop;
-    const walkX = (x - startX) * 1; // скорость прокрутки
-    const walkY = (y - startY) * 1; // скорость прокрутки
-    tableContainer.scrollLeft = scrollLeft - walkX;
-    tableContainer.scrollTop = scrollTop - walkY;
-});
+    tableContainer.addEventListener('mousemove', (e) => {
+        if (!isDragging) return; // если не перетаскиваем, выходим
+        e.preventDefault();
+        const x = e.pageX - tableContainer.offsetLeft;
+        const y = e.pageY - tableContainer.offsetTop;
+        const walkX = (x - startX) * 1; // скорость прокрутки
+        const walkY = (y - startY) * 1; // скорость прокрутки
+        tableContainer.scrollLeft = scrollLeft - walkX;
+        tableContainer.scrollTop = scrollTop - walkY;
+    });
+}
 JS;
 $this->registerJs($script, yii\web\View::POS_READY);
 ?>
@@ -280,12 +282,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
     </div>
     
 <?php $form = ActiveForm::begin([
-        'action' => ['statistics'],
         'method' => 'get',
     ]); ?>
-<div class="settings-filter-form-group scroll-bar-left" style="overflow-y: auto;
-    overflow-x: hidden;
-    height: calc(100vh - 128px);">
+<div class="settings-filter-form-group scroll-bar-left">
     <div class="form-group">
         <label>Дата с</label>
         <?= Html::input('date', 'datetime_start', $datetime_start ?? '', ['class' => 'form-control']) ?>
@@ -299,7 +298,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
         <label class="custom-control-label" for="show_only_bad"> Выводить только не завершенные рабочие дни</label>
     </div>
 
-    <!-- <div class="form-group">
+<!-- <div class="form-group">
         <label>ФИО</label>
         <?= Html::input('input', 'username', $username ?? '', ['class' => 'form-control']) ?>
     </div> -->
@@ -343,6 +342,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                 }*/?>
             </div>
         <?php } ?>
+
 </div>
     <div class="form-group bottom-panel">
         <?= Html::submitButton(Module::t('Apply'), ['class' => 'btn btn-primary']) ?>
@@ -350,7 +350,6 @@ $this->registerJs($script, yii\web\View::POS_READY);
 
     <?php ActiveForm::end(); ?>
 </div>
-
 
 <script>
     let data = <?= json_encode($activity_list, JSON_UNESCAPED_UNICODE) ?>;
