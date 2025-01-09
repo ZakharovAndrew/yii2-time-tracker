@@ -13,7 +13,8 @@ use ZakharovAndrew\user\models\UserSettings;
 use ZakharovAndrew\user\models\UserSettingsConfig;
 use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
-use \yii\helpers\ArrayHelper;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 
 /**
  * TimeTrackingController implements the CRUD actions for TimeTracking model.
@@ -277,6 +278,8 @@ class TimeTrackingController extends ParentController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         
+        Url::remember('', 'user_statistics');
+        
         if (is_null($user_id)) {
             $user_id = Yii::$app->user->id;
         } else {
@@ -383,7 +386,8 @@ class TimeTrackingController extends ParentController
                     UserActivityProperty::saveValue($model->user_id, $property->id, $model->id, $value);
                 }
                 
-                return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
+                return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $model->user_id]);
+                //return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
             }
         } 
         
@@ -436,7 +440,7 @@ class TimeTrackingController extends ParentController
                     UserActivityProperty::saveValue($model->user_id, $property->id, $id, $value);
                 }
                 
-                return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
+                return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $model->user_id]);
             }
         }
         
