@@ -45,6 +45,8 @@ $script = <<< JS
 JS;
 
 $this->registerJs($script, yii\web\View::POS_READY);
+
+$bad = [];
 //echo Html::a('+', ['add', 'id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'btn btn-sm btn-primary btn-add-activity', 'title'=>Module::t('Add Activity')]);
 ?>
 <?= $this->render('_timeline_style') ?>
@@ -66,7 +68,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
             <tr>
             <?php foreach ($timeline as $day => $item) {?>
 
-            <td>
+            <td id="row<?= date('d-m-Y', strtotime($day)) ?>">
                 <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?><?php if ($is_editor) {?>
                     <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-bs-toggle="modal" data-target="#form-add-activity" data-bs-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>
                     
@@ -112,6 +114,14 @@ $this->registerJs($script, yii\web\View::POS_READY);
                         </div>
                     </div>
                 <?php } ?>
+                <?php 
+                if ($show_only_bad == 'on') {
+                    $lastActivity = end($item);
+                    if ($activity->activity_id != Activity::WORK_STOP) {
+                        $bad[date('d-m-Y', strtotime($day))] = date('d-m-Y', strtotime($day));
+                    }
+                }
+                ?>
                 </div>
             </div>
         </td>
@@ -120,6 +130,19 @@ $this->registerJs($script, yii\web\View::POS_READY);
         </table>
     </div>
 </div>
+
+<style>
+    <?php
+    if ($show_only_bad == 'on') {
+        foreach ($timeline as $day => $item) {
+            $key = date('d-m-Y', strtotime($day));
+            if (!isset($bad[$key])) {
+                echo '#row'. $key .' {display:none}';
+            }
+        }
+    }
+    ?>
+</style>
 
 <?php
 if ($is_editor) {
