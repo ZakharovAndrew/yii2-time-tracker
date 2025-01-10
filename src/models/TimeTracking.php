@@ -34,9 +34,9 @@ class TimeTracking extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'activity_id', 'who_changed'], 'integer'],
+            [['user_id', 'activity_id', 'who_changed', 'duration'], 'integer'],
             ['activity_id', 'required'],
-            [['datetime_at', 'datetime_update'], 'safe'],
+            [['datetime_at', 'datetime_update', 'datetime_finish'], 'safe'],
             [['comment'], 'string', 'max' => 500],
         ];
     }
