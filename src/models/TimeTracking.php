@@ -20,6 +20,9 @@ use \yii\helpers\ArrayHelper;
 class TimeTracking extends \yii\db\ActiveRecord
 {
     
+    public $change_logging = true;
+
+
     /**
      * {@inheritdoc}
      */
@@ -162,9 +165,46 @@ class TimeTracking extends \yii\db\ActiveRecord
     
     public function beforeSave($insert)
     {
-        $this->datetime_update = date('Y-m-d H:i:s');
-        $this->who_changed = Yii::$app->user->id;
+        if ($this->change_logging) {
+            $this->datetime_update = date('Y-m-d H:i:s');
+            $this->who_changed = Yii::$app->user->id;
+        }
+        
+        $datetime_at = $this->datetime_at ?? date('Y-m-d H:i:s');
+
+        $after = self::find()
+            ->where(['user_id' => $this->user_id])
+            ->andWhere(['>', 'datetime_at', $datetime_at])
+            ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
+            ->orderBy('datetime_at ASC')
+            ->one();
+        
+        if ($after) {
+            $this->datetime_finish = $after->datetime_at;
+            $this->duration = strtotime($this->datetime_finish) - strtotime($datetime_at);
+        } else {
+            $this->datetime_finish = NULL;
+            $this->duration = NULL;
+        }
         
         return parent::beforeSave($insert);
+    }
+    
+    public function afterSave($insert, $changedAttributes)
+    {
+        $before = self::find()
+        ->where(['user_id' => $this->user_id])
+        ->andWhere(['<', 'datetime_at', $this->datetime_at])
+        ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($this->datetime_at))])
+        ->orderBy('datetime_at DESC')
+        ->one();
+
+        if ($before &&  $before->datetime_finish != $this->datetime_at) {
+            $before->datetime_finish = $this->datetime_at;
+            $this->duration = strtotime($before->datetime_finish) - strtotime($before->datetime_at);
+            $this->change_logging = false;
+        } 
+        
+        parent::afterSave($insert, $changedAttributes);
     }
 }
