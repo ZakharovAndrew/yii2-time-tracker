@@ -19,7 +19,11 @@ $this->title = Module::t('Statistics') . ': '. $user->name;
 $this->params['breadcrumbs'][] = ['label' => Module::t('Time Tracking'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
+$useronline = User::isOnline($user->id) == true ? 'online' : 'offline';
+
 $script = <<< JS
+    $("h1").append('<div class="status_$useronline">$useronline</div>');
+        
     $("h1").append('<div id="filter" class="btn mg-top--10"><svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.906 300.906" xml:space="preserve"><path d="M288.953 0h-277c-5.522 0-10 4.478-10 10v49.531c0 5.522 4.478 10 10 10h12.372l91.378 107.397v113.978a10 10 0 0 0 15.547 8.32l49.5-33a9.999 9.999 0 0 0 4.453-8.32v-80.978l91.378-107.397h12.372c5.522 0 10-4.478 10-10V10c0-5.522-4.477-10-10-10zM167.587 166.77a9.999 9.999 0 0 0-2.384 6.48v79.305l-29.5 19.666V173.25a9.997 9.997 0 0 0-2.384-6.48L50.585 69.531h199.736l-82.734 97.239zM278.953 49.531h-257V20h257v29.531z"/></svg></div>');
     $("#filter").click(function() {
         if ($(".settings-modal").hasClass('show')) {
@@ -41,7 +45,6 @@ $script = <<< JS
     $("#timetracking-activity_time").on('change keyup', function() {
         $("#timetracking-datetime_at").val(activity_day + ' '+$("#timetracking-activity_time").val());
     });
-        
 JS;
 
 $this->registerJs($script, yii\web\View::POS_READY);
@@ -51,6 +54,19 @@ $bad = [];
 ?>
 <?= $this->render('_timeline_style') ?>
 <style>
+    .status_offline, .status_online {
+        display: inline-block;
+        background-color:#cdcdcd;
+        border-radius: 7px;
+        padding: 3px 5px;
+        font-size: 12px;
+        margin-left:5px;
+        color:#515151;
+    }
+    .status_online {
+        background-color: #4CAF50;
+        color:#fff;
+    }
 .table-user-statistics {
     width: auto;
     height: calc(100vh - 236px);
@@ -58,6 +74,7 @@ $bad = [];
     padding: 15px;
     background: #fff;
     display: flex;
+}
 </style>
 
 <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
