@@ -192,18 +192,22 @@ class TimeTracking extends \yii\db\ActiveRecord
     
     public function afterSave($insert, $changedAttributes)
     {
+        $datetime_at = $this->datetime_at ?? date('Y-m-d H:i:s');
+
         $before = self::find()
         ->where(['user_id' => $this->user_id])
-        ->andWhere(['<', 'datetime_at', $this->datetime_at])
-        ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($this->datetime_at))])
+        ->andWhere(['<', 'datetime_at', $datetime_at])
+        ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
         ->orderBy('datetime_at DESC')
         ->one();
-
-        if ($before &&  $before->datetime_finish != $this->datetime_at) {
-            $before->datetime_finish = $this->datetime_at;
+        
+        if ($before && $before->datetime_finish != $datetime_at) {
+            $before->datetime_finish = $datetime_at;
+            $before->change_logging = false;
+            $before->save();
             $this->duration = strtotime($before->datetime_finish) - strtotime($before->datetime_at);
             $this->change_logging = false;
-        } 
+        }
         
         parent::afterSave($insert, $changedAttributes);
     }
