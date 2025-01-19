@@ -274,7 +274,7 @@ class TimeTrackingController extends ParentController
     
     public function actionUserStatistics($user_id = null, $datetime_start = null, $datetime_stop = null, $show_only_bad = null)
     {
-        if (!is_null($user_id) && !Yii::$app->user->identity->hasRole('admin') && !Yii::$app->user->identity->hasRole('time_tracking_editor')) {
+        if (!is_null($user_id) && !Yii::$app->user->identity->hasRole('admin') && !Yii::$app->user->identity->hasRole('time_tracking_editor') && !Yii::$app->user->identity->hasRole('time_tracking_admin')) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         
@@ -283,7 +283,7 @@ class TimeTrackingController extends ParentController
         if (is_null($user_id)) {
             $user_id = Yii::$app->user->id;
         } else {
-            $user_id = (Yii::$app->user->identity->hasRole('admin') || Yii::$app->user->identity->hasRole('time_tracking_editor')) ? $user_id : Yii::$app->user->id; 
+            $user_id = (Yii::$app->user->identity->hasRole('admin') || Yii::$app->user->identity->hasRole('time_tracking_editor') || Yii::$app->user->identity->hasRole('time_tracking_admin')) ? $user_id : Yii::$app->user->id; 
         }
         
         // start of interval
@@ -369,7 +369,7 @@ class TimeTrackingController extends ParentController
      */
     public function actionAdd()
     {
-        if (!Yii::$app->user->identity->hasRole('time_tracking_editor')) {
+        if (!Yii::$app->user->identity->hasRole('time_tracking_editor') && !Yii::$app->user->identity->hasRole('time_tracking_admin')) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
               
