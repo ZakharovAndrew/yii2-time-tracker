@@ -286,6 +286,7 @@ echo $this->render('_form_add', [
     ]);
 
 $classModal::end();
+$this->registerJs("$.fn.modal.Constructor.prototype.enforceFocus = $.noop;");
 ?>
 
 <div class="copying" id='comment-menu'>

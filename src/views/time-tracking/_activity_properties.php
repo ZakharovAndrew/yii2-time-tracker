@@ -18,7 +18,6 @@ $user_settings = \yii\helpers\ArrayHelper::map(UserSettings::find()
             ->all(), 'code', 'values');
 
 $js_logic = '';
-
 ?>
 
 <?php foreach ($properties as $property) {
@@ -130,12 +129,26 @@ $js_logic = '';
         <label><?= $property->name ?></label>
         <?php
         if ($property->type == ActivityProperty::TYPE_STRING && !empty($property->getValues())) {
-            echo Html::dropDownList($property->id, $value, $property->getValues(), [
+            
+            if (count($property->getValues()) > 10 && class_exists('kartik\select2\Select2') ) {        
+                echo \kartik\select2\Select2::widget([
+                    'id' => 'property-'.$property->id,
+                    'name' => 'property-'.$property->id,
+                    'bsVersion' => Yii::$app->params['bsVersion'],
+                    'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
+                    'class' => 'activity-property',
+                    'data' => $property->getValues(),
+                    'options' => ['placeholder' => '', 'required' => $required],
+                ]);
+            } else {
+                echo Html::dropDownList($property->id, $value, $property->getValues(), [
                     'id' => 'property-'.$property->id,
                     'class' => 'form-control activity-property',
                     'prompt' => '',
-                    'required' => $required
+                    'required' => $required,
                 ]);
+            }
+            
         } else if ($property->type == ActivityProperty::TYPE_CHECKBOX) {
             echo Html::checkbox($property->id, $value, ['id' => 'property-'.$property->id, 'class' => 'activity-property', 'required' => $required]);
         } else {
@@ -162,6 +175,7 @@ activity_property_check();
 $('.activity-property, #timetracking-activity_id').on('change keyup', function () {
     activity_property_check();
 });
+
 JS;
 
 $this->registerJs($script, yii\web\View::POS_READY);
