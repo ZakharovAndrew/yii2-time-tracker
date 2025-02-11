@@ -133,12 +133,17 @@ $js_logic = '';
             if (count($property->getValues()) > 10 && class_exists('kartik\select2\Select2') ) {        
                 echo \kartik\select2\Select2::widget([
                     'id' => 'property-'.$property->id,
-                    'name' => 'property-'.$property->id,
+                    'name' => $property->id,
                     'bsVersion' => Yii::$app->params['bsVersion'],
                     'theme' => \kartik\select2\Select2::THEME_BOOTSTRAP,
                     'class' => 'activity-property',
                     'data' => $property->getValues(),
-                    'options' => ['placeholder' => '', 'required' => $required],
+                    'value' => $value,
+                    'options' => [
+                        'placeholder' => '',
+                        'required' => $required,
+                        //'value' => $value
+                    ],
                 ]);
             } else {
                 echo Html::dropDownList($property->id, $value, $property->getValues(), [
