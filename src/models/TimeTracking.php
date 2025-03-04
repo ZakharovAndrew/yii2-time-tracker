@@ -177,6 +177,7 @@ class TimeTracking extends \yii\db\ActiveRecord
             ->andWhere(['>', 'datetime_at', $datetime_at])
             ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
             ->orderBy('datetime_at ASC')
+            ->andFilterWhere(['!=', 'id', $this->id])
             ->one();
         
         if ($after) {
@@ -210,5 +211,35 @@ class TimeTracking extends \yii\db\ActiveRecord
         }
         
         parent::afterSave($insert, $changedAttributes);
+    }
+    
+    public function afterDelete()
+    {
+        $datetime_at = $this->datetime_at ?? date('Y-m-d H:i:s');
+        
+        parent::afterDelete();
+		
+        $before = self::find()
+            ->where(['user_id' => $this->user_id])
+            ->andWhere(['<', 'datetime_at', $datetime_at])
+            ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
+            ->orderBy('datetime_at DESC')
+            ->one();
+
+        if($before) {
+            $after = self::find()
+                ->where(['user_id' => $this->user_id])
+                ->andWhere(['>', 'datetime_at', $datetime_at])
+                ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
+                ->orderBy('datetime_at ASC')			
+                ->one();
+
+            $new_datetime_finish = $after ? $after->datetime_at : null;
+            if($before->datetime_finish != $new_datetime_finish) {
+                $before->datetime_finish = $new_datetime_finish;
+                $before->change_logging = false;
+                $before->save();
+            }			
+        }
     }
 }
