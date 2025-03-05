@@ -294,7 +294,7 @@ class TimeTrackingController extends ParentController
                 ->where(['user_id' => $user_id])
                 ->andWhere(['>', 'datetime_at', $start_day])
                 ->andWhere(['<', 'datetime_at', $stop_day])
-                ->orderBy('datetime_at')
+                ->orderBy('datetime_at, id')
                 ->all();
         
         $timeline = [];

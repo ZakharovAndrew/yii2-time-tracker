@@ -174,10 +174,10 @@ class TimeTracking extends \yii\db\ActiveRecord
 
         $after = self::find()
             ->where(['user_id' => $this->user_id])
-            ->andWhere(['>', 'datetime_at', $datetime_at])
-            ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
-            ->orderBy('datetime_at ASC')
+            ->andWhere(["or", ['>', 'datetime_at', $datetime_at], ['and', ['=', 'datetime_at', $datetime_at], ['>', 'id', $this->id]]])
+            ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])            
             ->andFilterWhere(['!=', 'id', $this->id])
+            ->orderBy('datetime_at ASC, id ASC')
             ->one();
         
         if ($after) {
@@ -197,9 +197,10 @@ class TimeTracking extends \yii\db\ActiveRecord
 
         $before = self::find()
         ->where(['user_id' => $this->user_id])
-        ->andWhere(['<', 'datetime_at', $datetime_at])
+        ->andWhere(["or", ['<', 'datetime_at', $datetime_at], ['and', ['=', 'datetime_at', $datetime_at], ['<', 'id', $this->id]]])
         ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
-        ->orderBy('datetime_at DESC')
+	->andFilterWhere(['!=', 'id', $this->id])
+        ->orderBy('datetime_at DESC, id DESC')
         ->one();
         
         if ($before && $before->datetime_finish != $datetime_at) {
@@ -223,15 +224,17 @@ class TimeTracking extends \yii\db\ActiveRecord
             ->where(['user_id' => $this->user_id])
             ->andWhere(['<', 'datetime_at', $datetime_at])
             ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
-            ->orderBy('datetime_at DESC')
+            ->andFilterWhere(['!=', 'id', $this->id])
+            ->orderBy('datetime_at DESC, id DESC')
             ->one();
 
-        if($before) {
+        if ($before) {
             $after = self::find()
                 ->where(['user_id' => $this->user_id])
                 ->andWhere(['>', 'datetime_at', $datetime_at])
                 ->andWhere(['date(datetime_at)' => date('Y-m-d', strtotime($datetime_at))])
-                ->orderBy('datetime_at ASC')			
+		->andFilterWhere(['!=', 'id', $this->id])
+                ->orderBy('datetime_at ASC, id ASC')			
                 ->one();
 
             $new_datetime_finish = $after ? $after->datetime_at : null;
