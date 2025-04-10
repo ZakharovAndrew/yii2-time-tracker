@@ -108,7 +108,7 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
     background: #fff;
     padding: 10px 15px;
     z-index: 1050;
-    min-width: 260px;
+    width:300px
 }
 .settings-modal-title:first-child {
     font-size: 18px;
@@ -148,6 +148,7 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
     width: 100%;
     left: 0;
     padding: 0 12px;
+    gap:5px;
 }
 .settings-modal .bottom-panel button {
     width: 100%;
