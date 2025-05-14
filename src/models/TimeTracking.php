@@ -165,6 +165,12 @@ class TimeTracking extends \yii\db\ActiveRecord
     
     public function beforeSave($insert)
     {
+        $function = Yii::$app->getModule('timetracker')->beforeSaveFunction;
+        
+        if (!empty($function) && is_callable($function)) {
+            $function($this);
+        }
+        
         if ($this->change_logging) {
             $this->datetime_update = date('Y-m-d H:i:s');
             $this->who_changed = Yii::$app->user->id;

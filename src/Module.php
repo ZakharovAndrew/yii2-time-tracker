@@ -24,7 +24,7 @@ class Module extends \yii\base\Module
     /**
      * @var string Module version
      */
-    protected $version = "0.1.7";
+    protected $version = "0.1.8";
 
     /**
      * @var string Alias for module
@@ -54,6 +54,11 @@ class Module extends \yii\base\Module
     
     /**
      * @var string show H1
+     */
+    public $beforeSaveFunction = '';
+    
+    /**
+     * @var boolean show H1
      */
     public $showTitle = true;
     
