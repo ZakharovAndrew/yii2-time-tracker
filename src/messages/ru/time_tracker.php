@@ -69,6 +69,7 @@ return [
     'Edit' => 'Редактировать',
     'Send' => 'Отправить',
     'Apply' => 'Применить',
+    'Saving' => 'Сохранение',
     
     'Activity Properties' => 'Свойства активности',
     'Activity Property' => 'Свойство активности',

@@ -8,6 +8,19 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\TimeTracking $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$saving = Module::t('Saving');
+
+$script = <<< JS
+        
+$('#saveButton').click(function() {
+    $('#saveButton').html('$saving...');
+    $('#saveButton').addClass('disabled');
+    console.log('CLICK!');
+});
+JS;
+
+$this->registerJs($script, yii\web\View::POS_READY);
 ?>
 
 <div class="time-tracking-form">
@@ -25,9 +38,8 @@ use ZakharovAndrew\TimeTracker\models\Activity;
     <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
     
     <div class="form-group">
-        <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Module::t('Save'), ['id' => 'saveButton', 'class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
-
 </div>
