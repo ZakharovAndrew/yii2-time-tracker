@@ -198,6 +198,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 }
                                 ?>
                             </td>
+                            <?php foreach ($additionalProperties as $prop) { ?>
+                            <td><?= $prop->getUserPropertyValue($item->activity_id, Yii::$app->user->id) ?></td>
+                            <?php } ?>
                         </tr>
                         <?php } ?>
                     </table>
