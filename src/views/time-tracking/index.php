@@ -3,6 +3,7 @@
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
+use ZakharovAndrew\TimeTracker\models\ActivityProperty;
 use yii\helpers\Html;
 use ZakharovAndrew\TimeTracker\assets\TimeTrackerAssets;
 
@@ -11,6 +12,9 @@ TimeTrackerAssets::register($this);
 $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
 $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Modal";
 $classTabs = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Tabs";
+
+$additionalPropertiesInWorkStatuses = Yii::$app->getModule('timetracker')->additionalPropertiesInWorkStatuses;
+$additionalProperties = ActivityProperty::find()->where(['id' => $additionalPropertiesInWorkStatuses])->all();
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\TimeTrackingSearch $searchModel */
@@ -178,6 +182,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 <th class="time-tracking__time"><?= Module::t('Time') ?></th>
                                 <th><?= Module::t('Activity') ?></th>
                                 <th class="time-tracking__comment"><?= Module::t('Comment') ?></th>
+                                <?php foreach ($additionalProperties as $prop) { ?>
+                                <th><?= $prop->name ?></th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <?php 
