@@ -199,7 +199,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 ?>
                             </td>
                             <?php foreach ($additionalProperties as $prop) { ?>
-                            <td><?= $prop->getUserPropertyValue($item->activity_id) ?></td>
+                            <td><?= $prop->getUserPropertyValue($item->id) ?></td>
                             <?php } ?>
                         </tr>
                         <?php } ?>
