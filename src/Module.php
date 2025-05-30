@@ -51,7 +51,12 @@ class Module extends \yii\base\Module
     public $statisticUserProperties = [
         
     ];
-    
+ 
+    /**
+     * @var array list of activity properties ID for display in statistics
+     */
+    public $additionalPropertiesInWorkStatuses = [];
+ 
     /**
      * @var string show H1
      */
