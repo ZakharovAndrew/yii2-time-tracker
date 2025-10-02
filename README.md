@@ -14,7 +14,7 @@ The time tracking module for the Yii2 framework is a comprehensive solution for 
 - Supports Bootstrap versions: 3, 4, 5
 - Supports languages: English, Russian
 
-## Installation
+## 🚀 Installation
 
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
@@ -59,7 +59,7 @@ return [
 ];
 ```
 
-## Usage
+## 🛠 Usage
 
 Add this to your main configuration's modules array
 
