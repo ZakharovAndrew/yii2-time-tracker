@@ -3,6 +3,7 @@
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
+use ZakharovAndrew\TimeTracker\models\ActivityProperty;
 use yii\helpers\Html;
 use ZakharovAndrew\TimeTracker\assets\TimeTrackerAssets;
 
@@ -11,6 +12,9 @@ TimeTrackerAssets::register($this);
 $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
 $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Modal";
 $classTabs = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Tabs";
+
+$additionalPropertiesInWorkStatuses = Yii::$app->getModule('timetracker')->additionalPropertiesInWorkStatuses;
+$additionalProperties = ActivityProperty::find()->where(['id' => $additionalPropertiesInWorkStatuses])->all();
 
 /** @var yii\web\View $this */
 /** @var ZakharovAndrew\TimeTracker\models\TimeTrackingSearch $searchModel */
@@ -178,6 +182,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 <th class="time-tracking__time"><?= Module::t('Time') ?></th>
                                 <th><?= Module::t('Activity') ?></th>
                                 <th class="time-tracking__comment"><?= Module::t('Comment') ?></th>
+                                <?php foreach ($additionalProperties as $prop) { ?>
+                                <th><?= $prop->name ?></th>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <?php 
@@ -191,6 +198,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 }
                                 ?>
                             </td>
+                            <?php foreach ($additionalProperties as $prop) { ?>
+                            <td><?= $prop->getUserPropertyValue($item->id) ?></td>
+                            <?php } ?>
                         </tr>
                         <?php } ?>
                     </table>
@@ -230,6 +240,8 @@ $this->registerJs($script, yii\web\View::POS_READY);
         //let second = Math.floor((seconds % (3600*60)/100);
         return hours + ':' + (minutes < 10 ? '0' : '') + minutes;
     }
+    
+    let sumActivities = <?= array_sum( array_values ($aggActivity)) ?>;
     let chartBar = new Chart(document.getElementById("bar"), {
         type: 'bar',
         
@@ -260,7 +272,9 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             let hours = Math.floor(tooltipItem.raw / 3600);
                             let minutes = Math.floor((tooltipItem.raw % 3600) / 60);
 
-                            return hours + 'h ' + (minutes < 10 ? '0' : '') + minutes + 'm';
+                            let timeLabel = hours + 'h ' + (minutes < 10 ? '0' : '') + minutes + 'm'
+                            let activityProcent = (tooltipItem.raw / sumActivities) * 100;
+                            return timeLabel + ' ' + Math.round(activityProcent, 2) + '%';
                         }
                     }
                 }
