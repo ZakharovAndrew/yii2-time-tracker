@@ -97,6 +97,7 @@
     padding: 6px 10px;
     border-radius: 8px;
     padding-left: 41px;
+    min-width:200px;
 }
 .table-bordered {
     box-shadow: none;
