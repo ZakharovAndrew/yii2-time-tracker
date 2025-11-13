@@ -100,5 +100,9 @@ return [
     'Users' => 'Пользователи',
     'User Property' => 'Свойство пользователя',
     'Activities for which to display a property' => 'Активности, для которых отображать свойство',
-    'Activities for which the property is required' => 'Активности, для которых свойство обязательно'
+    'Activities for which the property is required' => 'Активности, для которых свойство обязательно',
+    
+    'Dashboard' => 'Дашборд',
+    'Duration' => 'Длительность',
+    'Count' => 'Количество',
 ];
