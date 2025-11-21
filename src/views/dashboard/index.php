@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 
@@ -31,7 +32,7 @@ $this->title = Module::t('Dashboard');
             <div class="card info-block">
                 <div class="card-body">
                     <h4>Последние месяц</h4>
-                    <span><?= $data['coun_last_month_activities'] ?></span>
+                    <span><?= $data['count_last_month_activities'] ?></span>
                 </div>
             </div>
         </div>
@@ -39,7 +40,7 @@ $this->title = Module::t('Dashboard');
             <div class="card info-block">
                 <div class="card-body">
                     <h4>Последние 7 дней</h4>
-                    <span><?= $data['coun_last_week_activities'] ?></span>
+                    <span><?= $data['count_last_week_activities'] ?></span>
                 </div>
             </div>
         </div>
@@ -50,17 +51,19 @@ $this->title = Module::t('Dashboard');
         <thead>
             <tr>
                 <th><?= Module::t('Activity') ?></th>
-                <th>Count</th>
+                <th><?= Module::t('Count') ?></th>
                 <th><?= Module::t('Duration') ?></th>
+                <th><?= Module::t('Average duration') ?></th>
             </tr>
         </thead>
             
     
     <?php foreach ($data['top_month_activities'] as $item) {?>
         <tr>
-            <td><?= $item['name'] ?></td>
+            <td><a href="<?= Url::to(['detail', 'activity_id'=> $item['activity_id'], 'period' => 'month']) ?>"><?= $item['name'] ?></a></td>
             <td><?= $item['cnt'] ?></td>
             <td><?= Activity::timeFormat($item['duration']) ?></td>
+            <td><?= Activity::timeFormat(round($item['duration']/$item['cnt'])) ?></td>
         </tr>
     <?php } ?>
     </table>
@@ -70,8 +73,9 @@ $this->title = Module::t('Dashboard');
         <thead>
             <tr>
                 <th><?= Module::t('Activity') ?></th>
-                <th>Count</th>
+                <th><?= Module::t('Count') ?></th>
                 <th><?= Module::t('Duration') ?></th>
+                <th><?= Module::t('Average duration') ?></th>
             </tr>
         </thead>
             
@@ -81,6 +85,7 @@ $this->title = Module::t('Dashboard');
             <td><?= $item['name'] ?></td>
             <td><?= $item['cnt'] ?></td>
             <td><?= Activity::timeFormat($item['duration']) ?></td>
+            <td><?= Activity::timeFormat(round($item['duration']/$item['cnt'])) ?></td>
         </tr>
     <?php } ?>
     </table>
@@ -90,7 +95,9 @@ $this->title = Module::t('Dashboard');
         <thead>
             <tr>
                 <th><?= Module::t('Activity') ?></th>
-                <th>Count</th>
+                <th><?= Module::t('Count') ?></th>
+                <th><?= Module::t('Duration') ?></th>
+                <th><?= Module::t('Average duration') ?></th>
             </tr>
         </thead>
             
@@ -99,6 +106,8 @@ $this->title = Module::t('Dashboard');
         <tr>
             <td><?= $item['name'] ?></td>
             <td><?= $item['cnt'] ?></td>
+            <td><?= Activity::timeFormat($item['duration']) ?></td>
+            <td><?= Activity::timeFormat(round($item['duration']/$item['cnt'])) ?></td>
         </tr>
     <?php } ?>
     </table>

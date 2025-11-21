@@ -104,5 +104,6 @@ return [
     
     'Dashboard' => 'Дашборд',
     'Duration' => 'Длительность',
+    'Average duration' => 'Средняя длительность',
     'Count' => 'Количество',
 ];

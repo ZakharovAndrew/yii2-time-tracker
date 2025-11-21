@@ -251,4 +251,33 @@ class TimeTracking extends \yii\db\ActiveRecord
             }			
         }
     }
+    
+    public static function getTopActivitiesQuery($startDate, $limit = 10)
+    {
+        return static::find()
+            ->alias('t')
+            ->select([
+                't.activity_id', 
+                'a.name', 
+                'cnt' => 'COUNT(*)', 
+                'duration' => 'SUM(duration)'
+            ])
+            ->leftJoin(['a' => Activity::tableName()], 'a.id = t.activity_id')
+            ->where(['NOT IN', 't.activity_id', [
+                Activity::WORK_START, 
+                Activity::WORK_STOP, 
+                Activity::WORK_BREAK
+            ]])
+            ->andWhere(['>', 'datetime_at', $startDate])
+            ->groupBy('t.activity_id, a.name')
+            ->orderBy(['cnt' => SORT_DESC])
+            ->limit($limit);
+    }
+    
+    public static function getCountFromDate($startDate)
+    {
+        return static::find()
+            ->where(['>', 'datetime_at', $startDate])
+            ->count();
+    }
 }
