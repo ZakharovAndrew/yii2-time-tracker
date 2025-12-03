@@ -259,6 +259,7 @@ class TimeTracking extends \yii\db\ActiveRecord
             ->select([
                 't.activity_id', 
                 'a.name', 
+                'cnt_users' => 'COUNT(DISTINCT(user_id))', 
                 'cnt' => 'COUNT(*)', 
                 'duration' => 'SUM(duration)'
             ])

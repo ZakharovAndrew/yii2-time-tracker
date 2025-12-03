@@ -51,6 +51,13 @@ class Module extends \yii\base\Module
     public $statisticUserProperties = [
         
     ];
+    
+    /**
+     * @var array list of user properties in dashboards
+     */
+    public $dashboardUserProperties = [
+        
+    ];
  
     /**
      * @var array list of activity properties ID for display in statistics

@@ -282,6 +282,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
     </div>
     
 <?php $form = ActiveForm::begin([
+        'action' => ['statistics'],
         'method' => 'get',
     ]); ?>
 <div class="settings-filter-form-group scroll-bar-left">

@@ -79,7 +79,7 @@ UserAssets::register($this);
     <?php } ?>
     
     <h3><?= Module::t('Activities for which to display a property') ?></h3>
-    <?= $form->field($model, 'params[show_when_activity]')->checkboxList(Activity::getDropdownList())->label(false); ?>
+    <?= $form->field($model, 'params[show_when_activity]')->checkboxList(Activity::getFullList())->label(false); ?>
     
     <h3><?= Module::t('Activities for which the property is required') ?></h3>
     <?= $form->field($model, 'params[required_when_activity]')->checkboxList(Activity::getDropdownList())->label(false); ?>

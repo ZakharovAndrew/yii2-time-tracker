@@ -2,10 +2,12 @@
 
 namespace ZakharovAndrew\TimeTracker\controllers;
 
+use Yii;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\user\controllers\ParentController;
 use yii\helpers\ArrayHelper;
+use ZakharovAndrew\user\models\UserSettingsConfig;
 
 class DashboardController extends ParentController
 {
@@ -29,6 +31,7 @@ class DashboardController extends ParentController
                 'count_all_activities' => TimeTracking::find()->count(),
                 'count_last_month_activities' => TimeTracking::getCountFromDate($monthAgo),
                 'count_last_week_activities' => TimeTracking::getCountFromDate($weekAgo),
+                'count_today_activities' => TimeTracking::getCountFromDate($today),
                 'top_month_activities' => TimeTracking::getTopActivitiesQuery($monthAgo)->asArray()->all(),
                 'top_week_activities' => TimeTracking::getTopActivitiesQuery($weekAgo)->asArray()->all(),
                 'top_today_activities' => TimeTracking::getTopActivitiesQuery($today)->asArray()->all(),
@@ -40,7 +43,7 @@ class DashboardController extends ParentController
         ]);
     }
     
-    public function actionDetail($period, $activity_id)
+    public function actionDetail($period, $activity_id, $order_by = 'count')
     {
         $model = $this->findModel($activity_id);
         
@@ -51,6 +54,8 @@ class DashboardController extends ParentController
             $start_date = date('Y-m-d', strtotime('-7 days'));
         }
         
+        $order_by_sql = ($order_by == 'duration' ? 'duration DESC, cnt DESC' : 'cnt DESC, duration DESC');
+        
         $data = TimeTracking::find()->alias('t')
                 ->select(['t.user_id', 'u.name', 'cnt' => 'count(*)', 'duration' => 'sum(duration)'])
                 ->leftJoin(Activity::tableName().' a', 'a.id = t.activity_id')
@@ -60,11 +65,17 @@ class DashboardController extends ParentController
                 ->andWhere(['activity_id' => $activity_id])
                 ->groupBy('t.user_id')
                 ->asArray()
-                ->orderBy('cnt DESC, duration DESC');
+                ->orderBy($order_by_sql);
         
         return $this->render('detail', [
             'data' => $data->all(),
-            'model' => $model
+            'model' => $model,
+            'period' => $period,
+            'activity_id' => $activity_id,
+            'order_by' => $order_by,
+            'user_properties_column' => UserSettingsConfig::find()->where([
+                'code' => Yii::$app->getModule('timetracker')->dashboardUserProperties
+            ])->all()
         ]);
     }
     

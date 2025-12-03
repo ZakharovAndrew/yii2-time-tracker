@@ -56,6 +56,16 @@ class Activity extends \yii\db\ActiveRecord
         return ArrayHelper::map(static::find()->asArray()->cache(600)->all(), 'id', 'name');
     }
     
+    public static function  getFullList()
+    {
+        $arr = ArrayHelper::map(static::find()->asArray()->cache(600)->all(), 'id', 'name');
+        //$arr[static::WORK_START] = '';
+        //$arr[static::WORK_STOP] = '';
+        $arr[static::WORK_BREAK] = Module::t('Break');
+        
+        return $arr;
+    }
+    
     public static function  getActivityColors()
     {
         return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'color');

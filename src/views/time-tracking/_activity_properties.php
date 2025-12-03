@@ -26,7 +26,7 @@ $js_logic = '';
     $required = ($property->required ?? false) == true;
     
     $show = true;
-       
+
     if (is_array($property->params) && isset($property->params['user_property'])) {
         foreach ($property->params['user_property'] as $param) {
             if (empty($param['comparison'])) {
@@ -117,12 +117,10 @@ $js_logic = '';
     
     // required when activity is selected
     $list = $property->params['required_when_activity'] ?? [];
-    if (!$required) {
-        if (is_array($list) && count($list) > 0) {
-            $js_logic .= '$("#property-'.$property->id.'").attr("required", ($("#property-'.$property->id.'").is(":visible") && [' . implode(',',$list) . '].includes($("#timetracking-activity_id").val() * 1)));';
-        } else {
-            $js_logic .= '$("#property-'.$property->id.'").attr("required", false);';
-        }
+    if (is_array($list) && count($list) > 0) {
+        $js_logic .= '$("#property-'.$property->id.'").attr("required", ($("#property-'.$property->id.'").is(":visible") && [' . implode(',',$list) . '].includes($("#timetracking-activity_id").val() * 1)));';
+    } else {
+        $js_logic .= '$("#property-'.$property->id.'").attr("required", false);';
     }
 ?>
     <div class="form-group">
@@ -142,8 +140,8 @@ $js_logic = '';
                     'options' => [
                         'placeholder' => '',
                         'required' => $required,
-                        //'value' => $value
                     ],
+                    'pluginOptions' => ['allowClear' => true],
                 ]);
             } else {
                 echo Html::dropDownList($property->id, $value, $property->getValues(), [
