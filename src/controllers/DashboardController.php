@@ -43,13 +43,17 @@ class DashboardController extends ParentController
         ]);
     }
     
-    public function actionDetail($period, $activity_id, $order_by = 'count')
+    public function actionDetail($period, $activity_id, $order_by = 'count', $date = null)
     {
         $model = $this->findModel($activity_id);
         
         $start_date = date('Y-m-d');
         if ($period == 'month') {
             $start_date = date('Y-m-d', strtotime('-1 month'));
+            if (!empty($date)) {
+                $start_date = date('Y-m-01', strtotime($date));
+                $stop_date = date('Y-m-01', strtotime($start_date. ' + 1 month'));
+            }
         } else if ($period == 'week') {
             $start_date = date('Y-m-d', strtotime('-7 days'));
         }
@@ -67,6 +71,10 @@ class DashboardController extends ParentController
                 ->asArray()
                 ->orderBy($order_by_sql);
         
+        if (isset($stop_date)) {
+            $data->andWhere(['<', 'datetime_at', $stop_date]);
+        }
+        
         return $this->render('detail', [
             'data' => $data->all(),
             'model' => $model,
@@ -76,6 +84,32 @@ class DashboardController extends ParentController
             'user_properties_column' => UserSettingsConfig::find()->where([
                 'code' => Yii::$app->getModule('timetracker')->dashboardUserProperties
             ])->all()
+        ]);
+    }
+    
+    public function actionActivity($id)
+    {
+        $model = $this->findModel($id);
+        
+        $data = TimeTracking::find()->alias('t')
+            ->select([
+                'month' => "DATE_FORMAT(t.datetime_at, '%Y-%m')", // Группировка по месяцам (формат: 2024-01)
+                'month_name' => "DATE_FORMAT(t.datetime_at, '%M %Y')",
+                'cnt' => 'COUNT(*)', // Количество уникальных активностей
+                'activity_count' => 'COUNT(*)', // Общее количество записей
+                'duration' => 'SUM(t.duration)'
+            ])
+            ->where(['NOT IN', 't.activity_id', [Activity::WORK_START, Activity::WORK_STOP, Activity::WORK_BREAK]])
+            ->andWhere(['>', 't.datetime_at', date('Y-m-01', strtotime('-6 month'))])
+            ->andWhere(['t.activity_id' => $id])
+            ->groupBy(['month']) // Группируем по пользователю и месяцу
+            ->orderBy('month ASC')
+            ->asArray()
+            ->all();
+                
+        return $this->render('activity', [
+            'data' => $data,
+            'model' => $model,
         ]);
     }
     

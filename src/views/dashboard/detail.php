@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 
-$this->title = Module::t('Activity').': '.$model->name;
+$this->title = Module::t('Activity').($period == 'month' ? ' за месяц' : ''). ': '.$model->name;
 
 //$this->title = Module::t('Update Activity Property') . ': ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Module::t('Dashboard'), 'url' => ['index']];

@@ -25,6 +25,11 @@ $this->title = Module::t('Dashboard');
         font-family: Roboto;
     }
     .timetracking-dashboard-index table tr:hover td {background:#e2f6ff}
+    .activity_name span {
+        float:right;
+    }
+    .timetracking-dashboard-index .activity_name span .btn{padding:1px 5px;opacity:0;}
+    .timetracking-dashboard-index table tr:hover .activity_name span .btn{opacity:1;}
 </style>
 <div class="timetracking-dashboard-index">
 
@@ -66,7 +71,26 @@ $this->title = Module::t('Dashboard');
         </div>
     </div>
     
-    <h3>Топ 10 активностей за месяц</h3>
+    <?php 
+    $stats = [
+        'top_month_activities' => [
+            'title' => 'Топ 10 активностей за месяц',
+            'period' => 'month'
+        ],
+        'top_week_activities' => [
+            'title' => 'Топ 10 активностей за неделю',
+            'period' => 'week'
+        ],
+        'top_today_activities' => [
+            'title' => 'Топ 10 активностей за сегодня',
+            'period' => 'today'
+        ],
+    ]
+    ?>
+    
+    <?php foreach ($stats as $key => $stat) { ?>
+    
+    <h3><?= $stat['title'] ?></h3>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -79,9 +103,12 @@ $this->title = Module::t('Dashboard');
         </thead>
             
     
-    <?php foreach ($data['top_month_activities'] as $item) {?>
+    <?php foreach ($data[$key] as $item) {?>
         <tr>
-            <td><a href="<?= Url::to(['detail', 'activity_id'=> $item['activity_id'], 'period' => 'month']) ?>"><?= $item['name'] ?></a></td>
+            <td class="activity_name">
+                <a href="<?= Url::to(['detail', 'activity_id'=> $item['activity_id'], 'period' => $stat['period']]) ?>"><?= $item['name'] ?></a>
+                <span><a href="<?= Url::to(['activity', 'id'=> $item['activity_id']]) ?>" class="btn btn-success" title="Статистика по активности за 6 месяцев"><b>S</b></a><span></span>
+            </td>
             <td><?= $item['cnt'] ?></td>
             <td><?= $item['cnt_users'] ?></td>
             <td><?= Activity::timeFormat($item['duration']) ?></td>
@@ -89,30 +116,7 @@ $this->title = Module::t('Dashboard');
         </tr>
     <?php } ?>
     </table>
-    
-    <h3>Топ 10 активностей за неделю</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th><?= Module::t('Activity') ?></th>
-                <th><?= Module::t('Count') ?></th>
-                <th><?= Module::t('Users') ?></th>
-                <th><?= Module::t('Duration') ?></th>
-                <th><?= Module::t('Average duration') ?></th>
-            </tr>
-        </thead>
-            
-    
-    <?php foreach ($data['top_week_activities'] as $item) {?>
-        <tr>
-            <td><a href="<?= Url::to(['detail', 'activity_id'=> $item['activity_id'], 'period' => 'week']) ?>"><?= $item['name'] ?></a></td>
-            <td><?= $item['cnt'] ?></td>
-            <td><?= $item['cnt_users'] ?></td>
-            <td><?= Activity::timeFormat($item['duration']) ?></td>
-            <td><?= Activity::timeFormat(round($item['duration']/$item['cnt'])) ?></td>
-        </tr>
     <?php } ?>
-    </table>
     
     <h3>Топ 10 активностей за сегодня</h3>
     <table class="table table-bordered">
@@ -129,11 +133,15 @@ $this->title = Module::t('Dashboard');
     
     <?php foreach ($data['top_today_activities'] as $item) {?>
         <tr>
-            <td><a href="<?= Url::to(['detail', 'activity_id'=> $item['activity_id'], 'period' => 'today']) ?>"><?= $item['name'] ?></a></td>
+            <td class="activity_name">
+                <a href="<?= Url::to(['detail', 'activity_id'=> $item['activity_id'], 'period' => 'today']) ?>"><?= $item['name'] ?></a>
+                <span><a href="<?= Url::to(['activity', 'id'=> $item['activity_id']]) ?>" class="btn btn-success" title="Статистика по активности за 6 месяцев"><b>S</b></a><span></span>
+            </td>
             <td><?= $item['cnt'] ?></td>
             <td><?= $item['cnt_users'] ?></td>
             <td><?= Activity::timeFormat($item['duration'] ?? 0) ?></td>
             <td><?= Activity::timeFormat(round($item['duration']/$item['cnt'])) ?></td>
+            
         </tr>
     <?php } ?>
     </table>
