@@ -111,38 +111,10 @@ $this->title = Module::t('Dashboard');
             </td>
             <td><?= $item['cnt'] ?></td>
             <td><?= $item['cnt_users'] ?></td>
-            <td><?= Activity::timeFormat($item['duration']) ?></td>
-            <td><?= Activity::timeFormat(round($item['duration']/$item['cnt'])) ?></td>
-        </tr>
-    <?php } ?>
-    </table>
-    <?php } ?>
-    
-    <h3>Топ 10 активностей за сегодня</h3>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th><?= Module::t('Activity') ?></th>
-                <th><?= Module::t('Count') ?></th>
-                <th><?= Module::t('Users') ?></th>
-                <th><?= Module::t('Duration') ?></th>
-                <th><?= Module::t('Average duration') ?></th>
-            </tr>
-        </thead>
-            
-    
-    <?php foreach ($data['top_today_activities'] as $item) {?>
-        <tr>
-            <td class="activity_name">
-                <a href="<?= Url::to(['detail', 'activity_id'=> $item['activity_id'], 'period' => 'today']) ?>"><?= $item['name'] ?></a>
-                <span><a href="<?= Url::to(['activity', 'id'=> $item['activity_id']]) ?>" class="btn btn-success" title="Статистика по активности за 6 месяцев"><b>S</b></a><span></span>
-            </td>
-            <td><?= $item['cnt'] ?></td>
-            <td><?= $item['cnt_users'] ?></td>
             <td><?= Activity::timeFormat($item['duration'] ?? 0) ?></td>
             <td><?= Activity::timeFormat(round($item['duration']/$item['cnt'])) ?></td>
-            
         </tr>
     <?php } ?>
     </table>
+    <?php } ?>
 </div>
