@@ -218,6 +218,8 @@ class TimeTracking extends \yii\db\ActiveRecord
         }
         
         parent::afterSave($insert, $changedAttributes);
+        
+        self::setUserLastActivity($this->user_id);
     }
     
     public function afterDelete()
@@ -250,6 +252,8 @@ class TimeTracking extends \yii\db\ActiveRecord
                 $before->save();
             }			
         }
+        
+        self::setUserLastActivity($this->user_id);
     }
     
     public static function getTopActivitiesQuery($startDate, $limit = 10)
@@ -280,5 +284,56 @@ class TimeTracking extends \yii\db\ActiveRecord
         return static::find()
             ->where(['>', 'datetime_at', $startDate])
             ->count();
+    }
+    
+    public static function setUserLastActivity($user_id)
+    {
+        $last_activity = \ZakharovAndrew\user\models\User::find()->alias('u')
+            ->select([
+                'u.id', 
+                'tt_last.datetime_at as last_activity_time', 
+                'tt_last.id as last_activity_id', 
+                'a.name as last_activity_name',
+            ])
+            ->leftJoin(['tt_last' => TimeTracking::tableName()], 'tt_last.id = (
+                SELECT id 
+                FROM '.TimeTracking::tableName().' 
+                WHERE user_id = u.id 
+                ORDER BY datetime_at DESC, id DESC 
+                LIMIT 1
+            )')
+            ->leftJoin(['a' => Activity::tableName()], 'a.id = tt_last.activity_id')
+            ->where(['u.id' => $user_id])
+            ->asArray()
+            ->one();
+        
+        $users = static::getUsersWithLastActivity();
+        
+        $users[$user_id] = $last_activity;
+        
+        Yii::$app->cache->set('users_with_last_activity', $users, 600);
+    }
+    
+    public static function getUsersWithLastActivity()
+    {
+        return Yii::$app->cache->getOrSet('users_with_last_activity', function () {
+            return ArrayHelper::index(\ZakharovAndrew\user\models\User::find()->alias('u')
+            ->select([
+                'u.id', 
+                'tt_last.datetime_at as last_activity_time', 
+                'tt_last.id as last_activity_id', 
+                'a.name as last_activity_name',
+            ])
+            ->leftJoin(['tt_last' => TimeTracking::tableName()], 'tt_last.id = (
+                SELECT id 
+                FROM '.TimeTracking::tableName().' 
+                WHERE user_id = u.id 
+                ORDER BY datetime_at DESC, id DESC 
+                LIMIT 1
+            )')
+            ->leftJoin(['a' => Activity::tableName()], 'a.id = tt_last.activity_id')
+            ->asArray()
+            ->all(), 'id');
+        }, 600);
     }
 }
