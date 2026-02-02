@@ -292,7 +292,7 @@ class TimeTracking extends \yii\db\ActiveRecord
             ->select([
                 'u.id', 
                 'tt_last.datetime_at as last_activity_time', 
-                'tt_last.id as last_activity_id', 
+                'tt_last.activity_id as last_activity_id', 
                 'a.name as last_activity_name',
             ])
             ->leftJoin(['tt_last' => TimeTracking::tableName()], 'tt_last.id = (
@@ -321,7 +321,7 @@ class TimeTracking extends \yii\db\ActiveRecord
             ->select([
                 'u.id', 
                 'tt_last.datetime_at as last_activity_time', 
-                'tt_last.id as last_activity_id', 
+                'tt_last.activity_id as last_activity_id', 
                 'a.name as last_activity_name',
             ])
             ->leftJoin(['tt_last' => TimeTracking::tableName()], 'tt_last.id = (
