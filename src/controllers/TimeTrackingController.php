@@ -493,6 +493,7 @@ class TimeTrackingController extends ParentController
             'success' => true,
             'lastActivityTime' => $lastActivity['last_activity_time'],
             'lastActivityName' => $lastActivity['last_activity_name'] ?? null,
+            'lastActivityId' => $lastActivity['last_activity_id'] ?? null,
             'serverTime' => date('Y-m-d H:i:s'),
             'timestamp' => time()
         ];
