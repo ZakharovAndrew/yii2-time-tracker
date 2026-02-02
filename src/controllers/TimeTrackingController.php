@@ -15,6 +15,7 @@ use ZakharovAndrew\user\controllers\ParentController;
 use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\web\Response;
 
 /**
  * TimeTrackingController implements the CRUD actions for TimeTracking model.
@@ -471,6 +472,30 @@ class TimeTrackingController extends ParentController
         
         
         return $this->redirect(Url::previous('user_statistics') ??  ['user-statistics', 'user_id' => $user_id]);
+    }
+    
+    public function actionGetLastActivity()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $usersData = TimeTracking::getUsersWithLastActivity();
+        $lastActivity = $usersData[Yii::$app->user->id] ?? null;
+        
+        if (!$lastActivity || empty($lastActivity['last_activity_time'])) {
+            return [
+                'success' => false,
+                'message' => 'Нет данных об активности',
+                'timestamp' => time()
+            ];
+        }
+        
+        return [
+            'success' => true,
+            'lastActivityTime' => $lastActivity['last_activity_time'],
+            'lastActivityName' => $lastActivity['last_activity_name'] ?? null,
+            'serverTime' => date('Y-m-d H:i:s'),
+            'timestamp' => time()
+        ];
     }
 
     /**
