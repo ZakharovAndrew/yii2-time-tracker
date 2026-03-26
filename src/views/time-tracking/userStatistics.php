@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $useronline = User::isOnline($user->id) == true ? 'online' : 'offline';
 
 $script = <<< JS
-    $("h1").append('<div class="status_$useronline">$useronline</div>');
+    $("h1").append('<div class="user_status_$useronline">$useronline</div>');
         
     $("h1").append('<div id="filter" class="btn mg-top--10"><svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.906 300.906" xml:space="preserve"><path d="M288.953 0h-277c-5.522 0-10 4.478-10 10v49.531c0 5.522 4.478 10 10 10h12.372l91.378 107.397v113.978a10 10 0 0 0 15.547 8.32l49.5-33a9.999 9.999 0 0 0 4.453-8.32v-80.978l91.378-107.397h12.372c5.522 0 10-4.478 10-10V10c0-5.522-4.477-10-10-10zM167.587 166.77a9.999 9.999 0 0 0-2.384 6.48v79.305l-29.5 19.666V173.25a9.997 9.997 0 0 0-2.384-6.48L50.585 69.531h199.736l-82.734 97.239zM278.953 49.531h-257V20h257v29.531z"/></svg></div>');
     $("#filter").click(function() {
@@ -54,19 +54,6 @@ $bad = [];
 ?>
 <?= $this->render('_timeline_style') ?>
 <style>
-    .status_offline, .status_online {
-        display: inline-block;
-        background-color:#cdcdcd;
-        border-radius: 7px;
-        padding: 3px 5px;
-        font-size: 12px;
-        margin-left:5px;
-        color:#515151;
-    }
-    .status_online {
-        background-color: #4CAF50;
-        color:#fff;
-    }
 .table-user-statistics {
     width: auto;
     height: calc(100vh - 236px);
@@ -86,10 +73,39 @@ $bad = [];
             <?php foreach ($timeline as $day => $item) {?>
 
             <td id="row<?= date('d-m-Y', strtotime($day)) ?>">
-                <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?><?php if ($is_editor) {?>
-                    <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-bs-toggle="modal" data-target="#form-add-activity" data-bs-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>
-                    
-                <?php }?></b>
+                <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?>
+                    <?php
+                    $workTime = 0;
+                    $breakTime = 0;
+                    $activityCount = count($item);
+                    foreach ($item as $i => $activity) {
+                        $nextActivityTime = ($i === $activityCount - 1) ?  strtotime('now') : strtotime($item[$i + 1]->datetime_at);
+
+                        $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
+
+                        /*if (!$activity->isWorkStop()) {
+                            $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
+                        }*/
+
+                        // sum up working hours
+                        if (!$activity->isWorkStop() && !$activity->isWorkBreak()) {
+                            $workTime += $activityTime;
+                        }
+
+                        // sum up breaking hours
+                        if ($activity->isWorkBreak()) {
+                            $breakTime += $activityTime;
+                        }
+
+                    }?>
+                    <span class="work_time" title="<?= Module::t('Working hours')?>"><?= Activity::timeFormat($workTime) ?></span>
+                    <?php
+                    echo '<span class="break_time">'.Activity::timeFormat($breakTime).'</span>';
+                    ?>
+                    <?php if ($is_editor) {?>
+                    <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-bs-toggle="modal" data-target="#form-add-activity" data-bs-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>    
+                    <?php }?>
+                </b>
                 <div class="vertical-timeline">
                 <?php foreach ($item as $activity) {?>
                     <div class="timeline-element">
