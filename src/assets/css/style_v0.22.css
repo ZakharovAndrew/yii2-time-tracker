@@ -194,3 +194,44 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
 .settings-filter-form-group {
     overflow-y:auto;overflow-x: hidden;height: calc(100vh - 128px);
 }
+.user_status_offline, .user_status_online {
+    display: inline-block;
+    background-color:#cdcdcd;
+    border-radius: 7px;
+    padding: 3px 5px;
+    font-size: 12px;
+    margin-left:5px;
+    color:#515151;
+}
+.user_status_online {
+    background-color: #4CAF50;
+    color:#fff;
+}
+
+.table-user-statistics .approval {
+    font-size: 13px;
+    margin-bottom: 10px;
+    top: 0;
+    position: sticky;
+    background: #4caf50;
+    color: #ffffff;
+    border-radius: 5px;
+    padding: 5px;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+    box-shadow: 0 0 2px #00000040;
+}
+.table-user-statistics .need-approval {
+    font-size: 13px;
+    margin-bottom: 10px;
+    top: 0;
+    z-index: 100;
+    position: sticky;
+    /* margin: 5px; */
+    background: #ededed;
+    border-radius: 5px;
+    padding: 5px;
+    width: 100%;
+    text-align: center;
+}
