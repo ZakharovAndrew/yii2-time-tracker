@@ -113,6 +113,38 @@ class DashboardController extends ParentController
         ]);
     }
     
+    public function actionActivityProperty($period = null, $order_by = 'count')
+    {        
+        $start_date = date('Y-m-d');
+        if ($period == 'month') {
+            $start_date = date('Y-m-d', strtotime('-1 month'));
+            if (!empty($date)) {
+                $start_date = date('Y-m-01', strtotime($date));
+                $stop_date = date('Y-m-01', strtotime($start_date. ' + 1 month'));
+            }
+        } else if ($period == 'week') {
+            $start_date = date('Y-m-d', strtotime('-7 days'));
+        }
+        
+        $order_by_sql = ($order_by == 'duration' ? 'duration DESC, cnt DESC' : 'cnt DESC, duration DESC');
+        
+        $data = TimeTracking::find()->alias('t')
+                ->select(['t.activity_id', 'a.name', 'cnt' => 'count(*)', 'values' => "ifnull(p.values, '')", 'duration' => 'sum(duration)'])
+                ->leftJoin(Activity::tableName().' a', 'a.id = t.activity_id')
+                ->leftJoin(\ZakharovAndrew\TimeTracker\models\UserActivityProperty::tableName().' p', 'p.activity_id = t.id')
+                ->where(['NOT IN', 't.activity_id', [Activity::WORK_START, Activity::WORK_STOP, Activity::WORK_BREAK]])
+                ->andWhere(['>', 'datetime_at', $start_date])
+                ->groupBy(["t.activity_id", "ifnull(p.values, '')"])
+                ->asArray()
+                ->orderBy($order_by_sql); 
+        
+        return $this->render('activity-property', [
+            'data' => $data->all(),
+            'period' => $period,
+            'order_by' => $order_by
+        ]);
+    }
+    
     /**
      * Finds the Activity model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

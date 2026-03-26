@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 
-$this->title = Module::t('Activity').($period == 'month' ? ' за месяц' : ''). ': '.$model->name;
+$this->title = Module::t('Activity').($period == 'month' ? ' за месяц' : ($period == 'week' ? ' за неделю' : ' за день'));
 
 //$this->title = Module::t('Update Activity Property') . ': ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => Module::t('Dashboard'), 'url' => ['index']];
@@ -38,6 +38,10 @@ $script = <<< JS
             \$item.toggle(containsAllWords);
         });
     });
+        
+    $("#period").on('change', function() {
+        document.location = '/timetracker/dashboard/activity-property?period='+$(this).val()+"&order_by=$order_by";
+    });
 JS;
 
 $this->registerJs($script, yii\web\View::POS_READY);
@@ -58,8 +62,15 @@ $this->registerJs($script, yii\web\View::POS_READY);
   
     <p>
         Сортировать по: 
-        <a href="<?= Url::to(['detail', 'period' => $period, 'activity_id' => $activity_id, 'order_by' => $order_by, 'order_by' => 'count']) ?>" class="<?= $order_by == 'count' ? 'active' : '' ?>"><?= Module::t('Count') ?></a> | 
-        <a href="<?= Url::to(['detail', 'period' => $period, 'activity_id' => $activity_id, 'order_by' => $order_by, 'order_by' => 'duration']) ?>" class="<?= $order_by == 'duration' ? 'active' : '' ?>"><?= Module::t('Duration') ?></a>
+        <a href="<?= Url::to(['activity-property', 'period' => $period, 'order_by' => $order_by, 'order_by' => 'count']) ?>" class="<?= $order_by == 'count' ? 'active' : '' ?>"><?= Module::t('Count') ?></a> | 
+        <a href="<?= Url::to(['activity-property', 'period' => $period, 'order_by' => $order_by, 'order_by' => 'duration']) ?>" class="<?= $order_by == 'duration' ? 'active' : '' ?>"><?= Module::t('Duration') ?></a>
+        <b>Период</b> 
+        <?= Html::dropDownList(
+            'period',
+            $period,
+            ['' => 'день', 'week' => 'неделю', 'month' => 'месяц'],
+            ['id' => 'period']
+        );?>
         
         <input type="text" id="filter" placeholder="Фильтр по таблице..." class="form-control pull-right" style="max-width: 220px;padding: 4px 4px;height: 24px;">
     </p>
@@ -67,11 +78,8 @@ $this->registerJs($script, yii\web\View::POS_READY);
     <table class="table table-bordered" id="dashboard-detail">
         <thead>
             <tr>
-                <th>ID</th>
-                <th><?= Module::t('Name') ?></th>
-                <?php foreach ($user_properties_column as $property) {?>
-                <th><?= $property->title ?></th>
-                <?php } ?>
+                <th><?= Module::t('Activity') ?></th>
+                <th><?= Module::t('Values') ?></th>
                 <th><?= Module::t('Count') ?></th>
                 <th><?= Module::t('Duration') ?></th>
                 <th><?= Module::t('Average duration') ?></th>
@@ -81,11 +89,8 @@ $this->registerJs($script, yii\web\View::POS_READY);
     
     <?php foreach ($data as $item) {?>
         <tr>
-            <td><a href="<?= Url::to(['/user/user/profile', 'id'=> $item['user_id']]) ?>"><?= $item['user_id'] ?></a></td>
             <td><?= $item['name'] ?></td>
-            <?php foreach ($user_properties_column as $property) {?>
-            <td><?= $property->getUserSettingValue($item['user_id']) ?></td>
-            <?php } ?>
+            <td><?= $item['values'] ?></td>
             <td><?= $item['cnt'] ?></td>
             <td><?= isset($item['duration']) ? Activity::timeFormat($item['duration']) : 'N/A' ?></td>
             <td><?= isset($item['duration']) ? Activity::timeFormat(round($item['duration']/$item['cnt'])) : 'N/A'  ?></td>
