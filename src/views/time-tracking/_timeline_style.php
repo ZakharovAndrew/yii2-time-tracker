@@ -96,8 +96,8 @@
     background: #f3f3f3;
     padding: 6px 10px;
     border-radius: 8px;
-    padding-left: 41px;
-    min-width:200px;
+    padding-left: 8px;
+    min-width:265px;
 }
 .table-bordered {
     box-shadow: none;
@@ -114,18 +114,29 @@
     display:inline-block;
 }
 .btn-add-activity {
-    float: right;
-    padding: 2px 4px;
+    float: left;
+    padding: 2px 5px;
     line-height: 16px;
     font-size: 18px;
     background-color: #4CAF50;
     border: none;
-    margin-right:5px;
+    margin-right:9px;
 }
 .timeline-date-update {
     color: #cfcfcf;
 }
-
+.work_time {
+    /*font-weight: normal;
+    font-size: 12px;*/
+    color: #4caf50;
+    padding-left:10px;
+    float:right;
+}
+.break_time {
+    padding-left:5px;
+    color: #ff9800;
+    float:right;
+}
 <?php 
 $colors = ZakharovAndrew\TimeTracker\models\Activity::find()->where('color is not null')->all();
 foreach ($colors as $activity) {
