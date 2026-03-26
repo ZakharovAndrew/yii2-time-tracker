@@ -30,12 +30,25 @@ $this->title = Module::t('Dashboard');
     }
     .timetracking-dashboard-index .activity_name span .btn{padding:1px 5px;opacity:0;}
     .timetracking-dashboard-index table tr:hover .activity_name span .btn{opacity:1;}
+    .flex-justify {
+        display:flex;justify-content:space-between;
+    }
+    .flex-justify h3{
+        margin-top:0;
+        padding-top:0;
+    }
 </style>
 <div class="timetracking-dashboard-index">
 
     <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 
-    <h3>Количество активностей</h3>
+    <div class="flex-justify">
+        <h3>Количество активностей</h3>
+        <div>
+            <?= Html::a('Активности со свойствами', ['activity-property'], ['class'=>'btn btn-sm btn-success']); ?>
+        </div>
+    </div>
+    
     <div class="row row-dashboard">
         <div class="col-md-3">
             <div class="card info-block">
