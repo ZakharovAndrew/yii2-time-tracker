@@ -50,7 +50,6 @@ JS;
 $this->registerJs($script, yii\web\View::POS_READY);
 
 $bad = [];
-//echo Html::a('+', ['add', 'id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'btn btn-sm btn-primary btn-add-activity', 'title'=>Module::t('Add Activity')]);
 ?>
 <?= $this->render('_timeline_style') ?>
 <style>
@@ -73,6 +72,16 @@ $bad = [];
             <?php foreach ($timeline as $day => $item) {?>
 
             <td id="row<?= date('d-m-Y', strtotime($day)) ?>">
+                <?php if ($is_editor && isset($approved_days[date('Y-m-d', strtotime($day))])) {
+                    $approved = $approved_days[date('Y-m-d', strtotime($day))];
+                    ?>
+                <div class="approval" title="<?= $approved->approver->name ?>">Подтверждено <?php 
+                
+                echo date('d.m.Y', strtotime($approved->approval_date));
+                ?></div>
+                <?php } else if ($is_editor) { 
+                    echo Html::a('Согласовать', ['approval', 'user_id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'need-approval']);
+                } ?>
                 <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?>
                     <?php
                     $workTime = 0;

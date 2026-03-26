@@ -16,6 +16,7 @@ use yii\web\NotFoundHttpException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\Response;
+use ZakharovAndrew\TimeTracker\models\TimeTrackingApproval;
 
 /**
  * TimeTrackingController implements the CRUD actions for TimeTracking model.
@@ -304,14 +305,32 @@ class TimeTrackingController extends ParentController
             $timeline[$item_name][] = $item;
         }
         
+        $approvedDays = ArrayHelper::index(TimeTrackingApproval::getApprovedDays($user_id, $start_day, $stop_day), 'approval_date');
+        
         return $this->render('userStatistics', [
             'timeline' => $timeline,
             'user' => User::findOne($user_id),
             'datetime_start' => $datetime_start,
             'datetime_stop' => $datetime_stop,
             'show_only_bad' => $show_only_bad,
+            'approved_days' => $approvedDays,
             'is_editor' => Yii::$app->user->identity->hasRole('time_tracking_editor')
         ]);
+    }
+    
+    public function actionApproval($user_id, $day)
+    {
+        if (!Yii::$app->user->identity->hasRole(['admin', 'time_tracking_editor', 'time_tracking_admin'])) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        
+        if (TimeTrackingApproval::approve($user_id, Yii::$app->user->id, $day)) {
+            Yii::$app->session->setFlash('success', 'Подтверждено');
+        } else {
+            Yii::$app->session->setFlash('error', 'ошибка');
+        }
+        
+        return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $user_id]);
     }
 
     /**
