@@ -13,7 +13,7 @@ class TimeTrackerAssets extends AssetBundle
     public $sourcePath = '@vendor/zakharov-andrew/yii2-time-tracker/src/assets';
 
     public $css = [
-        'css/style_v0.22.css',
+        'css/style_v0.23.css',
     ];
 
     public $js = [
@@ -22,6 +22,5 @@ class TimeTrackerAssets extends AssetBundle
 
     public $depends = [
         'yii\web\YiiAsset',
-        //'yii\bootstrap5\BootstrapAsset',
     ];
 }
