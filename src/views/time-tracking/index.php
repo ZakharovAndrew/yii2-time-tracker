@@ -210,20 +210,52 @@ $this->registerJs($script, yii\web\View::POS_READY);
         <div class="col-md-6">
             <div class="time-tracking-box">
                 <?php
-                echo $classTabs::widget([
-                    'items' => [
-                        [
-                            'label' => Module::t('Chart'),
-                            'content' => '<canvas id="bar" width="800" height="450"></canvas>',
-                            'active' => true
-                        ],
-                        [
-                            'label' => Module::t('Table'),
-                            'content' => $this->render('_table_activity', ['aggActivity' => $aggActivity]),
-                        ],
-
+                $tabs = [
+                    [
+                        'label' => Module::t('Chart'),
+                        'content' => '<canvas id="bar" width="800" height="450"></canvas>',
+                        'active' => true
                     ],
-                ]);
+                    [
+                        'label' => Module::t('Table'),
+                        'content' => $this->render('_table_activity', ['aggActivity' => $aggActivity]),
+                        'active' => false
+                    ],
+                ];
+                $additionalTabs = Yii::$app->getModule('timetracker')->additionalTabs;
+                if (!empty($additionalTabs) && is_array($additionalTabs)) {
+                    foreach ($additionalTabs as $index => $tab) {
+                        if (isset($tab['label']) && isset($tab['view'])) {
+                            
+                            $tabParams = [];
+                            if (isset($tab['params'])) {
+                                if (is_callable($tab['params'])) {
+                                    $tabParams = $tab['params'](Yii::$app->user->id, $this);
+                                } else {
+                                    $tabParams = $tab['params'];
+                                }
+                            }
+
+                            $tabItem = [
+                                'label' => $tab['label'],
+                                'content' => $this->render($tab['view'], $tabParams),
+                                'active' => $tab['active'] ?? false,
+                            ];
+
+                            // If active is specified for a tab, disable active for the base ones
+                            if ($tab['active'] ?? false) {
+                                foreach ($tabs as &$baseTab) {
+                                    $baseTab['active'] = false;
+                                }
+                                $tabItem['active'] = true;
+                            }
+
+                            $tabs[] = $tabItem;
+                        }
+                    }
+                }
+
+                echo $classTabs::widget(['items' => $tabs]);
                 ?>
                 
             </div>
@@ -231,9 +263,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
     </div>
     
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    
-        
+<script>        
     function formatTime(seconds) {
         let hours = Math.floor(seconds / 3600);
         let minutes = Math.floor((seconds % 3600) / 60);

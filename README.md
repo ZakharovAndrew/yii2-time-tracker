@@ -59,6 +59,7 @@ return [
 ];
 ```
 
+
 ## 🛠 Usage
 
 Add this to your main configuration's modules array
@@ -69,6 +70,42 @@ Add this to your main configuration's modules array
             'class' => 'ZakharovAndrew\TimeTracker\Module',
             'bootstrapVersion' => 5, // if use bootstrap 5
             'showTitle' => true, // display H1 headings (default - true)
+        ],
+        // ...
+    ],
+```
+
+#### Custom Tabs
+
+You can add custom tabs to display additional information, integrate with other modules, or create custom reports:
+
+```php
+    'modules' => [
+        'timetracker' => [
+            'class' => 'ZakharovAndrew\TimeTracker\Module',
+            'additionalTabs' => [
+                [
+                    'label' => 'Weekly Report',
+                    'view' => 'weekly-report',
+                    'params' => function($userId, $model) use ($someData) {
+                        // params can be a callable function that returns an array
+                        return [
+                            'weekData' => TimeTracking::getWeeklyReport($userId),
+                            'chartData' => TimeTracking::getChartData($userId),
+                            'extra' => $someData,
+                        ];
+                    },
+                ],
+                [
+                    'label' => 'Export',
+                    'view' => 'export-buttons',
+                    'params' => ['data' => ['csv', 'pdf', 'excel']], // or just an array
+                ],
+                [
+                    'label' => 'Static Info',
+                    'view' => 'info', // params can be omitted entirely
+                ],
+            ],
         ],
         // ...
     ],

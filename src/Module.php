@@ -85,7 +85,24 @@ class Module extends \yii\base\Module
      */
     public $controllerNamespace = 'ZakharovAndrew\TimeTracker\controllers';
     
-
+    /**
+     * @var array additional tabs for display
+     * Configuration example:
+     * [
+     *     [
+     *         'label' => 'Reports', // tab label
+     *         'view' => 'reports', // view file name
+     *         'params' => ['data' => $someData], // parameters for the view (optional) - can be either array or callable function that returns array
+     *         'active' => false // whether the tab is active by default (optional)
+     *     ],
+     * ]
+     * 
+     * Note: 'params' can be defined in two ways:
+     * 1. As an array: ['data' => $someData, 'otherParam' => $value]
+     * 2. As a callable function that returns an array: function() use ($someData) { return ['data' => $someData]; }
+     */
+    public $additionalTabs = [];
+    
     /**
      * {@inheritdoc}
      * @throws \yii\base\InvalidConfigException
