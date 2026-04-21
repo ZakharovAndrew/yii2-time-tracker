@@ -209,6 +209,16 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
     color:#fff;
 }
 
+/* time-tracking-statistics */
+.time-tracking-statistics {
+    width: auto;
+    height: calc(100vh - 236px);
+    box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
+    border-radius: 15px;
+    padding: 15px;
+    background: #fff;
+    display:flex;
+}
 .table-user-statistics .approval {
     font-size: 13px;
     margin-bottom: 10px;
@@ -247,7 +257,35 @@ transition: opacity 0.3s linear, right 0.3s ease-out;
     text-decoration: none;
     color:#000;
 }
+.time-tracking-statistics .td-approval span {
+    background-color: #bdf5c0 !important;
+    border-radius: 5px;
+    padding: 6px 7px;
+    white-space: nowrap
+}
+.table-timeline th {
+    position: sticky; /* Фиксируем элемент */
+    top: 0; /* Располагаем его в верхней части контейнера */
+    background-color: white; /* Установите цвет фона, чтобы текст не сливался с фоном при прокрутке */
+    z-index: 10;
+}
+.time-tracking-box-scroll {
+    overflow: auto;
+    width: -webkit-fill-available;
+}
+.time-tracking-statistics .sticky, .table-timeline td:first-child {
+    position: sticky;
+    background-color: white;
+    z-index: 11;
+}
+.table-timeline td:first-child, .time-tracking-statistics thead th:first-child {
+    left:0;
+}
+.time-tracking-statistics thead th:first-child {
+    z-index: 12;
+}
 
+/* common */
 .disable-select {
   -webkit-user-select: none;  
   -moz-user-select: none;    
