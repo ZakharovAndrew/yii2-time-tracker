@@ -179,7 +179,7 @@ class TimeTrackingController extends ParentController
         return $this->redirect('index');
     }
     
-    public function actionStatistics($datetime_start = null, $datetime_stop = null, $username = null, $show_only_bad = null)
+    public function actionStatistics($datetime_start = null, $datetime_stop = null, $username = null, $show_only_bad = null, $highlight_approved = null)
     {
         $selectedUserIds = Yii::$app->request->get('users');
         $selected_settings = Yii::$app->request->get('selected_settings');
@@ -242,6 +242,19 @@ class TimeTrackingController extends ParentController
             $model = TimeTracking::getActivityByDay($start_day, $stop_day, $selectedUserIds, $roles);
         }
 
+        $approval = [];
+        
+        if ($highlight_approved) {
+            $arr = TimeTrackingApproval::find()
+                        ->where(['>=', 'approval_date', $start_day])
+                        ->andWhere(['<=', 'approval_date', $stop_day])
+                        //->andWhere(['user_id' => $selectedUserIds])
+                        ->asArray()
+                        ->all();
+            foreach ($arr as $item) {
+                $approval[$item['user_id']][$item['approval_date']] = $item['approved_at'];
+            }
+        }       
         
         
         $settings = UserSettingsConfig::find()->where([
@@ -257,6 +270,8 @@ class TimeTrackingController extends ParentController
             'datetime_start' => $datetime_start,
             'datetime_stop' => $datetime_stop,
             'show_only_bad' => $show_only_bad,
+            'highlight_approved' => $highlight_approved,
+            'approval' => $approval,
             'activities' => Activity::getList(),
             'selected_user_ids' => $selectedUserIds,
             'selected_settings' => $selected_settings,

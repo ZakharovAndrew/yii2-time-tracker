@@ -142,14 +142,15 @@ $this->registerJs($script, yii\web\View::POS_READY);
 .time-tracking-statistics thead th:first-child {
     z-index: 12;
 }
-.disable-select {
-  -webkit-user-select: none;  
-  -moz-user-select: none;    
-  -ms-user-select: none;      
-  user-select: none;
-}
 #tableContainer {
     width: -webkit-fill-available;
+}
+.time-tracking-statistics .td-approval span {
+    background-color: #4CAF50 !important;
+    border-radius: 5px;
+    padding: 6px 7px;
+    white-space: nowrap;
+    color:#fff
 }
 </style>
 
@@ -158,7 +159,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
 <div class="time-tracking-statistics">
 
     
-    <?php if ($timeline) { ?>
+    <?php if (isset($timeline) && $timeline) { ?>
     
     <div id="tableContainer" class="time-tracking-box-scroll animate__animated animate__fast animate__fadeInUp">
         <table class="table table-timeline disable-select">
@@ -184,7 +185,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                         $link_params['datetime_start'] = $datetime_start ?? null;
                     }
                     ?>
-                    <?= Html::a($user_name, $link_params, ['class' => '']) ?>
+                    <?= Html::a(Html::encode($user_name), $link_params) ?>
                 </td>
                 <?php foreach ($user_properties_column as $property) {?>
                 <td><?= $property->getUserSettingValue($user_id) ?></td>
@@ -197,7 +198,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                         $stop = '';
                         
                         foreach ($item[$user_id] as $activity) {
-                            if ($activity->activity_id == Activity::WORK_START && $start == '') {
+                            if ($activity->isWorkStart() && $start == '') {
                                 $start = date('H:i', strtotime($activity->datetime_at));
                             }
                                             
@@ -211,16 +212,17 @@ $this->registerJs($script, yii\web\View::POS_READY);
                         }
                         
                         // last status
-                        $end_activity = end($item[$user_id]);
+                        $end_activity = !empty($item[$user_id]) ? end($item[$user_id]) : null;
                         
                         // find stop day
-                        if ($end_activity->activity_id == Activity::WORK_STOP) {
+                        if ($end_activity && $end_activity->isWorkStop()) {
                             $stop = date('H:i', strtotime($activity->datetime_at));
                         }
                         
                         // not current day
                         if (date('d.m.Y', strtotime($day)) != date('d.m.Y') || !empty($stop)) {
                             $time_diff = round((strtotime($stop ?? $start) - strtotime($start))/3600);
+                            
                             if ($time_diff < 6) {
                                 $class .= ' td-warning';
                             }
@@ -228,8 +230,11 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 $class .= ' td-danger';
                                 $alert = '⚠ ';
                             }
-                            if ($show_only_bad == 'on' && $stop == '') {
-                                $bad[$user_id] = $user_id;
+                            if ($highlight_approved && isset($approval[$user_id][$day])) {
+                                $class .= ' td-approval';
+                            }
+                            if ($show_only_bad == 'on' && empty($stop)) {
+                                $bad[$user_id] = true;
                             }
                         }
       
@@ -272,13 +277,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
 <div class="settings-modal" data-modal-name="settings">
     <div class="settings-modal-title">
         <div><?= Module::t('Filter') ?></div>
-        <div class="btn btn-modal-close">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14px" height="14px" viewBox="0 0 50 50" version="1.1">
-<g id="surface1">
-<path style=" stroke:none;fill-rule:nonzero;fill:rgb(33 150 243);fill-opacity:1;" d="M 2.722656 5.144531 L 5.152344 2.75 C 6.542969 1.328125 8.867188 1.328125 10.253906 2.75 L 25.003906 17.464844 L 39.753906 2.75 C 41.144531 1.328125 43.46875 1.328125 44.855469 2.75 L 47.25 5.144531 C 48.671875 6.53125 48.671875 8.859375 47.25 10.246094 L 32.535156 24.996094 L 47.25 39.746094 C 48.671875 41.132812 48.671875 43.457031 47.25 44.847656 L 44.855469 47.277344 C 43.46875 48.664062 41.144531 48.664062 39.753906 47.277344 L 25.003906 32.527344 L 10.253906 47.277344 C 8.867188 48.664062 6.542969 48.664062 5.152344 47.277344 L 2.722656 44.847656 C 1.335938 43.457031 1.335938 41.132812 2.722656 39.746094 L 17.472656 24.996094 L 2.722656 10.246094 C 1.335938 8.859375 1.335938 6.53125 2.722656 5.144531 Z M 2.722656 5.144531 "/>
-</g>
-</svg>
-        </div>
+        <div class="btn btn-modal-close"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="14px" height="14px" viewBox="0 0 50 50" version="1.1"><g id="surface1"><path style=" stroke:none;fill-rule:nonzero;fill:rgb(33 150 243);fill-opacity:1;" d="M 2.722656 5.144531 L 5.152344 2.75 C 6.542969 1.328125 8.867188 1.328125 10.253906 2.75 L 25.003906 17.464844 L 39.753906 2.75 C 41.144531 1.328125 43.46875 1.328125 44.855469 2.75 L 47.25 5.144531 C 48.671875 6.53125 48.671875 8.859375 47.25 10.246094 L 32.535156 24.996094 L 47.25 39.746094 C 48.671875 41.132812 48.671875 43.457031 47.25 44.847656 L 44.855469 47.277344 C 43.46875 48.664062 41.144531 48.664062 39.753906 47.277344 L 25.003906 32.527344 L 10.253906 47.277344 C 8.867188 48.664062 6.542969 48.664062 5.152344 47.277344 L 2.722656 44.847656 C 1.335938 43.457031 1.335938 41.132812 2.722656 39.746094 L 17.472656 24.996094 L 2.722656 10.246094 C 1.335938 8.859375 1.335938 6.53125 2.722656 5.144531 Z M 2.722656 5.144531 "/></g></svg>        </div>
     </div>
     
 <?php $form = ActiveForm::begin([
@@ -298,11 +297,10 @@ $this->registerJs($script, yii\web\View::POS_READY);
         <input type="checkbox" class="custom-control-input" name="show_only_bad" id="show_only_bad" <?php if ($show_only_bad == 'on') { echo 'checked';} ?>>
         <label class="custom-control-label" for="show_only_bad"> Выводить только не завершенные рабочие дни</label>
     </div>
+    <div class="form-group">
+        <?= Html::checkbox('highlight_approved', $highlight_approved ?? false, ['label' => 'Подсветить подтвержденные']) ?>
+    </div>
 
-<!-- <div class="form-group">
-        <label>ФИО</label>
-        <?= Html::input('input', 'username', $username ?? '', ['class' => 'form-control']) ?>
-    </div> -->
     <div class="form-group">
         <label><?= Module::t('Users') ?></label>
         <div class="search-box"><?= Module::t('Filter') ?> <input type="text" id="users-list-filter" data-filter-item=".users-list-item" class="filter-control"></div>
