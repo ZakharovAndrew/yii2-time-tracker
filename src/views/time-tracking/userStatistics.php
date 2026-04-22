@@ -48,8 +48,6 @@ $script = <<< JS
 JS;
 
 $this->registerJs($script, yii\web\View::POS_READY);
-
-$bad = [];
 ?>
 <?= $this->render('_timeline_style') ?>
 <style>
@@ -69,7 +67,14 @@ $bad = [];
     <div class="table-responsive table-user-statistics">
         <table class="table table-bordered">
             <tr>
-            <?php foreach ($timeline as $day => $item) {?>
+            <?php foreach ($timeline as $day => $item) {
+                if ($show_only_bad == 'on') {
+                    $lastActivity = end($item);
+                    if ($lastActivity->isWorkStop()) {
+                        continue;
+                    }
+                }
+            ?>
 
             <td id="row<?= date('d-m-Y', strtotime($day)) ?>">
                 <?php if ($is_editor && isset($approved_days[date('Y-m-d', strtotime($day))])) {
@@ -82,109 +87,19 @@ $bad = [];
                 <?php } else if ($is_editor) { 
                     echo Html::a('Согласовать', ['approval', 'user_id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'need-approval']);
                 } ?>
-                <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?>
-                    <?php
-                    $workTime = 0;
-                    $breakTime = 0;
-                    $activityCount = count($item);
-                    foreach ($item as $i => $activity) {
-                        $nextActivityTime = ($i === $activityCount - 1) ?  strtotime('now') : strtotime($item[$i + 1]->datetime_at);
-
-                        $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
-
-                        /*if (!$activity->isWorkStop()) {
-                            $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
-                        }*/
-
-                        // sum up working hours
-                        if (!$activity->isWorkStop() && !$activity->isWorkBreak()) {
-                            $workTime += $activityTime;
-                        }
-
-                        // sum up breaking hours
-                        if ($activity->isWorkBreak()) {
-                            $breakTime += $activityTime;
-                        }
-
-                    }?>
-                    <span class="work_time" title="<?= Module::t('Working hours')?>"><?= Activity::timeFormat($workTime) ?></span>
-                    <?php
-                    echo '<span class="break_time">'.Activity::timeFormat($breakTime).'</span>';
-                    ?>
-                    <?php if ($is_editor) {?>
-                    <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-bs-toggle="modal" data-target="#form-add-activity" data-bs-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>    
-                    <?php }?>
-                </b>
-                <div class="vertical-timeline">
-                <?php foreach ($item as $activity) {?>
-                    <div class="timeline-element">
-                        <div>
-                            <span class="timeline-icon">
-                                <i class="badge badge-dot activity-<?= $activity->activity_id ?>"> </i>
-                            </span>
-                            <div class="timeline-content">
-                                <h4 class="timeline-title"><?= Activity::getList()[$activity->activity_id] ?? ''  ?></h4>
-                                <?php if (!empty($activity->datetime_update) && $activity->datetime_at <> $activity->datetime_update) { ?>
-                                    <div class="timeline-date-update">
-                                        Изменено 
-                                        <?php
-                                        if (date('Y-m-d', strtotime($activity->datetime_update)) != date('Y-m-d', strtotime($activity->datetime_at))) {
-                                            echo date('d.m.Y', strtotime($activity->datetime_update));
-                                        } ?>
-                                        <?= date('H:i:s', strtotime($activity->datetime_update)) ?>
-                                        <?php if (!empty($activity->who_changed) && $activity->who_changed != $activity->user_id) {
-                                            $who_changed = User::find()->where(['id' => $activity->who_changed])->one();
-                                            echo $who_changed->name;
-                                        } ?>
-                                    </div>
-                                <?php } ?>
-                                <?php 
-                                if ($is_editor) {
-                                    echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);
-                                    echo Html::a('Удалить', Url::to(['delete', 'id' => $activity->id]), [
-                                        'class' => 'btn btn-danger btn-delete-activity',
-                                        'data' => [
-                                            'confirm' => 'Вы уверены, что хотите удалить этот элемент?',
-                                            //'method' => 'get',
-                                        ],
-                                    ]);
-                                }
-                                ?>
-                                <p><?= $activity->comment ?></p>
-                                <span class="timeline-date"><?= date('H:i:s', strtotime($activity->datetime_at)) ?></span>
-                            </div>
-                        </div>
-                    </div>
-                <?php } ?>
-                <?php 
-                if ($show_only_bad == 'on') {
-                    $lastActivity = end($item);
-                    if ($activity->activity_id != Activity::WORK_STOP) {
-                        $bad[date('d-m-Y', strtotime($day))] = date('d-m-Y', strtotime($day));
-                    }
-                }
-                ?>
-                </div>
-            </div>
-        </td>
+                
+                <?= $this->render('_vertical-timeline', [
+                    'activities' => $item,
+                    'is_editor' => $is_editor,
+                    'day' => $day,
+                    'approved' => isset($approved_days[date('Y-m-d', strtotime($day))])
+                ]) ?>
+            </td>
         <?php } ?>
         </tr>
         </table>
     </div>
 </div>
-
-<style>
-    <?php
-    if ($show_only_bad == 'on') {
-        foreach ($timeline as $day => $item) {
-            $key = date('d-m-Y', strtotime($day));
-            if (!isset($bad[$key])) {
-                echo '#row'. $key .' {display:none}';
-            }
-        }
-    }
-    ?>
-</style>
 
 <?php
 if ($is_editor) {
@@ -217,6 +132,7 @@ if ($is_editor) {
     </div>
     
 <?php $form = ActiveForm::begin([
+        'action' => ['user-statistics', 'user_id' => $user->id],
         'method' => 'get',
     ]); ?>
     <div class="settings-filter-form-group scroll-bar-left">
