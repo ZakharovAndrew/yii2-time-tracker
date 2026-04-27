@@ -46,7 +46,7 @@ $showEditButtons = $is_editor && (!$approved || !$blockEditing);
     <?php
     echo '<span class="break_time">'.Activity::timeFormat($breakTime).'</span>';
     ?>
-    <?php if ($is_editor && !$approved) {?>
+    <?php if ($showEditButtons) {?>
     <button type="button" class="btn btn-success btn-add-activity" data-toggle="modal" data-bs-toggle="modal" data-target="#form-add-activity" data-bs-target="#form-add-activity" data-day="<?= date('Y-m-d', strtotime($day))?>" title="<?= Module::t('Add Activity')?>">+</button>    
     <?php }?>
 </b>

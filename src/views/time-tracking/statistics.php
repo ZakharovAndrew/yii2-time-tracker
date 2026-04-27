@@ -112,52 +112,11 @@ $this->registerJs($script, yii\web\View::POS_READY);
     .scroll-bar-left::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
-
-.table-timeline th {
-    position: sticky; /* Фиксируем элемент */
-    top: 0; /* Располагаем его в верхней части контейнера */
-    background-color: white; /* Установите цвет фона, чтобы текст не сливался с фоном при прокрутке */
-    z-index: 10;
-}
-.time-tracking-statistics {
-    width: auto;
-    height: calc(100vh - 236px);
-    box-shadow: 0px 2px 6px rgba(37, 83, 185, 0.1);
-    border-radius: 15px;
-    padding: 15px;
-    background: #fff;
-    display:flex;
-}
-.time-tracking-box-scroll {
-    overflow: auto;
-}
-.sticky, .table-timeline td:first-child {
-    position: sticky;
-    background-color: white;
-    z-index: 11;
-}
-.table-timeline td:first-child, .time-tracking-statistics thead th:first-child {
-    left:0;
-}
-.time-tracking-statistics thead th:first-child {
-    z-index: 12;
-}
-#tableContainer {
-    width: -webkit-fill-available;
-}
-.time-tracking-statistics .td-approval span {
-    background-color: #4CAF50 !important;
-    border-radius: 5px;
-    padding: 6px 7px;
-    white-space: nowrap;
-    color:#fff
-}
 </style>
 
 <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>   
 
 <div class="time-tracking-statistics">
-
     
     <?php if (isset($timeline) && $timeline) { ?>
     
