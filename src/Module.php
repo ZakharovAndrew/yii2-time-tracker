@@ -103,6 +103,42 @@ class Module extends \yii\base\Module
      */
     public $additionalTabs = [];
     
+    
+    /**
+     * @var callable Function that will be called after approval is saved
+     * Function accepts parameters:
+     * - $user_id: int
+     * - $approval_date: string
+     * 
+     * Example usage in config:
+     * 'afterApprovalFunction' => function($user_id, $approval_date) {
+     *     // Send notification, call API, etc.
+     *     Yii::info("Approval for user {$user_id} on {$approval_date}", 'approval');
+     * }
+     */
+    public $afterApprovalFunction;
+    
+    /**
+     * @var callable Function that will be called after time tracking record is updated
+     * Function accepts parameters:
+     * - $model: TimeTracking object (the updated record)
+     * - $changedAttributes: array of changed attributes
+     * 
+     * Example usage in config:
+     * 'afterUpdateFunction' => function($model, $changedAttributes) {
+     *     // Send notification, log changes, call API, etc.
+     *     Yii::info("Record {$model->id} was updated. Changes: " . json_encode($changedAttributes), 'timetracker');
+     * }
+     */
+    public $afterUpdateFunction;
+    
+    /**
+     * @var boolean Block editing of approved time tracking records
+     * If true, editing/deleting will be disabled for approved records
+     * If false, editing/deleting will be allowed regardless of approval status
+     */
+    public $blockEditingForApproved = true;
+    
     /**
      * {@inheritdoc}
      * @throws \yii\base\InvalidConfigException

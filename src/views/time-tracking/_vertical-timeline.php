@@ -12,6 +12,9 @@ use ZakharovAndrew\TimeTracker\assets\TimeTrackerAssets;
 TimeTrackerAssets::register($this);
 
 $approved = $approved ?? false;
+$module = Yii::$app->getModule('timetracker');
+$blockEditing = $module->blockEditingForApproved;
+$showEditButtons = $is_editor && (!$approved || !$blockEditing);
 ?>
 
 <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?>
@@ -72,7 +75,7 @@ $approved = $approved ?? false;
                         </div>
                     <?php } ?>
                     <?php
-                    if ($is_editor && !$approved) {
+                    if ($showEditButtons) {
                         echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);
                         echo Html::a('Удалить', Url::to(['delete', 'id' => $activity->id]), [
                             'class' => 'btn btn-danger btn-delete-activity',
