@@ -276,6 +276,12 @@ class TimeTracking extends \yii\db\ActiveRecord
         }
         
         self::setUserLastActivity($this->user_id);
+        
+        $afterDeleteFunction = Yii::$app->getModule('timetracker')->afterDeleteFunction;
+
+        if (!empty($afterDeleteFunction) && is_callable($afterDeleteFunction)) {
+            $afterDeleteFunction($this);
+        }
     }
     
     public static function getTopActivitiesQuery($startDate, $limit = 10)

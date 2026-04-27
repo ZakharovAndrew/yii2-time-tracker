@@ -133,6 +133,20 @@ class Module extends \yii\base\Module
     public $afterUpdateFunction;
     
     /**
+     * @var callable Function that will be called after time tracking record is deleted
+     * Function accepts parameters:
+     * - $model: TimeTracking object (the deleted record)
+     * 
+     * Example usage in config:
+     * 'afterDeleteFunction' => function($model) {
+     *     // Send notification, log deletion, call API, etc.
+     *     Yii::info("Record {$model->id} was deleted by user " . Yii::$app->user->id, 'timetracker');
+     *     // Or restore from backup, update external system, etc.
+     * }
+     */
+    public $afterDeleteFunction;
+    
+    /**
      * @var boolean Block editing of approved time tracking records
      * If true, editing/deleting will be disabled for approved records
      * If false, editing/deleting will be allowed regardless of approval status
