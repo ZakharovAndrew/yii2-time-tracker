@@ -148,6 +148,20 @@ class TimeTracking extends \yii\db\ActiveRecord
         ];
     }
     
+    public static function userTimeline($start_day, $stop_day, $user)
+    {
+        $model = static::getActivityList($start_day, $stop_day, $user, $roles = []);
+        
+        $timeline = [];
+        
+        foreach ($model as $item) {
+            $item_name = date('Y-m-d', strtotime($item->datetime_at));
+            $timeline[$item_name][] = $item;
+        }
+        
+        return $timeline;
+    }
+    
     public function isWorkStart()
     {
         return $this->activity_id == Activity::WORK_START;
@@ -220,6 +234,14 @@ class TimeTracking extends \yii\db\ActiveRecord
         parent::afterSave($insert, $changedAttributes);
         
         self::setUserLastActivity($this->user_id);
+        
+        if (!$insert) {
+            $afterUpdateFunction = Yii::$app->getModule('timetracker')->afterUpdateFunction;
+
+            if (!empty($afterUpdateFunction) && is_callable($afterUpdateFunction)) {
+                $afterUpdateFunction($this, $changedAttributes);
+            }
+        }
     }
     
     public function afterDelete()
