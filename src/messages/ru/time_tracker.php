@@ -60,8 +60,13 @@ return [
     'Table' => 'Таблица',
     'Chart' => 'Диаграмма',
     'Filter' => 'Фильтр',
-    'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить этот элемент?',
     'Changed' => 'Изменено',
+    'Delete' => 'Удалить',
+    
+    // messages
+    'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить этот элемент?',
+    'You cannot approve a day that is not completed. Please finish your work day first.' => 'Вы не можете подтвердить незавершенный рабочий день. Сначала завершите рабочий день.',
+    'Cannot approve a day without any activities.' => 'Нельзя утвердить день без активностей.',
 
     'Comment Templates' => 'Шаблоны комментариев',
     'Color' => 'Цвет',

@@ -6,7 +6,6 @@ use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\user\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\widgets\ActiveForm;
 use ZakharovAndrew\TimeTracker\assets\TimeTrackerAssets;
 
 TimeTrackerAssets::register($this);
@@ -26,10 +25,6 @@ $showEditButtons = $is_editor && (!$approved || !$blockEditing);
         $nextActivityTime = ($i === $activityCount - 1) ?  strtotime('now') : strtotime($activities[$i + 1]->datetime_at);
 
         $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
-
-        /*if (!$activity->isWorkStop()) {
-            $aggActivity[$activity->activity_id] = ($aggActivity[$activity->activity_id] ?? 0) + $activityTime;
-        }*/
 
         // sum up working hours
         if (!$activity->isWorkStop() && !$activity->isWorkBreak()) {
@@ -62,7 +57,7 @@ $showEditButtons = $is_editor && (!$approved || !$blockEditing);
                     <h4 class="timeline-title"><?= Activity::getList()[$activity->activity_id] ?? ''  ?></h4>
                     <?php if (!empty($activity->datetime_update) && $activity->datetime_at <> $activity->datetime_update) { ?>
                         <div class="timeline-date-update">
-                            Изменено 
+                            <?= Module::t('Changed') ?>
                             <?php
                             if (date('Y-m-d', strtotime($activity->datetime_update)) != date('Y-m-d', strtotime($activity->datetime_at))) {
                                 echo date('d.m.Y', strtotime($activity->datetime_update));
@@ -77,11 +72,10 @@ $showEditButtons = $is_editor && (!$approved || !$blockEditing);
                     <?php
                     if ($showEditButtons) {
                         echo Html::a(Module::t('Edit'), ['update', 'id' => $activity->id], ['class' => 'btn btn-success btn-edit-activity']);
-                        echo Html::a('Удалить', Url::to(['delete', 'id' => $activity->id]), [
+                        echo Html::a(Module::t('Delete'), Url::to(['delete', 'id' => $activity->id]), [
                             'class' => 'btn btn-danger btn-delete-activity',
                             'data' => [
-                                'confirm' => 'Вы уверены, что хотите удалить этот элемент?',
-                                //'method' => 'get',
+                                'confirm' => Module::t('Are you sure you want to delete this item?'),
                             ],
                         ]);
                     }
