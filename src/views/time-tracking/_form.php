@@ -12,6 +12,7 @@ use ZakharovAndrew\TimeTracker\Module;
 <div class="time-tracking-form">
 
     <?php $form = ActiveForm::begin(); ?>
+    <div class="card info-block">
 
     <?= $form->field($model, 'user_id')->hiddenInput()->label(false) ?>
     
@@ -26,7 +27,8 @@ use ZakharovAndrew\TimeTracker\Module;
         'activity_id' => $model->id,
         'user_id' => $model->user_id ?? \Yii::$app->user->id
     ]) ?>
-
+    </div>
+    
     <div class="form-group">
         <?= Html::submitButton(Module::t('Save'), ['class' => 'btn btn-success']) ?>
     </div>
