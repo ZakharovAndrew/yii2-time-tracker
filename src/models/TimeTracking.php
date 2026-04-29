@@ -235,7 +235,13 @@ class TimeTracking extends \yii\db\ActiveRecord
         
         self::setUserLastActivity($this->user_id);
         
-        if (!$insert) {
+        if ($insert) {
+            $afterCreateFunction = Yii::$app->getModule('timetracker')->afterCreateFunction;
+        
+            if (!empty($afterCreateFunction) && is_callable($afterCreateFunction)) {
+                $afterCreateFunction($this);
+            }
+        } else {
             $afterUpdateFunction = Yii::$app->getModule('timetracker')->afterUpdateFunction;
 
             if (!empty($afterUpdateFunction) && is_callable($afterUpdateFunction)) {

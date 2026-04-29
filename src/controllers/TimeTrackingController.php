@@ -213,12 +213,12 @@ class TimeTrackingController extends ParentController
             
             foreach ($selected_settings as $setting_name => $setting_value) {
                 $query->leftJoin(UserSettingsConfig::tableName(). ' s'.$setting_i,
-                        ['s'.$setting_i.".code" => $setting_name]
+                        ["s{$setting_i}.code" => $setting_name]
                     );
                 $query->innerJoin(UserSettings::tableName(). ' us'.$setting_i,
                         "us{$setting_i}.setting_config_id = s{$setting_i}.id AND us{$setting_i}.user_id = u.id"  
                     );
-                $query->andWhere(['us'.$setting_i.'.values' => $setting_value]);
+                $query->andWhere(["us{$setting_i}.values" => $setting_value]);
                 $setting_i++;
             }
             
@@ -291,34 +291,21 @@ class TimeTrackingController extends ParentController
     
     public function actionUserStatistics($user_id = null, $datetime_start = null, $datetime_stop = null, $show_only_bad = null)
     {
-        if (!is_null($user_id) && !Yii::$app->user->identity->hasRole('admin') && !Yii::$app->user->identity->hasRole('time_tracking_editor') && !Yii::$app->user->identity->hasRole('time_tracking_admin')) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-        
         Url::remember('', 'user_statistics');
         
         if (is_null($user_id)) {
             $user_id = Yii::$app->user->id;
         } else {
-            $user_id = (Yii::$app->user->identity->hasRole('admin') || Yii::$app->user->identity->hasRole('time_tracking_editor') || Yii::$app->user->identity->hasRole('time_tracking_admin')) ? $user_id : Yii::$app->user->id; 
+            if ($user_id != Yii::$app->user->id && !Yii::$app->user->identity->hasRole(['admin', 'time_tracking_editor', 'time_tracking_admin'])) {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
         }
         
         // start of interval
         $start_day = !empty($datetime_start) ? $datetime_start : date('Y-m-d 00:00:00', strtotime('-7 days'));
         $stop_day = !empty($datetime_stop) ? $datetime_stop : date('Y-m-d 23:59:59');
         
-        $model = TimeTracking::find()
-                ->where(['user_id' => $user_id])
-                ->andWhere(['>', 'datetime_at', $start_day])
-                ->andWhere(['<', 'datetime_at', $stop_day])
-                ->orderBy('datetime_at, id')
-                ->all();
-        
-        $timeline = [];
-        foreach ($model as $item) {
-            $item_name = date('Y-m-d', strtotime($item->datetime_at));
-            $timeline[$item_name][] = $item;
-        }
+        $timeline = TimeTracking::userTimeline($start_day, $stop_day, $user_id);
         
         $approvedDays = ArrayHelper::index(TimeTrackingApproval::getApprovedDays($user_id, $start_day, $stop_day), 'approval_date');
         
@@ -339,7 +326,33 @@ class TimeTrackingController extends ParentController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         
+        $last_activity = TimeTracking::find()
+                ->where(['>', 'datetime_at', date('Y-m-d 00:00:00', strtotime($day))])
+                ->where(['<=', 'datetime_at', date('Y-m-d 23:59:59', strtotime($day))])
+                ->andWhere(['user_id' => $user_id])
+                ->orderBy('datetime_at DESC')
+                ->one();
+        
+        if (!$last_activity) {
+            Yii::$app->session->setFlash('error', Module::t('Cannot approve a day without any activities. Please add time records first.'));
+            
+            return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $user_id]);
+        }
+        
+        if (!$last_activity->isWorkStop()) {
+            Yii::$app->session->setFlash('error', Module::t('You cannot approve a day that is not completed. Please finish your work day first.'));
+        
+            return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $user_id]);
+        }
+        
         if (TimeTrackingApproval::approve($user_id, Yii::$app->user->id, $day)) {
+            
+            $function = Yii::$app->getModule('timetracker')->afterApprovalFunction;
+            
+            if (!empty($function) && is_callable($function)) {
+                $function($user_id, $day);
+            }
+            
             Yii::$app->session->setFlash('success', 'Подтверждено');
         } else {
             Yii::$app->session->setFlash('error', 'ошибка');

@@ -147,6 +147,20 @@ class Module extends \yii\base\Module
     public $afterDeleteFunction;
     
     /**
+     * @var callable Function that will be called after time tracking record is inserted (created)
+     * Function accepts parameters:
+     * - $model: TimeTracking object (the inserted record)
+     * 
+     * Example usage in config:
+     * 'afterCreateFunction' => function($model) {
+     *     // Send notification, call API, update external system, etc.
+     *     Yii::info("New record {$model->id} was created by user " . Yii::$app->user->id, 'timetracker');
+     *     // Or send email, push to CRM, etc.
+     * }
+     */
+    public $afterCreateFunction;
+    
+    /**
      * @var boolean Block editing of approved time tracking records
      * If true, editing/deleting will be disabled for approved records
      * If false, editing/deleting will be allowed regardless of approval status
