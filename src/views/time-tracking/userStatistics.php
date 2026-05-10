@@ -52,20 +52,10 @@ $this->registerJs($script, yii\web\View::POS_READY);
 $properties = ArrayHelper::index(\ZakharovAndrew\TimeTracker\models\ActivityProperty::find()->all(), 'id');
 ?>
 <?= $this->render('_timeline_style') ?>
-<style>
-.table-user-statistics {
-    width: auto;
-    height: calc(100vh - 236px);
-    border-radius: 15px;
-    padding: 15px;
-    background: #fff;
-    display: flex;
-}
-</style>
 
 <?php if (Yii::$app->getModule('timetracker')->showTitle) {?><h1><?= Html::encode($this->title) ?></h1><?php } ?>
 
-<div style="background:#fff; padding:15px;border-radius:10px">
+<div class="timeline-stats-container">
     <div class="table-responsive table-user-statistics">
         <table class="table table-bordered">
             <tr>

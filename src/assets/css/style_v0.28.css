@@ -58,6 +58,29 @@ Time Tracking
     background-color: #FFCDD2 !important;
 }
 
+.timeline-stats-container {
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.table-user-statistics {
+    width: auto;
+    height: calc(100vh - 236px);
+    border-radius: 15px;
+    padding: 15px;
+    background: #fff;
+    display: flex;
+}
+.timeline-activity-properties {
+    background:#f9fafb;
+    border-radius:6px;
+    margin-bottom: 4px;
+}
+.timeline-activity-property {
+    padding: 2px 8px;
+}
+
 /* Modal Right */
 .modal.right.fade.in .modal-dialog {
 right:0 !important;

@@ -88,7 +88,7 @@ $isBs5 = ($bootstrapVersion == 5);
                             if (!empty($userActivityProperty->values) || $propertyType == ActivityProperty::TYPE_CHECKBOX) { ?>
                         <div class="timeline-activity-property timeline-activity-property__<?= $userActivityProperty->property_id ?>">
                             <span class="timeline-activity-property__name"><?= $property->name ?? '' ?>:</span>
-                            <span><?php 
+                            <span class="timeline-activity-property__value"><?php 
                             if ($propertyType  == ActivityProperty::TYPE_CHECKBOX) {
                                 echo $userActivityProperty->values == true ? Module::t('Yes') : Module::t('No');
                             } else {
