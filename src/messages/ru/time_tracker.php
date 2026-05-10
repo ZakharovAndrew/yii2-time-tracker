@@ -113,4 +113,10 @@ return [
     'Duration' => 'Длительность',
     'Average duration' => 'Средняя длительность',
     'Count' => 'Количество',
+    
+    'Approve' => 'Согласовать',
+    'Approved' => 'Подтверждено',
+    'Date from' => 'Дата с',
+    'Date to' => 'Дата по',
+    'Show only incomplete working days' => 'Выводить только не завершенные рабочие дни'
 ];

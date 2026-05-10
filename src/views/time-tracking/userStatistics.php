@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 $useronline = User::isOnline($user->id) == true ? 'online' : 'offline';
 
 $script = <<< JS
-    $("h1").append('<div class="user_status_$useronline">$useronline</div>');
+    $("h1").append('<div class="user_status_{$useronline}">{$useronline}</div>');
         
     $("h1").append('<div id="filter" class="btn mg-top--10"><svg height="18" width="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300.906 300.906" xml:space="preserve"><path d="M288.953 0h-277c-5.522 0-10 4.478-10 10v49.531c0 5.522 4.478 10 10 10h12.372l91.378 107.397v113.978a10 10 0 0 0 15.547 8.32l49.5-33a9.999 9.999 0 0 0 4.453-8.32v-80.978l91.378-107.397h12.372c5.522 0 10-4.478 10-10V10c0-5.522-4.477-10-10-10zM167.587 166.77a9.999 9.999 0 0 0-2.384 6.48v79.305l-29.5 19.666V173.25a9.997 9.997 0 0 0-2.384-6.48L50.585 69.531h199.736l-82.734 97.239zM278.953 49.531h-257V20h257v29.531z"/></svg></div>');
     $("#filter").click(function() {
@@ -81,10 +81,11 @@ $properties = ArrayHelper::index(\ZakharovAndrew\TimeTracker\models\ActivityProp
             <td id="row<?= date('d-m-Y', strtotime($day)) ?>">
                 <?php if ($is_editor && isset($approved_days[date('Y-m-d', strtotime($day))])) {
                     $approved = $approved_days[date('Y-m-d', strtotime($day))];
+                    $approverName = $approved->approver ? $approved->approver->name : '';
                     ?>
-                <div class="approval" title="<?= $approved->approver->name ?>">Подтверждено <?= date('d.m.Y', strtotime($approved->approved_at)) ?></div>
+                <div class="approval" title="<?= Html::encode($approverName) ?>"><?= Module::t('Approved') ?> <?= date('d.m.Y', strtotime($approved->approved_at)) ?></div>
                 <?php } else if ($is_editor) {
-                    echo Html::a('Согласовать', ['approval', 'user_id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'need-approval']);
+                    echo Html::a(Module::t('Approve'), ['approval', 'user_id' => $user->id, 'day' => date('Y-m-d', strtotime($day))], ['class' => 'need-approval']);
                 } ?>
                 
                 <?= $this->render('_vertical-timeline', [
@@ -104,11 +105,22 @@ $properties = ArrayHelper::index(\ZakharovAndrew\TimeTracker\models\ActivityProp
 <?php
 if ($is_editor) {
     $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
-    $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Modal";
+    if ($bootstrapVersion >= 4 && $bootstrapVersion <= 5) {
+        $classModal = "\\yii\\bootstrap{$bootstrapVersion}\\Modal";
+        $titleOption = 'title';
+    } else {
+        $classModal = "\\yii\\bootstrap\\Modal";
+        $titleOption = 'header';
+    }
+    
+    if (!class_exists($classModal)) {
+        $classModal = "\yii\bootstrap\Modal";
+        $titleOption = 'header';
+    }
     
     // FORM
     $classModal::begin([
-        ($bootstrapVersion==3 ? 'header' : 'title') => '<h2>'.Module::t('Add Activity').'</h2>',
+        $titleOption => '<h2>'.Module::t('Add Activity').'</h2>',
         'id' => 'form-add-activity'
     ]);
 
@@ -137,16 +149,16 @@ if ($is_editor) {
     ]); ?>
     <div class="settings-filter-form-group scroll-bar-left">
         <div class="form-group">
-            <label>Дата с</label>
+            <label><?= Module::t('Date from') ?></label>
             <?= Html::input('date', 'datetime_start', $datetime_start ?? '', ['class' => 'form-control']) ?>
         </div>
         <div class="form-group">
-            <label>Дата по</label>
+            <label><?= Module::t('Date to') ?></label>
             <?= Html::input('date', 'datetime_stop', $datetime_stop ?? '', ['class' => 'form-control']) ?>
         </div>
         <div class="custom-control custom-switch">
             <input type="checkbox" class="custom-control-input" name="show_only_bad" id="show_only_bad" <?php if ($show_only_bad == 'on') { echo 'checked';} ?>>
-            <label class="custom-control-label" for="show_only_bad"> Выводить только не завершенные рабочие дни</label>
+            <label class="custom-control-label" for="show_only_bad"> <?= Module::t('Show only incomplete working days') ?></label>
         </div>
 
     </div>
