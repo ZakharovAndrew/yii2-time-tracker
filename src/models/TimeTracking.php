@@ -5,6 +5,7 @@ namespace ZakharovAndrew\TimeTracker\models;
 use Yii;
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
+use ZakharovAndrew\TimeTracker\models\UserActivityProperty;
 use ZakharovAndrew\user\models\Roles;
 use \yii\helpers\ArrayHelper;
 
@@ -369,5 +370,13 @@ class TimeTracking extends \yii\db\ActiveRecord
             ->asArray()
             ->all(), 'id');
         }, 600);
+    }
+    
+    public function getUserActivityProperties()
+    {
+        //return UserActivityProperty::find()->where(['activity_id' => 'activity_id'[)], , 'user_id' => 'user_id1']);
+        return UserActivityProperty::find()
+                ->where(['activity_id' => $this->id])
+                ->andWhere(['user_id' => $this->user_id])->all();
     }
 }

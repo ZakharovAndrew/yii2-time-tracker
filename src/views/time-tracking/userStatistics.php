@@ -4,6 +4,7 @@ use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\user\models\User;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -48,6 +49,7 @@ $script = <<< JS
 JS;
 
 $this->registerJs($script, yii\web\View::POS_READY);
+$properties = ArrayHelper::index(\ZakharovAndrew\TimeTracker\models\ActivityProperty::find()->all(), 'id');
 ?>
 <?= $this->render('_timeline_style') ?>
 <style>
@@ -89,7 +91,8 @@ $this->registerJs($script, yii\web\View::POS_READY);
                     'activities' => $item,
                     'is_editor' => $is_editor,
                     'day' => $day,
-                    'approved' => isset($approved_days[date('Y-m-d', strtotime($day))])
+                    'approved' => isset($approved_days[date('Y-m-d', strtotime($day))]),
+                    'properties' => $properties,
                 ]) ?>
             </td>
         <?php } ?>
