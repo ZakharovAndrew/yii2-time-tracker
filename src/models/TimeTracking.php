@@ -374,9 +374,39 @@ class TimeTracking extends \yii\db\ActiveRecord
     
     public function getUserActivityProperties()
     {
-        //return UserActivityProperty::find()->where(['activity_id' => 'activity_id'[)], , 'user_id' => 'user_id1']);
         return UserActivityProperty::find()
                 ->where(['activity_id' => $this->id])
                 ->andWhere(['user_id' => $this->user_id])->all();
+    }
+    
+    /**
+     * Calculate total working hours and break time for activities
+     * 
+     * @param array|TimeTracking[] $activities List of activities
+     * @return array [workTime, breakTime] in seconds
+     */
+    public static function calculateWorkBreakTime($activities)
+    {
+        $workTime = 0;
+        $breakTime = 0;
+        $activityCount = count($activities);
+
+        foreach ($activities as $i => $activity) {
+            $nextActivityTime = ($i === $activityCount - 1) 
+                ? time() 
+                : strtotime($activities[$i + 1]->datetime_at);
+
+            $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
+
+            if (!$activity->isWorkStop() && !$activity->isWorkBreak()) {
+                $workTime += $activityTime;
+            }
+
+            if ($activity->isWorkBreak()) {
+                $breakTime += $activityTime;
+            }
+        }
+
+        return [$workTime, $breakTime];
     }
 }

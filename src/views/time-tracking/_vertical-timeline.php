@@ -3,6 +3,7 @@
 use ZakharovAndrew\TimeTracker\Module;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\TimeTracker\models\ActivityProperty;
+use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\user\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -21,30 +22,12 @@ $activityList = Activity::getList();
 // Detect Bootstrap version for modal window compatibility (supports BS4 and BS5)
 $bootstrapVersion = $module->bootstrapVersion;
 $isBs5 = ($bootstrapVersion == 5);
+
+// Calculate total working hours and break time
+[$workTime, $breakTime] = TimeTracking::calculateWorkBreakTime($activities);
 ?>
 
 <b class="timeline-header"><?= date('d.m.Y', strtotime($day))  ?>
-    <?php
-    // Calculate total working hours and break time
-    $workTime = 0;
-    $breakTime = 0;
-    $activityCount = count($activities);
-    foreach ($activities as $i => $activity) {
-        $nextActivityTime = ($i === $activityCount - 1) ?  time() : strtotime($activities[$i + 1]->datetime_at);
-
-        $activityTime = $nextActivityTime - strtotime($activity->datetime_at);
-
-        // Add to working hours (excluding breaks and stops)
-        if (!$activity->isWorkStop() && !$activity->isWorkBreak()) {
-            $workTime += $activityTime;
-        }
-
-        // Add to break time
-        if ($activity->isWorkBreak()) {
-            $breakTime += $activityTime;
-        }
-
-    }?>
     <span class="work_time" title="<?= Module::t('Working hours')?>"><?= Activity::timeFormat($workTime) ?></span>
     <span class="break_time"><?= Activity::timeFormat($breakTime) ?></span>
     <?php if ($showEditButtons) {?>
