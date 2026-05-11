@@ -84,6 +84,7 @@ $properties = ArrayHelper::index(\ZakharovAndrew\TimeTracker\models\ActivityProp
                     'day' => $day,
                     'approved' => isset($approved_days[date('Y-m-d', strtotime($day))]),
                     'properties' => $properties,
+                    'showProperties' => $showProperties
                 ]) ?>
             </td>
         <?php } ?>
@@ -150,7 +151,11 @@ if ($is_editor) {
             <input type="checkbox" class="custom-control-input" name="show_only_bad" id="show_only_bad" <?php if ($show_only_bad == 'on') { echo 'checked';} ?>>
             <label class="custom-control-label" for="show_only_bad"> <?= Module::t('Show only incomplete working days') ?></label>
         </div>
-
+        
+        <div class="custom-control custom-switch mt-2">
+            <input type="checkbox" class="custom-control-input" name="show_properties" id="show_properties" value="1" <?= $showProperties ? 'checked' : '' ?>>
+            <label class="custom-control-label" for="show_properties"> <?= Module::t('Show activity properties') ?></label>
+        </div>
     </div>
     <div class="form-group bottom-panel">
         <?= Html::submitButton(Module::t('Apply'), ['class' => 'btn btn-primary']) ?>

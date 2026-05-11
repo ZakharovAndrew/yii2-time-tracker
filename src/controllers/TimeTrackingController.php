@@ -289,7 +289,7 @@ class TimeTrackingController extends ParentController
         ]);
     }
     
-    public function actionUserStatistics($user_id = null, $datetime_start = null, $datetime_stop = null, $show_only_bad = null)
+    public function actionUserStatistics($user_id = null, $datetime_start = null, $datetime_stop = null, $show_only_bad = null, $show_properties = null)
     {
         Url::remember('', 'user_statistics');
         
@@ -315,6 +315,7 @@ class TimeTrackingController extends ParentController
             'datetime_start' => $datetime_start,
             'datetime_stop' => $datetime_stop,
             'show_only_bad' => $show_only_bad,
+            'show_properties' => $show_properties,
             'approved_days' => $approvedDays,
             'is_editor' => Yii::$app->user->identity->hasRole('time_tracking_editor')
         ]);
