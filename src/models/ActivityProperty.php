@@ -42,6 +42,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
             [['values'], 'string'],
             [['params'], 'safe'],
             [['name'], 'string', 'max' => 200],
+            [['values_function'], 'string', 'max' => 255],
         ];
     }
 
@@ -57,6 +58,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
             'pos' => Module::t('Position'),
             'values' => Module::t('Values'),
             'required' => Module::t('Required'),
+            'values_function' => Module::t('Function that returns list of values'),
         ];
     }
     

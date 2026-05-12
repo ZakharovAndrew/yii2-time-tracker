@@ -31,6 +31,8 @@ UserAssets::register($this);
 
     <?= $form->field($model, 'values')->textarea(['rows' => 6]) ?>
     
+    <?= $form->field($model, 'values_function')->textInput() ?>
+    
     <?= $form->field($model, 'required')->dropDownList([ 0 => Module::t('No'), 1 => Module::t('Yes')], ['class' => 'form-control form-select']) ?>
     
     <h3><?= Module::t('Visibility conditions') ?></h3>
