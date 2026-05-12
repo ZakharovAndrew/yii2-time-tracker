@@ -118,5 +118,6 @@ return [
     'Approved' => 'Подтверждено',
     'Date from' => 'Дата с',
     'Date to' => 'Дата по',
-    'Show only incomplete working days' => 'Выводить только не завершенные рабочие дни'
+    'Show only incomplete working days' => 'Выводить только не завершенные рабочие дни',
+    'Show activity properties' => 'Показывать свойства активностей',
 ];
