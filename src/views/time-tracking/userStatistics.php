@@ -84,7 +84,7 @@ $properties = ArrayHelper::index(\ZakharovAndrew\TimeTracker\models\ActivityProp
                     'day' => $day,
                     'approved' => isset($approved_days[date('Y-m-d', strtotime($day))]),
                     'properties' => $properties,
-                    'showProperties' => $showProperties
+                    'show_properties' => $show_properties
                 ]) ?>
             </td>
         <?php } ?>
@@ -153,7 +153,7 @@ if ($is_editor) {
         </div>
         
         <div class="custom-control custom-switch mt-2">
-            <input type="checkbox" class="custom-control-input" name="show_properties" id="show_properties" value="1" <?= $showProperties ? 'checked' : '' ?>>
+            <input type="checkbox" class="custom-control-input" name="show_properties" id="show_properties" value="1" <?= $show_properties ? 'checked' : '' ?>>
             <label class="custom-control-label" for="show_properties"> <?= Module::t('Show activity properties') ?></label>
         </div>
     </div>

@@ -58,7 +58,7 @@ class ActivityProperty extends \yii\db\ActiveRecord
             'pos' => Module::t('Position'),
             'values' => Module::t('Values'),
             'required' => Module::t('Required'),
-            'values_function' => Module::t('Function that returns list of values'),
+            'values_function' => Module::t('Values Function'),
         ];
     }
     
@@ -104,18 +104,35 @@ class ActivityProperty extends \yii\db\ActiveRecord
     
     public function getValues()
     {
+        if (empty($this->values) && empty($this->values_function)) {
+            return null;
+        }
+        
+        if (!empty($this->values_function) && is_callable($this->values_function)) {
+            $arr = call_user_func($this->values_function);
+            return array_combine($arr, $arr);
+        }
+        
+        return $this->getStaticValues();
+    }
+    
+    /**
+     * Get static values from values field
+     * 
+     * @return array|null
+     */
+    protected function getStaticValues()
+    {
         if (empty($this->values)) {
             return null;
         }
         
         $result = json_decode($this->values, true);
         if (json_last_error() === JSON_ERROR_NONE) {
-            // JSON is valid
             return $result;
         }
         
-        $arr =  explode("\r\n", $this->values);
-        
+        $arr = explode("\r\n", $this->values);
         return array_combine($arr, $arr);
     }
     

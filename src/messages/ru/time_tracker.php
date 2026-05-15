@@ -89,6 +89,7 @@ return [
     'Checkbox' => 'Чекбокс',
     'Values' => 'Значения',
     'Position' => 'Позиция',
+    'Values Function' => 'Функция для получения значений',
     'Update Activity Property' => 'Обновить свойство активности',
     'Error in setting the start date of work.' => 'Ошибка проставления начала работы',
     'Error when adding activity to a user.' => 'Ошибка при добавление активности пользователю',

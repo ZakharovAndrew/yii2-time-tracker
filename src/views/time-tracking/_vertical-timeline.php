@@ -11,7 +11,7 @@ use ZakharovAndrew\TimeTracker\assets\TimeTrackerAssets;
 
 TimeTrackerAssets::register($this);
 
-$showProperties = $showProperties ?? false;
+$showProperties = $show_properties ?? false;
 $approved = $approved ?? false;
 $module = Yii::$app->getModule('timetracker');
 $blockEditing = $module->blockEditingForApproved;
