@@ -19,10 +19,9 @@ use \yii\helpers\ArrayHelper;
  * @property string|null $comment
  */
 class TimeTracking extends \yii\db\ActiveRecord
-{
-    
+{   
     public $change_logging = true;
-
+    public $afterUpdateFunctionEnabled = true;
 
     /**
      * {@inheritdoc}
@@ -96,27 +95,20 @@ class TimeTracking extends \yii\db\ActiveRecord
      */
     public static function getActivityList($start_day, $stop_day, $user = null, $roles = [])
     {
-        if (!is_array($roles) || count($roles) == 0) {
-            $query = static::find()
-                ->leftJoin('users', 'users.id = time_tracking.user_id')
-                ->andWhere(['>', 'datetime_at', $start_day])
-                ->andWhere(['<=', 'datetime_at', $stop_day])
-                //->andWhere('users.id' => $users)
-                ->orderBy('datetime_at');
-        } else {
-            $query = static::find()
-                ->leftJoin('user_roles', 'user_roles.user_id = time_tracking.user_id')
-                ->leftJoin('roles', 'user_roles.role_id = roles.id')
-                ->leftJoin('users', 'users.id = time_tracking.user_id')
-                ->where(['roles.code' => $roles])
-                ->andWhere(['>', 'datetime_at', $start_day])
-                ->andWhere(['<=', 'datetime_at', $stop_day])
-                //->andWhere('LIKE', 'users.name', $username)
-                ->orderBy('datetime_at');
-        }
-                
+        $query = static::find()
+            ->leftJoin('users', 'users.id = time_tracking.user_id')
+            ->where(['>', 'datetime_at', $start_day])
+            ->andWhere(['<=', 'datetime_at', $stop_day])
+            ->orderBy('datetime_at');
+        
         if (!empty($user)) {
             $query->andWhere(['time_tracking.user_id' => $user]);
+        }
+        
+        if (!empty($roles)) {
+            $query->leftJoin('user_roles', 'user_roles.user_id = time_tracking.user_id')
+                ->leftJoin('roles', 'user_roles.role_id = roles.id')
+                ->andWhere(['roles.code' => $roles]);
         }
         
         return $query->all();
@@ -149,15 +141,23 @@ class TimeTracking extends \yii\db\ActiveRecord
         ];
     }
     
-    public static function userTimeline($start_day, $stop_day, $user)
+    /**
+     * Get user activities grouped by day
+     * 
+     * @param string $start_day Start date (Y-m-d)
+     * @param string $stop_day End date (Y-m-d)
+     * @param int|array $user User ID or array of user IDs
+     * @return array Activities grouped by date [ '2024-01-01' => [activities], ... ]
+     */
+    public static function userTimeline(string $start_day, string $stop_day, $user)
     {
-        $model = static::getActivityList($start_day, $stop_day, $user, $roles = []);
+        $activities = static::getActivityList($start_day, $stop_day, $user);
         
         $timeline = [];
         
-        foreach ($model as $item) {
-            $item_name = date('Y-m-d', strtotime($item->datetime_at));
-            $timeline[$item_name][] = $item;
+        foreach ($activities  as $activity) {
+            $date = date('Y-m-d', strtotime($activity->datetime_at));
+            $timeline[$date][] = $activity;
         }
         
         return $timeline;
@@ -232,8 +232,6 @@ class TimeTracking extends \yii\db\ActiveRecord
             $this->change_logging = false;
         }
         
-        parent::afterSave($insert, $changedAttributes);
-        
         self::setUserLastActivity($this->user_id);
         
         if ($insert) {
@@ -242,15 +240,24 @@ class TimeTracking extends \yii\db\ActiveRecord
             if (!empty($afterCreateFunction) && is_callable($afterCreateFunction)) {
                 $afterCreateFunction($this);
             }
-        } else {
-            $afterUpdateFunction = Yii::$app->getModule('timetracker')->afterUpdateFunction;
-
-            if (!empty($afterUpdateFunction) && is_callable($afterUpdateFunction)) {
-                $afterUpdateFunction($this, $changedAttributes);
-            }
+        } elseif ($this->afterUpdateFunctionEnabled) {
+            $this->afterUpdateFunction($changedAttributes ?? []);
         }
+        
+        parent::afterSave($insert, $changedAttributes);
     }
     
+    public function afterUpdateFunction($changedAttributes)
+    {
+        $afterUpdateFunction = Yii::$app->getModule('timetracker')->afterUpdateFunction;
+
+        if (!empty($afterUpdateFunction) && is_callable($afterUpdateFunction)) {
+            $afterUpdateFunction($this, $changedAttributes, true);
+        }
+    }
+            
+
+
     public function afterDelete()
     {
         $datetime_at = $this->datetime_at ?? date('Y-m-d H:i:s');
