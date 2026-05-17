@@ -81,6 +81,6 @@ class UserActivityProperty extends \yii\db\ActiveRecord
         
         // change value
         $model->values = $values;
-        $model->save();
+        return $model->save();
     }
 }
