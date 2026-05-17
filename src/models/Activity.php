@@ -17,6 +17,7 @@ class Activity extends \yii\db\ActiveRecord
     const WORK_START    = 1000000;
     const WORK_STOP     = 1000001;
     const WORK_BREAK    = 1000002;
+    const CACHE_DURATION = 600;
     
     /**
      * {@inheritdoc}
@@ -51,22 +52,28 @@ class Activity extends \yii\db\ActiveRecord
         ];
     }
     
-    public static function  getDropdownList()
+    /**
+     * @return array
+     */
+    public static function getDropdownList()
     {
-        return ArrayHelper::map(static::find()->asArray()->cache(600)->all(), 'id', 'name');
+        return ArrayHelper::map(static::find()->asArray()->cache(self::CACHE_DURATION)->all(), 'id', 'name');
     }
     
-    public static function  getFullList()
+    /**
+     * Get full list of activities including system break activity
+     * 
+     * @return array Associative array of activity id => name
+     */
+    public static function getFullList()
     {
-        $arr = ArrayHelper::map(static::find()->asArray()->cache(600)->all(), 'id', 'name');
-        //$arr[static::WORK_START] = '';
-        //$arr[static::WORK_STOP] = '';
+        $arr = static::getDropdownList();
         $arr[static::WORK_BREAK] = Module::t('Break');
         
         return $arr;
     }
     
-    public static function  getActivityColors()
+    public static function getActivityColors()
     {
         return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'color');
     }
@@ -78,12 +85,12 @@ class Activity extends \yii\db\ActiveRecord
      * @param string $additionalCondition
      * @return array
      */
-    public static function  userActivity($user_id, $additionalCondition = null)
+    public static function userActivity($user_id, $additionalCondition = null)
     {
         $query = RoleActivity::find()->alias('a')
                 ->select(['t.*'])
                 ->leftJoin('time_tracking_activity t', 't.id = a.activity_id')
-                ->where('a.role_id in (SELECT role_id FROM user_roles WHERE user_id = '.(int)$user_id.' )')
+                ->where('a.role_id IN (SELECT role_id FROM user_roles WHERE user_id = :user_id)', [':user_id' => $user_id])
                 ->orderBy('a.pos');
         
         if ($additionalCondition !== null) {
@@ -93,7 +100,7 @@ class Activity extends \yii\db\ActiveRecord
         return $query->asArray()->all();
     }
     
-    public static function  getActivityByUserId($user_id, $showAll = false)
+    public static function getActivityByUserId($user_id, $showAll = false)
     {   
         $list = ArrayHelper::map(static::userActivity($user_id), 'id', 'name');
         
@@ -109,11 +116,11 @@ class Activity extends \yii\db\ActiveRecord
     /**
      * Get hints for activities available to the user
      */
-    public static function  getHintsActivityByUserId($user_id)
+    public static function getHintsActivityByUserId($user_id)
     {
         return ArrayHelper::map(static::userActivity($user_id, "t.hint <> '' AND t.hint IS NOT NULL"), 'id', 'hint');
     }
-    public static function  getTemplateCommentsActivityByUserId($user_id)
+    public static function getTemplateCommentsActivityByUserId($user_id)
     {
         return ArrayHelper::map(static::userActivity($user_id, "t.comment_templates <> '' AND t.comment_templates IS NOT NULL"), 'id', 'comment_templates');
     }
