@@ -22,7 +22,6 @@ $this->params['breadcrumbs'][] = ['label' => Module::t('Time Tracking'), 'url' =
 $this->params['breadcrumbs'][] = $this->title;
 
 // for json
-$activity_list = [];
 $bad = [];
 $i = 1;
 
@@ -136,7 +135,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
             </thead>
             
             <?php foreach ($users as $user_id => $user_name) {?>
-            <tr id="row<?= $user_id ?>">
+            <tr id="row<?= $user_id ?>" data-username="<?= Html::encode($user_name) ?>" data-user_id="<?= $user_id ?>">
                 <td>
                     <?php 
                     $link_params = ['user-statistics', 'user_id' => $user_id];
@@ -150,7 +149,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
                 <td><?= $property->getUserSettingValue($user_id) ?></td>
                 <?php } ?>
                 <?php foreach ($timeline as $day => $item) {
-                    $class = (date('N', strtotime($day)) > 5) ? 'td-holiday ' : '';
+                    $class = (date('N', strtotime($day)) > 5) ? 'td-holiday popover ' : 'popover ';
                     /*$item_name = date('Y-m-d', strtotime($item[$user_id]->datetime_at));*/?>
                     <?php if ($item[$user_id] ?? '') {
                         $start = '';
@@ -160,14 +159,6 @@ $this->registerJs($script, yii\web\View::POS_READY);
                             if ($activity->isWorkStart() && $start == '') {
                                 $start = date('H:i', strtotime($activity->datetime_at));
                             }
-                                            
-                            $activity_list[$i][] = [
-                                'id' => $activity->activity_id,
-                                'activity' => $activities[$activity->activity_id],
-                                'time' => date('H:i:s', strtotime($activity->datetime_at)),
-                                'date' => date('d.m.Y', strtotime($activity->datetime_at)),
-                                'comment' => $activity->comment ?? ''
-                            ];
                         }
                         
                         // last status
@@ -196,15 +187,13 @@ $this->registerJs($script, yii\web\View::POS_READY);
                                 $bad[$user_id] = true;
                             }
                         }
-      
-                        
                         
                         $hint = '';
                         if ($end_activity->activity_id != Activity::WORK_STOP && $end_activity->activity_id != Activity::WORK_START) {
                             $hint = '<div class="last_activity">'.$activities[$activity->activity_id].'</div>';
                         }
                         
-                        echo '<td class="'.$class.'" data-id="'.$i.'" data-toggle="popover" data-user="'.$user_name.'" data-day="' . date('d.m.Y', strtotime($day)) .'"><span>'.$start.($stop ? ' - '.$stop : '').'</span>'.$hint.'</td>';
+                        echo '<td class="'.$class.'" data-day="' . date('d.m.Y', strtotime($day)) .'"><span>'.$start.($stop ? ' - '.$stop : '').'</span>'.$hint.'</td>';
                         $i++;
                     } else {
                     ?>
@@ -308,9 +297,5 @@ $this->registerJs($script, yii\web\View::POS_READY);
 
     <?php ActiveForm::end(); ?>
 </div>
-
-<script>
-    let data = <?= json_encode($activity_list, JSON_UNESCAPED_UNICODE) ?>;
-</script>
 
 

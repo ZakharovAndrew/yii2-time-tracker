@@ -481,6 +481,7 @@ class TimeTrackingController extends ParentController
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->afterUpdateFunctionEnabled = false;
             if ($model->save()) {
                 // save user activity property
                 $properties = ActivityProperty::find()->all();
@@ -488,6 +489,8 @@ class TimeTrackingController extends ParentController
                     $value = Yii::$app->request->post($property->id) ?? null;
                     UserActivityProperty::saveValue($model->user_id, $property->id, $id, $value);
                 }
+                
+                $model->afterUpdateFunction(null);
                 
                 return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $model->user_id]);
             }
@@ -498,6 +501,41 @@ class TimeTrackingController extends ParentController
         return $this->render('update', [
             'model' => $model,
             'activity' => $activity
+        ]);
+    }
+    
+    /**
+     * AJAX endpoint for displaying user timeline in vertical view
+     * 
+     * @param string $date_event Date in format Y-m-d or any strtotime-compatible format
+     * @param int $user_id User ID to display timeline for
+     * @return string Rendered vertical timeline view without layout
+     * @throws NotFoundHttpException If user doesn't have permission or date is invalid
+     */
+    public function actionUserTimeline(string $date_event, $user_id)
+    {
+        $roles = array_keys(Yii::$app->getModule('timetracker')->availableRolesForViewingStatistics);
+        
+        if (!Yii::$app->user->identity->hasRole($roles)) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        
+        $timestamp = strtotime($date_event);
+        if (!$timestamp) {
+            throw new NotFoundHttpException('Invalid date format.');
+        }
+    
+        $start_day = date('Y-m-d', $timestamp);
+        $stop_day = date('Y-m-d', strtotime($date_event. ' +1 day'));
+        
+        $timeline = TimeTracking::userTimeline($start_day, $stop_day, $user_id);
+        
+        $this->layout = false;
+
+        return $this->render('_vertical-timeline', [
+            'activities' => $timeline[$start_day] ?? [],
+            'is_editor' => false,
+            'day' => $start_day,
         ]);
     }
 

@@ -5,27 +5,43 @@ use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\user\models\User;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
+$urlUserTimeline = Url::to(['user-timeline']);
 
 $bootstrapVersion = Yii::$app->getModule('timetracker')->bootstrapVersion;
 $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion)."\\Modal";
 
-$str = Module::t('Activities');
-
 $script = <<< JS
         
-$('[data-toggle="popover"]').click(function() {
+$('.popover').click(function() {
     let id = $(this).data('id');
+    let user_id = $(this).parent().data('user_id');
+    let user_name = $(this).parent().data('username');
     let day = $(this).data('day');
-
-    let content = '<div class="vertical-timeline">';
-    data[id].forEach((activity) => content += getActivityHtml(activity));
-    content += '</div>';
-        
-    // prepare and show modal
-    $("#popover-modal .modal-body").html(content);
-    $("#popover-modal-title").html('$str ' + $(this).data('user'));
-    $('#popover-modal').modal('show');
+     
+    // Отправляем AJAX-запрос
+    $.ajax({
+        url: '{$urlUserTimeline}',
+        type: 'GET',
+        data: {
+            date_event: day,
+            user_id: user_id
+        },
+        //dataType: 'json',
+        success: function(response) {
+            if (response) {
+                 // prepare and show modal
+                $("#popover-modal .modal-body").html(response);
+                $("#popover-modal-title").html(user_name);
+                $('#popover-modal').modal('show');
+            }
+        },
+        error: function(xhr, status, error) {
+            $("#popover-modal-title").html('<div class="alert alert-danger">Ошибка при загрузке данных</div>');
+            console.error('Error AJAX:', error);
+        }
+    });
 });        
 JS;
 
@@ -39,4 +55,3 @@ $classModal::begin([
 ]);
 
 $classModal::end();
-?>
