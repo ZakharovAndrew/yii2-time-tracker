@@ -13,20 +13,21 @@ use ZakharovAndrew\TimeTracker\Module;
 
     <?php $form = ActiveForm::begin(); ?>
     <div class="card info-block">
+        <div class="card-body">
+            <?= $form->field($model, 'user_id')->hiddenInput()->label(false) ?>
 
-    <?= $form->field($model, 'user_id')->hiddenInput()->label(false) ?>
-    
-    <?= $form->field($model, 'activity_id')->dropDownList($activity, ['prompt'=>'', 'class' => 'form-control form-select']) ?>
+            <?= $form->field($model, 'activity_id')->dropDownList($activity, ['prompt'=>'', 'class' => 'form-control form-select']) ?>
 
-    <?= $form->field($model, 'datetime_at')->textInput() ?>
+            <?= $form->field($model, 'datetime_at')->textInput() ?>
 
-    <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
-    
-    <?= $this->render('_activity_properties', [
-        'properties' => $properties,
-        'activity_id' => $model->id,
-        'user_id' => $model->user_id ?? \Yii::$app->user->id
-    ]) ?>
+            <?= $form->field($model, 'comment')->textarea(['rows' => '6']) ?>
+
+            <?= $this->render('_activity_properties', [
+                'properties' => $properties,
+                'activity_id' => $model->id,
+                'user_id' => $model->user_id ?? \Yii::$app->user->id
+            ]) ?>
+        </div>
     </div>
     
     <div class="form-group">
