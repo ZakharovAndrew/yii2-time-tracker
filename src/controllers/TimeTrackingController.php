@@ -424,8 +424,9 @@ class TimeTrackingController extends ParentController
               
         $model = new TimeTracking();
         
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) { 
+            $model->afterCreateFunctionEnabled = false;
+            if ($model->save()) {
                 Yii::$app->session->setFlash('success', Module::t('Activity added'));
                 
                 // save user activity property
@@ -434,6 +435,8 @@ class TimeTrackingController extends ParentController
                     $value = Yii::$app->request->post($property->id) ?? null;
                     UserActivityProperty::saveValue($model->user_id, $property->id, $model->id, $value);
                 }
+                
+                $model->afterCreateFunction(null);
                 
                 return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $model->user_id]);
                 //return $this->redirect(['user-statistics', 'user_id' => $model->user_id]);
@@ -490,7 +493,7 @@ class TimeTrackingController extends ParentController
                     UserActivityProperty::saveValue($model->user_id, $property->id, $id, $value);
                 }
                 
-                $model->afterUpdateFunction(null);
+                $model->afterCreateFunction();
                 
                 return $this->redirect(Url::previous('user_statistics') ?? ['user-statistics', 'user_id' => $model->user_id]);
             }

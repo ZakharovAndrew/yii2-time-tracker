@@ -22,6 +22,7 @@ class TimeTracking extends \yii\db\ActiveRecord
 {   
     public $change_logging = true;
     public $afterUpdateFunctionEnabled = true;
+    public $afterCreateFunctionEnabled = true;
 
     /**
      * {@inheritdoc}
@@ -234,12 +235,8 @@ class TimeTracking extends \yii\db\ActiveRecord
         
         self::setUserLastActivity($this->user_id);
         
-        if ($insert) {
-            $afterCreateFunction = Yii::$app->getModule('timetracker')->afterCreateFunction;
-        
-            if (!empty($afterCreateFunction) && is_callable($afterCreateFunction)) {
-                $afterCreateFunction($this);
-            }
+        if ($insert && $this->afterCreateFunctionEnabled) {
+            $this->afterCreateFunction();
         } elseif ($this->afterUpdateFunctionEnabled) {
             $this->afterUpdateFunction($changedAttributes ?? []);
         }
@@ -255,7 +252,15 @@ class TimeTracking extends \yii\db\ActiveRecord
             $afterUpdateFunction($this, $changedAttributes, true);
         }
     }
-            
+    
+    public function afterCreateFunction()
+    {
+        $afterCreateFunction = Yii::$app->getModule('timetracker')->afterCreateFunction;
+        
+        if (!empty($afterCreateFunction) && is_callable($afterCreateFunction)) {
+            $afterCreateFunction($this);
+        }
+    }
 
 
     public function afterDelete()
