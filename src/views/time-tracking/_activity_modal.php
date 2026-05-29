@@ -14,7 +14,7 @@ $classModal = "\\yii\bootstrap".($bootstrapVersion==3 ? '' : $bootstrapVersion).
 
 $script = <<< JS
         
-$('.popover').click(function() {
+$('[data-toggle="popover"]').click(function() {
     let id = $(this).data('id');
     let user_id = $(this).parent().data('user_id');
     let user_name = $(this).parent().data('username');
