@@ -75,7 +75,7 @@ $this->registerJs($script, yii\web\View::POS_READY);
     textarea.form-control {
         max-width:100%
     }
-    .popover {
+    .popover, .show-timeline {
         max-width: 500px;
         z-index: 2000;
     }
