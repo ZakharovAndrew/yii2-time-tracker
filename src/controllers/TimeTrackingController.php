@@ -8,6 +8,8 @@ use ZakharovAndrew\TimeTracker\models\TimeTracking;
 use ZakharovAndrew\TimeTracker\models\Activity;
 use ZakharovAndrew\TimeTracker\models\ActivityProperty;
 use ZakharovAndrew\TimeTracker\models\UserActivityProperty;
+use ZakharovAndrew\user\models\Roles;
+use ZakharovAndrew\user\models\UserRoles;
 use ZakharovAndrew\user\models\User;
 use ZakharovAndrew\user\models\UserSettings;
 use ZakharovAndrew\user\models\UserSettingsConfig;
@@ -179,15 +181,86 @@ class TimeTrackingController extends ParentController
         return $this->redirect('index');
     }
     
-    public function actionStatistics($datetime_start = null, $datetime_stop = null, $username = null, $show_only_bad = null, $highlight_approved = null)
+    public function getUsersByParams(array $params)
+    {        
+        $ids = UserRoles::getUsersListByRoleSubject($params['role']);
+        
+        if (empty($ids)) {
+            return [];
+        }
+                    
+        $setting_i = 1;
+        $query = User::find()->alias('u')->select('u.id');
+        
+        if (!empty($params['statuses'])) {
+            $query->andWhere(['u.status' => $params['statuses']]);
+        }
+        
+        $query->andWhere(['u.id' => $ids]);
+
+        foreach ($params['user_properties'] as $setting_name => $setting_value) {
+            $query->leftJoin(UserSettingsConfig::tableName(). ' s'.$setting_i,
+                    ["s{$setting_i}.code" => $setting_name]
+                );
+            $query->innerJoin(UserSettings::tableName(). ' us'.$setting_i,
+                    "us{$setting_i}.setting_config_id = s{$setting_i}.id AND us{$setting_i}.user_id = u.id"  
+                );
+            $query->andWhere(["us{$setting_i}.values" => $setting_value]);
+            $setting_i++;
+        }
+            
+        return ArrayHelper::getColumn($query->asArray()->all(), 'id');
+    }
+    
+    public function checkFullAccess()
+    {
+        // check full access
+        foreach (TimeTracking::userRolesForViewingStatistics() as $params) {
+            if ($params == '*') {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get list of user IDs that current user can view statistics for
+     * 
+     * @return int[] Array of user IDs
+     */
+    public function getUserListForViewingStatistics()
+    {
+        $list = [];
+        
+        $user = Yii::$app->user->identity;
+        
+        foreach (TimeTracking::userRolesForViewingStatistics() as $params) {
+            if (is_array($params)) {                    
+                $users = $this->getUsersByParams($params);
+            } elseif (is_callable($params)) {
+                $result = call_user_func($params, $user);
+
+                $users = isset($result['role']) ? $this->getUsersByParams($result) : $result;
+            } else {
+                $users = UserRoles::getUsersListByRoleSubject($params);
+            }
+
+            $list = array_merge($list, $users);
+        }
+        
+        return $list;
+    }
+            
+    
+    public function actionStatistics($datetime_start = null, $datetime_stop = null, $show_only_bad = null, $highlight_approved = null)
     {
         $selectedUserIds = Yii::$app->request->get('users');
         $selected_settings = Yii::$app->request->get('selected_settings');
         
+        $availableRoles = array_keys(Yii::$app->getModule('timetracker')->availableRolesForViewingStatistics);
         
-        $roles = array_keys(Yii::$app->getModule('timetracker')->availableRolesForViewingStatistics);
-        
-        if (!Yii::$app->user->identity->hasRole($roles)) {
+        if (!Yii::$app->user->identity->hasRole($availableRoles)) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         
@@ -195,22 +268,26 @@ class TimeTrackingController extends ParentController
         $start_day = !empty($datetime_start) ? $datetime_start : date('Y-m-d 00:00:00', strtotime('-7 days'));
         $stop_day = !empty($datetime_stop) ? $datetime_stop : date('Y-m-d 23:59:59');
         
-        $roles = [];
-        foreach (TimeTracking::userRolesForViewingStatistics() as $params) {
-            if ($params == '*') {
-                $roles = [];
-                break;
-            }
-            
-            $roles = array_merge(explode(',', $params), $roles);
-        }
-        
+        // check full access
+        $full_acccess = $this->checkFullAccess();
+               
+        $list_user_id = !$full_acccess ? $this->getUserListForViewingStatistics() : [];
         
         // user filter
+        $query = User::find()->alias('u')->select('u.id');
+        
+        // if user IDs are specified
+        if (!empty($selectedUserIds) || !empty($list_user_id)) {
+            $query->andWhere(['u.id' => array_merge(
+                    $selectedUserIds ?? [],
+                    $list_user_id ?? []
+                )
+            ]);
+        }
+        
+        // property filter
         $setting_i = 1;
         if (isset($selected_settings) && is_array($selected_settings)) {
-            $query = User::find()->alias('u')->select('u.id');
-            
             foreach ($selected_settings as $setting_name => $setting_value) {
                 $query->leftJoin(UserSettingsConfig::tableName(). ' s'.$setting_i,
                         ["s{$setting_i}.code" => $setting_name]
@@ -221,25 +298,17 @@ class TimeTrackingController extends ParentController
                 $query->andWhere(["us{$setting_i}.values" => $setting_value]);
                 $setting_i++;
             }
+        }
+        
+        $users = ArrayHelper::getColumn($query->asArray()->all(), 'id');
             
-            // if user IDs are specified
-            if (!empty($selectedUserIds)) {
-                $query->andWhere(['u.id' => $selectedUserIds]);
-            }
-
-            $users = ArrayHelper::getColumn($query->asArray()->all(), 'id');
-            
-            if (count($users) == 0) {
-                $model = [
-                    'days' => null,
-                    'users_id' => null
-                ];
-            } else {
-                $model = TimeTracking::getActivityByDay($start_day, $stop_day, $users, $roles);
-            }
-            
+        if (count($users) == 0 || (!$full_acccess && count($list_user_id) == 0)) {
+            $model = [
+                'days' => null,
+                'users_id' => $users
+            ];
         } else {
-            $model = TimeTracking::getActivityByDay($start_day, $stop_day, $selectedUserIds, $roles);
+            $model = TimeTracking::getActivityByDay($start_day, $stop_day, $users);
         }
 
         $approval = [];
@@ -295,8 +364,12 @@ class TimeTrackingController extends ParentController
         
         if (is_null($user_id)) {
             $user_id = Yii::$app->user->id;
-        } else {
-            if ($user_id != Yii::$app->user->id && !Yii::$app->user->identity->hasRole(['admin', 'time_tracking_editor', 'time_tracking_admin'])) {
+        } else if ($user_id != Yii::$app->user->id) {        
+            if (!Yii::$app->user->identity->hasRole(['admin', 'time_tracking_editor', 'time_tracking_admin'])) {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
+            
+            if (!$this->checkFullAccess() && !in_array($user_id, $this->getUserListForViewingStatistics())) {
                 throw new NotFoundHttpException('The requested page does not exist.');
             }
         }
