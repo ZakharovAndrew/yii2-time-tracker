@@ -660,6 +660,28 @@ class TimeTrackingController extends ParentController
             'timestamp' => time()
         ];
     }
+    
+    /**
+     * Heatmap of working hours by employee
+     */
+    public function actionHeatmap()
+    {
+        $request = Yii::$app->request;
+        
+        $startDate = $request->get('start_date', date('Y-m-d', strtotime('-1 week')));
+        $stopDate = $request->get('stop_date', date('Y-m-d'));
+        
+        // If AJAX request — return JSON
+        if ($request->isAjax) {
+            $data = TimeTracking::getHeatmapData($startDate, $stopDate);
+            return $this->asJson($data);
+        }
+        
+        return $this->render('heatmap', [
+            'startDate' => $startDate,
+            'stopDate' => $stopDate,
+        ]);
+    }
 
     /**
      * Finds the TimeTracking model based on its primary key value.
