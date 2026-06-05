@@ -421,4 +421,75 @@ class TimeTracking extends \yii\db\ActiveRecord
 
         return [$workTime, $breakTime];
     }
+		
+	/**
+	 * Get heatmap data for Chart.js matrix chart
+	 * 
+	 * @param string $start_date
+	 * @param string $stop_date
+	 * @param array|null $user_ids
+	 * @return array
+	 */
+	public static function getHeatmapData($start_date, $stop_date, $user_ids = null)
+	{
+	    $query = self::find()
+	        ->where(['>=', 'datetime_at', $start_date . ' 00:00:00'])
+	        ->andWhere(['<=', 'datetime_at', $stop_date . ' 23:59:59'])
+	        ->andWhere(['IS NOT', 'datetime_finish', null])
+	        ->orderBy(['user_id' => SORT_ASC, 'datetime_at' => SORT_ASC]);
+	    
+	    if ($user_ids !== null) {
+	        $query->andWhere(['user_id' => $user_ids]);
+	    }
+	    
+	    $records = $query->all();
+	    
+	    // Split each record by hour
+	    $hourly = [];
+	    $userNames = [];
+	    
+	    foreach ($records as $record) {
+	        $start = strtotime($record->datetime_at);
+	        $end = strtotime($record->datetime_finish);
+	        $userId = $record->user_id;
+	        
+	        // Get user name from relation if set
+	        $userName = $record->user->name ?? "User #$userId";
+	        $userNames[$userId] = $userName;
+	        
+	        $startHour = (int)date('G', $start);
+	        $endHour = (int)date('G', $end);
+	        
+	        if ($startHour == $endHour) {
+	            // Everything within the same hour
+	            $minutes = ($end - $start) / 60;
+	            $hourly[$userId][$startHour] = ($hourly[$userId][$startHour] ?? 0) + $minutes;
+	        } else {
+	            // Distribute across hours
+	            $cursor = $start;
+	            while ($cursor < $end) {
+	                $hour = (int)date('G', $cursor);
+	                $nextHour = strtotime(date('Y-m-d H:00:00', $cursor) . ' +1 hour');
+	                $segmentEnd = min($nextHour, $end);
+	                $minutes = ($segmentEnd - $cursor) / 60;
+	                $hourly[$userId][$hour] = ($hourly[$userId][$hour] ?? 0) + $minutes;
+	                $cursor = $segmentEnd;
+	            }
+	        }
+	    }
+	    
+	    // Prepare data for Chart.js matrix
+	    $dataset = [];
+	    foreach ($hourly as $userId => $hours) {
+	        foreach ($hours as $hour => $minutes) {
+	            $dataset[] = [
+	                'x' => $hour,
+	                'y' => $userNames[$userId],
+	                'v' => round($minutes, 1),
+	            ];
+	        }
+	    }
+	    
+	    return $dataset;
+	}
 }
