@@ -53,19 +53,22 @@ class Activity extends \yii\db\ActiveRecord
     }
     
     /**
-     * @return array
+     * @return array<int, string>
      */
-    public static function getDropdownList()
+    public static function getDropdownList(): array
     {
-        return ArrayHelper::map(static::find()->asArray()->cache(self::CACHE_DURATION)->all(), 'id', 'name');
+        return ArrayHelper::map(
+            static::find()->asArray()->cache(self::CACHE_DURATION)->all(),
+            'id', 'name'
+        );
     }
     
     /**
      * Get full list of activities including system break activity
      * 
-     * @return array Associative array of activity id => name
+     * @return array<int, string> Associative array of activity id => name
      */
-    public static function getFullList()
+    public static function getFullList(): array
     {
         $arr = static::getDropdownList();
         $arr[static::WORK_BREAK] = Module::t('Break');
@@ -73,19 +76,26 @@ class Activity extends \yii\db\ActiveRecord
         return $arr;
     }
     
-    public static function getActivityColors()
+    /**
+     * @return array<int, string>
+     */
+    public static function getActivityColors(): array
     {
-        return ArrayHelper::map(static::find()->asArray()->all(), 'id', 'color');
+        return ArrayHelper::map(
+            static::find()->asArray()->all(),
+            'id',
+            'color'
+        );
     }
     
     /**
      * Get a list of activities available to the user
      * 
      * @param int $user_id
-     * @param string $additionalCondition
-     * @return array
+     * @param string|null $additionalCondition
+     * @return array<int, array>
      */
-    public static function userActivity($user_id, $additionalCondition = null)
+    public static function userActivity(int $user_id, ?string $additionalCondition = null): array
     {
         $query = RoleActivity::find()->alias('a')
                 ->select(['t.*'])
@@ -100,8 +110,13 @@ class Activity extends \yii\db\ActiveRecord
         return $query->asArray()->all();
     }
     
-    public static function getActivityByUserId($user_id, $showAll = false)
-    {   
+    /**
+     * @param int $user_id
+     * @param bool $showAll
+     * @return array<int, string>
+     */
+    public static function getActivityByUserId(int $user_id, bool $showAll = false): array
+    {  
         $list = ArrayHelper::map(static::userActivity($user_id), 'id', 'name');
         
         if ($showAll) {
@@ -115,17 +130,38 @@ class Activity extends \yii\db\ActiveRecord
     
     /**
      * Get hints for activities available to the user
+     * 
+     * @param int $user_id
+     * @return array<int, string>
      */
-    public static function getHintsActivityByUserId($user_id)
+    public static function getHintsActivityByUserId(int $user_id): array
     {
-        return ArrayHelper::map(static::userActivity($user_id, "t.hint <> '' AND t.hint IS NOT NULL"), 'id', 'hint');
+        return ArrayHelper::map(
+            static::userActivity($user_id, "t.hint <> '' AND t.hint IS NOT NULL"),
+            'id',
+            'hint'
+        );
     }
-    public static function getTemplateCommentsActivityByUserId($user_id)
+
+    /**
+     * @param int $user_id
+     * @return array<int, string>
+     */
+    public static function getTemplateCommentsActivityByUserId(int $user_id): array
     {
-        return ArrayHelper::map(static::userActivity($user_id, "t.comment_templates <> '' AND t.comment_templates IS NOT NULL"), 'id', 'comment_templates');
+        return ArrayHelper::map(
+            static::userActivity($user_id, "t.comment_templates <> '' AND t.comment_templates IS NOT NULL"),
+            'id',
+            'comment_templates'
+        );
     }
-        
-    public static function getList()
+
+    /**
+     * Returns full activity list for dropdowns: user activities + system actions (start/stop/break).
+     *
+     * @return array<int, string> Activity IDs mapped to localized names.
+     */
+    public static function getList(): array
     {
         $list = static::getDropdownList();
         
@@ -135,8 +171,12 @@ class Activity extends \yii\db\ActiveRecord
         
         return $list;
     }
-    
-    public static function timeFormat(int $time)
+
+    /**
+     * @param int $time
+     * @return string
+     */
+    public static function timeFormat(int $time): string
     {
         $hours = floor($time / 3600);
         $minutes = floor(($time % 3600) / 60);
