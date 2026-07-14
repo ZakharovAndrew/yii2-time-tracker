@@ -102,14 +102,15 @@ class TimeTracking extends \yii\db\ActiveRecord
     }
     
     /**
-     * Get a list of activities for the selected period
-     * 
-     * @param string $start_day - Start of interval (format Y-m-d)
-     * @param string $stop_day - Finish of interval (format Y-m-d)
-     * @param mixed $user - List of user IDs
-     * @param array $roles - List of user role IDs
+     * Get a list of activities for the selected period.
+     *
+     * @param string $start_day Start of interval (format Y-m-d)
+     * @param string $stop_day  Finish of interval (format Y-m-d)
+     * @param int|array|null $user Single user ID or array of user IDs
+     * @param array $roles List of user role codes
+     * @return static[]
      */
-    public static function getActivityList($start_day, $stop_day, $user = null, $roles = [])
+    public static function getActivityList(string $start_day, string $stop_day, $user = null, array $roles = []): array
     {
         $query = static::find()
             ->leftJoin('users', 'users.id = time_tracking.user_id')
@@ -130,15 +131,16 @@ class TimeTracking extends \yii\db\ActiveRecord
         return $query->all();
     }
     
-    /**
-     * Get a list of activities by day for the selected period
-     * 
+	/**
+     * Get activities grouped by day for the selected period.
+     *
      * @param string $start_day - Start of interval (format Y-m-d)
      * @param string $stop_day - Finish of interval (format Y-m-d)
-     * @param mixed $user - List of user IDs
+     * @param int|array|null $user - List of user IDs
      * @param array $roles - List of user role IDs
+     * @return array{ days: array<string, array<int, static[]>>, users_id: int[] }
      */
-    public static function getActivityByDay($start_day, $stop_day, $user = [], $roles = [])
+    public static function getActivityByDay(string $start_day, string $stop_day, $user = null, array $roles = []): array
     {
         $model = static::getActivityList($start_day, $stop_day, $user, $roles = []);
         
@@ -165,7 +167,7 @@ class TimeTracking extends \yii\db\ActiveRecord
      * @param int|array $user User ID or array of user IDs
      * @return array Activities grouped by date [ '2024-01-01' => [activities], ... ]
      */
-    public static function userTimeline(string $start_day, string $stop_day, $user)
+    public static function userTimeline(string $start_day, string $stop_day, $user): array
     {
         $activities = static::getActivityList($start_day, $stop_day, $user);
         
@@ -230,8 +232,8 @@ class TimeTracking extends \yii\db\ActiveRecord
             $this->datetime_finish = $after->datetime_at;
             $this->duration = strtotime($this->datetime_finish) - strtotime($datetime_at);
         } else {
-            $this->datetime_finish = NULL;
-            $this->duration = NULL;
+            $this->datetime_finish = null;
+            $this->duration = null;
         }
         
         return parent::beforeSave($insert);
