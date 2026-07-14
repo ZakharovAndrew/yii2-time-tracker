@@ -60,25 +60,40 @@ class TimeTracking extends \yii\db\ActiveRecord
         ];
     }
     
-    static public function getUserActivity($user_id)
-    {
-        return TimeTracking::find()
-                ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
-                ->andWhere(['user_id' => $user_id])
-                ->orderBy('datetime_at ASC')
-                ->all();
-    }
+	/**
+	 * Returns all user activities for today (from 00:00:00).
+	 *
+	 * @param int $user_id
+	 * @return static[]
+	 */
+	public static function getUserActivity(int $user_id): array
+	{
+	    return static::find()
+	        ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
+	        ->andWhere(['user_id' => $user_id])
+	        ->orderBy('datetime_at ASC')
+	        ->all();
+	}
     
-    static public function getUserLastActivity($user_id)
-    {
-        return TimeTracking::find()
-                ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
-                ->andWhere(['user_id' => $user_id])
-                ->orderBy('datetime_at DESC')
-                ->one();
-    }
-    
-    static public function userRolesForViewingStatistics()
+	/**
+	 * Returns the latest user activity for today (or null if none).
+	 *
+	 * @param int $user_id
+	 * @return static|null
+	 */
+	public static function getUserLastActivity(int $user_id): ?self
+	{
+	    return static::find()
+	        ->where(['>', 'datetime_at', date('Y-m-d 00:00:00')])
+	        ->andWhere(['user_id' => $user_id])
+	        ->orderBy('datetime_at DESC')
+	        ->one();
+	}
+
+	/**
+     * @return array<string, string> Roles allowed for viewing statistics, filtered by current user's roles
+     */
+    public static function userRolesForViewingStatistics(): array
     {
         $list = Yii::$app->getModule('timetracker')->availableRolesForViewingStatistics;
         $user_roles = ArrayHelper::map(Roles::getRolesByUserId(Yii::$app->user->id), 'code', 'code');
@@ -163,18 +178,27 @@ class TimeTracking extends \yii\db\ActiveRecord
         
         return $timeline;
     }
-    
-    public function isWorkStart()
+
+	/**
+     * @return bool
+     */
+    public function isWorkStart(): bool
     {
         return $this->activity_id == Activity::WORK_START;
     }
-    
-    public function isWorkStop()
+
+	/**
+     * @return bool
+     */
+    public function isWorkStop(): bool
     {
         return $this->activity_id == Activity::WORK_STOP;
     }
-    
-    public function isWorkBreak()
+
+	/**
+     * @return bool
+     */
+    public function isWorkBreak(): bool
     {
         return $this->activity_id == Activity::WORK_BREAK;
     }
@@ -243,7 +267,10 @@ class TimeTracking extends \yii\db\ActiveRecord
         
         parent::afterSave($insert, $changedAttributes);
     }
-    
+
+	/**
+     * @param array $changedAttributes
+     */
     public function afterUpdateFunction($changedAttributes)
     {
         $afterUpdateFunction = Yii::$app->getModule('timetracker')->afterUpdateFunction;
